@@ -9,7 +9,7 @@
 <style>
 
 body{
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family:"Segoe UI", Arial, sans-serif;
     margin:0;
     background:#f5f7fb;
     color:#333;
@@ -25,7 +25,6 @@ header{
 
 header h1{
     margin:0;
-    font-size:28px;
 }
 
 /* LAYOUT */
@@ -35,13 +34,13 @@ header h1{
 }
 
 nav{
-    width:260px;
-    background:#ffffff;
+    width:270px;
+    background:white;
     border-right:1px solid #ddd;
+    padding:20px;
     height:100vh;
     position:sticky;
     top:0;
-    padding:20px;
 }
 
 nav h3{
@@ -80,15 +79,6 @@ h3{
     margin-top:25px;
 }
 
-.rule{
-    background:#f9fafb;
-    border-left:4px solid #2563eb;
-    padding:10px 14px;
-    margin:10px 0;
-}
-
-/* CODE BLOCK */
-
 pre{
     background:#0f172a;
     color:#e2e8f0;
@@ -98,7 +88,9 @@ pre{
 }
 
 code{
-    font-family:monospace;
+    background:#eef2f6;
+    padding:2px 4px;
+    border-radius:4px;
 }
 
 /* TABLE */
@@ -119,8 +111,6 @@ th{
     background:#f1f5f9;
 }
 
-/* FOOTER */
-
 footer{
     margin-top:40px;
     padding:20px;
@@ -136,7 +126,7 @@ footer{
 <body>
 
 <header>
-<h1>Trading System Logic Blueprint</h1>
+<h1>PROJECT LOGIC BLUEPRINT (Exhaustive System Rules)</h1>
 </header>
 
 <div class="container">
@@ -145,210 +135,311 @@ footer{
 
 <h3>Contents</h3>
 
-<a href="#gateway">Entrance Gateway</a> <a href="#contract">Contract Selection</a> <a href="#execution">Order Execution</a> <a href="#monitoring">Position Monitoring</a> <a href="#exit">Exit Conditions</a> <a href="#math">Mathematical Logic</a> <a href="#weights">Timeframe Weighting</a> <a href="#news">News Safety Window</a>
+<a href="#entrance">Entrance Gateway</a> <a href="#contract">Contract & Order Selection</a> <a href="#execution">Order Execution System</a> <a href="#monitoring">Position Monitoring</a> <a href="#holding">Holding & Monitoring Rules</a> <a href="#exit">Exit Conditions</a> <a href="#audit">Audit & Post Trade</a> <a href="#math">Mathematical Logic Specification</a>
 
 </nav>
 
 <main>
 
-<section id="gateway">
+<p>This document contains the 100% complete internal logic, formulas, and <code>if/else</code> conditions of the trading system.</p>
 
-<h2>I. Entrance Gateway (Before Trade)</h2>
+<hr>
 
-<h3>Hard Chronological Rules</h3>
+<section id="entrance">
 
-<div class="rule"><code>if (Time &lt; 09:30 IST) → Trade Blocked</code></div>
-<div class="rule"><code>if (OpenPositions ≥ 1) → Trade Blocked</code></div>
-<div class="rule"><code>if (ExecutedTradesToday ≥ 1) → Trade Blocked</code></div>
-<div class="rule"><code>if (CurrentTrendTradeCount ≥ 3) → Trade Blocked</code></div>
+<h2>I. ENTRANCE GATEWAY (Before Trade)</h2>
 
-<h3>Confluence Engine Validation</h3>
+<h3>1. Hard Chronological Rules</h3>
 
 <ul>
-<li>TREND_DIRECTION must be VALID</li>
-<li>MARKET_STRUCTURE must be VALID</li>
-<li>KEY_LEVELS must be VALID</li>
-<li>Grid Density ≥ 70%</li>
-<li>ENTRY_PATTERN must be VALID on 15M or 5M timeframe</li>
+<li><strong>Time Block:</strong> <code>if (Time &lt; 09:30 IST)</code> -> Trade Blocked.</li>
+<li><strong>Max Positions:</strong> <code>if (OpenPositions >= 1)</code> -> Trade Blocked.</li>
+<li><strong>Daily Quota:</strong> <code>if (ExecutedTradesToday >= 1)</code> -> Trade Blocked.</li>
+<li><strong>Trend Quota:</strong> <code>if (CurrentTrendTradeCount >= 3)</code> -> Trade Blocked.</li>
+</ul>
+
+<h3>2. Confluence Engine Validation</h3>
+
+<ul>
+<li><strong>Mandatory Pillars (D1 to 30M):</strong>
+<ul>
+<li><code>TREND_DIRECTION</code> must be VALID.</li>
+<li><code>MARKET_STRUCTURE</code> must be VALID.</li>
+<li><code>KEY_LEVELS</code> must be VALID.</li>
+</ul>
+</li>
+
+<li><strong>Grid Density:</strong>
+<ul>
+<li><code>TotalGreenCells / TotalEnabledCells</code> must be <code>>= 0.70</code> (70%).</li>
+</ul>
+</li>
+
+<li><strong>Immediate Trigger:</strong>
+<ul>
+<li><code>ENTRY_PATTERN</code> must be VALID on <code>15M</code> or <code>5M</code> timeframe.</li>
+</ul>
+</li>
 </ul>
 
 </section>
+
+<hr>
 
 <section id="contract">
 
-<h2>II. Contract & Order Selection</h2>
+<h2>II. CONTRACT & ORDER SELECTION (The If/Else Logic)</h2>
 
-<h3>Instrument Choosing</h3>
-
-<pre>
-if (MarketDirection == UP)
-    Select CALL Option (CE)
-
-if (MarketDirection == DOWN)
-    Select PUT Option (PE)
-</pre>
-
-<h3>Strike Selection</h3>
-
-<pre>
-CE Strike = floor(SpotPrice - 150)
-
-PE Strike = ceil(SpotPrice + 150)
-
-Strike must be ≥150 points ITM
-</pre>
-
-<h3>Expiry & Premium Logic</h3>
+<h3>1. Instrument choosing</h3>
 
 <ul>
-<li>Target expiry: ~21 trading days</li>
-<li>Select contract with lower premium</li>
-<li>Reject if premium ≥ highest premium of last 3 days</li>
+<li><code>if (MarketDirection == UP)</code> -> Select <strong>CALL Option (CE)</strong>.</li>
+<li><code>if (MarketDirection == DOWN)</code> -> Select <strong>PUT Option (PE)</strong>.</li>
+</ul>
+
+<h3>2. Strike Selection Logic</h3>
+
+<ul>
+<li><strong>Formula (CE):</strong> <code>Strike = floor(SpotPrice - 150)</code>.</li>
+<li><strong>Formula (PE):</strong> <code>Strike = ceil(SpotPrice + 150)</code>.</li>
+<li><em>Rule:</em> Strike must be at least 150 points In-The-Money (ITM).</li>
+</ul>
+
+<h3>3. Expiry & Premium Logic</h3>
+
+<ul>
+<li><strong>Expiry Target:</strong> 21 trading days (~3 weeks).</li>
+<li><strong>Selection:</strong> If multiple contracts exist, choose the <strong>Lower Premium</strong>.</li>
+<li><strong>Filter:</strong> <code>if (OptionPremium >= HighestPremiumOfLast3Days)</code> -> <strong>REJECT CONTRACT</strong>.</li>
 </ul>
 
 </section>
+
+<hr>
 
 <section id="execution">
 
-<h2>III. Order Execution System</h2>
+<h2>III. ORDER EXECUTION SYSTEM (Step-by-Step)</h2>
 
-<h3>Pre-Order Validation</h3>
+<h3>1. Pre-Order Validation (Mandatory Checks)</h3>
 
-<pre>
-if (Quantity < 1 OR Quantity > 10000)
-    REJECT
-
-if (Price <= 0)
-    REJECT
-
-PriceDiff = abs(Price - LTP) / LTP * 100
-
-if (PriceDiff > 3%)
-    REJECT
-
-Reward = abs(Target - Price)
-Risk = abs(Price - SL)
-
-if (Reward / Risk < 2)
-    REJECT
-</pre>
-
-<h3>Position Sizing</h3>
-
-<pre>
-Qty = floor( TradeCapital / (Premium * 25) )
-
-FinalQty = floor(Qty / 50) * 50
-
-if (FinalQty < 50)
-    REJECT
-</pre>
-
-<h3>Broker Parameters</h3>
+<p>Before sending the order to the broker, the system checks:</p>
 
 <ul>
-<li>Product Type: MIS</li>
-<li>Order Type: LIMIT</li>
-<li>Validity: DAY</li>
-<li>Entry: BUY</li>
-<li>Exit: SELL</li>
+<li><strong>Quantity Check:</strong> <code>if (Quantity &lt; 1 OR Quantity &gt; 10000)</code> -> <strong>REJECT</strong>.</li>
+<li><strong>Price Reasonability:</strong> <code>if (Price &lt;= 0)</code> -> <strong>REJECT</strong>.</li>
+<li><strong>Slippage Guard:</strong> <code>PriceDiff = abs(Price - LTP) / LTP * 100</code>.
+<ul>
+<li><code>if (PriceDiff > PRICE_SLIPPAGE_PERCENT)</code> -> <strong>REJECT</strong>.</li>
+</ul>
+</li>
+
+<li><strong>Profit Ratio:</strong>
+<ul>
+<li><code>Reward = abs(Target - Price)</code></li>
+<li><code>Risk = abs(Price - SL)</code></li>
+<li><code>if (Reward / Risk < MIN_PROFIT_RATIO)</code> -> <strong>REJECT</strong>.</li>
+</ul>
+</li>
+</ul>
+
+<h3>2. Sizing & Lot Rounding</h3>
+
+<ul>
+<li><strong>Formula:</strong> <code>Qty = floor( TradeCapital / (Premium * 25) )</code>.</li>
+<li><strong>Nifty Lot Rounding:</strong> <code>FinalQty = floor(Qty / 50) * 50</code>.</li>
+<li><strong>Hard Minimum:</strong> <code>if (FinalQty < 50)</code> -> <strong>REJECT</strong>.</li>
+</ul>
+
+<h3>3. Broker Order Parameters</h3>
+
+<ul>
+<li><strong>Product Type:</strong> <code>MIS</code></li>
+<li><strong>Order Type:</strong> <code>LIMIT</code></li>
+<li><strong>Validity:</strong> <code>DAY</code></li>
+<li><strong>Transaction:</strong> <code>BUY</code> for entry, <code>SELL</code> for exit.</li>
+</ul>
+
+<h3>4. Retry & Timeout Logic</h3>
+
+<ul>
+<li><strong>Max Retries:</strong> 3 attempts (<code>MAX_ORDER_RETRY</code>).</li>
+<li><strong>Wait Interval:</strong> <code>ORDER_TIMEOUT / 2</code> milliseconds between failed attempts.</li>
+<li><strong>Failure Action:</strong> <code>if (Attempts == 3 AND Success == FALSE)</code> -> <strong>ABORT & LOG CRITICAL ERROR</strong>.</li>
 </ul>
 
 </section>
+
+<hr>
 
 <section id="monitoring">
 
-<h2>IV. Position Monitoring</h2>
+<h2>IV. POSITION MONITORING & MODIFICATION</h2>
 
-<h3>Stop Loss / Target Updates</h3>
-
-<pre>
-if (NewSL > 0 AND NewSL < EntryPrice)
-    PERMIT
-
-if (NewTarget > 0 AND NewTarget > EntryPrice)
-    PERMIT
-</pre>
-
-<h3>Time Based Holding</h3>
-
-<pre>
-if (CurrentTime - EntryTime >= 120 minutes)
-    EXIT
-</pre>
-
-<h3>News Based Adjustment</h3>
-
-<pre>
-if (NewsRestrictionStatus == RESTRICTED)
-
-Block new trades
-
-Reduce position to 33%
-
-floor(CurrentQty * 0.33)
-</pre>
-
-</section>
-
-<section id="exit">
-
-<h2>V. Exit Conditions</h2>
+<h3>1. Real-Time SL/Target Updates</h3>
 
 <ul>
-<li>Stop Loss triggered</li>
-<li>Target reached</li>
-<li>Trade duration reaches 2 hours</li>
-<li>News override</li>
-<li>Manual dashboard exit</li>
+<li><strong>Modify SL:</strong> <code>if (NewSL > 0 AND NewSL < EntryPrice)</code> -> <strong>PERMIT MODIFICATION</strong>.</li>
+<li><strong>Modify TP:</strong> <code>if (NewTarget > 0 AND NewTarget > EntryPrice)</code> -> <strong>PERMIT MODIFICATION</strong>.</li>
+</ul>
+
+<h3>2. Time-Based Holding</h3>
+
+<ul>
+<li><strong>Rule:</strong> <code>if (CurrentTime - EntryTime >= 120 minutes)</code> -> <strong>IMMEDIATE EXIT (TIME)</strong>.</li>
+</ul>
+
+<h3>3. News-Based Adjustments</h3>
+
+<ul>
+<li><strong>Status Check:</strong> <code>if (NewsRestrictionStatus == RESTRICTED)</code>:
+<ul>
+<li><strong>New Trade:</strong> Block Entry.</li>
+<li><strong>Existing Trade:</strong> Reduce position to <strong>33.3%</strong> (<code>floor(CurrentQty * 0.33)</code>).</li>
+</ul>
+</li>
+
+<li><strong>EntryPrice:</strong> Current Last Traded Price (LTP).</li>
+
+<li><strong>Stop Loss (SL):</strong> <code>EntryPrice * (1 - RiskPercent / 100)</code>.</li>
+
+<li><strong>Target (TP):</strong> <code>EntryPrice * (1 + (RiskPercent * 2) / 100)</code>.</li>
+
 </ul>
 
 </section>
 
-<section id="math">
+<hr>
 
-<h2>VI. Mathematical Logic Specification</h2>
+<section id="holding">
 
-<h3>MACD Calculation</h3>
+<h2>IV. HOLDING & MONITORING RULES</h2>
 
-<pre>
-Multiplier = 2 / (Period + 1)
+<h3>1. Time-Based Holding</h3>
 
-EMA_today =
-(Price_today - EMA_yesterday) * Multiplier
-+ EMA_yesterday
+<ul>
+<li><strong>Auto-Exit:</strong> <code>if (TimeElapsedDesdeEntry >= 120 minutes)</code> -> Trigger <strong>TIME</strong> exit.</li>
+</ul>
 
-MACD Line = EMA(12) - EMA(26)
+<h3>2. Real-Time News Shield</h3>
 
-Signal Line = EMA(MACD, 9)
+<ul>
+<li><strong>Entry Protection:</strong>
+<ul>
+<li><code>if (MinutesToNewsEvent <= 60)</code> -> Block New Trades.</li>
+<li><code>if (MinutesSinceNewsEvent <= 30)</code> -> Block New Trades.</li>
+</ul>
+</li>
 
-Histogram = MACD - Signal
-</pre>
+<li><strong>Live Position Protection (During News Window):</strong>
+<ul>
+<li><code>if (TrendlineBroken == TRUE)</code> -> <strong>Immediate Market Exit</strong>.</li>
+<li><code>if (CurrentPrice Outside PullbackZone (60-80%))</code> -> <strong>Immediate Market Exit</strong>.</li>
+<li><code>if (Trend direction != MACD histogram direction)</code> -> <strong>Immediate Market Exit</strong>.</li>
+</ul>
+</li>
 
-<h3>Retracement</h3>
-
-<pre>
-Range = HighestHigh - LowestLow
-
-Retracement % =
-((HighestHigh - CurrentClose) / Range) * 100
-</pre>
-
-<h3>Zig-Zag Validation</h3>
-
-<pre>
-Pullback 1 → ≥ 70%
-
-Pullback 2 → ≥ 60%
-
-Pullback 3 → ≥ 55%
-</pre>
+</ul>
 
 </section>
 
-<section id="weights">
+<hr>
 
-<h2>Timeframe Weighting</h2>
+<section id="exit">
+
+<h2>V. EXIT CONDITIONS</h2>
+
+<p>A position is closed immediately if <strong>ANY</strong> of these trigger:</p>
+
+<ol>
+
+<li><strong>Stop Loss:</strong> <code>LTP <= StopLossLevel</code>.</li>
+
+<li><strong>Target:</strong> <code>LTP >= TargetLevel</code>.</li>
+
+<li><strong>Time Out:</strong> <code>Duration == 2 Hours</code>.</li>
+
+<li><strong>News Override:</strong> Technical violation during economic news window.</li>
+
+<li><strong>Manual Pulse:</strong> User triggers exit via WebSocket (Dashboard).</li>
+
+</ol>
+
+</section>
+
+<hr>
+
+<section id="audit">
+
+<h2>VI. AUDIT & POST-TRADE</h2>
+
+<ul>
+
+<li><strong>Loss Penalty:</strong> <code>if (TradeResult == LOSS)</code> -> Activate <strong>Cooldown Manager</strong> (adds to consecutive loss counter).</li>
+
+<li><strong>Capital Update:</strong> Real-time reduction/addition to <code>TotalExposure</code> variable in Redis.</li>
+
+<li><strong>Persistence:</strong> All trades stored in MySQL database with <code>validationScore</code> and <code>exitReason</code>.</li>
+
+</ul>
+
+</section>
+
+<hr>
+
+<section id="math">
+
+<h2>MATHEMATICAL LOGIC SPECIFICATION (Raw Formulas)</h2>
+
+<p>This document details every specific mathematical calculation and threshold currently programmed in the system.</p>
+
+<h3>1. Indicator Calculations</h3>
+
+<h4>A. MACD (Trend & Momentum)</h4>
+
+<ul>
+<li><code>EMA Multiplier: M = 2 / (Period + 1)</code></li>
+<li><code>EMA_today = (Price_today - EMA_yesterday) * M + EMA_yesterday</code></li>
+<li><code>MACD Line = EMA(Close, 12) - EMA(Close, 26)</code></li>
+<li><code>Signal Line = EMA(MACD_Line, 9)</code></li>
+<li><code>Histogram = MACD_Line - Signal_Line</code></li>
+</ul>
+
+<h4>B. Pullback & Retracement (%)</h4>
+
+<ul>
+
+<li><code>Range = HighestHigh - LowestLow</code></li>
+
+<li><code>R = ((HighestHigh - CurrentClose) / Range) * 100</code></li>
+
+<li><strong>Zig-Zag Validation:</strong>
+<ul>
+<li><code>if (PullbackCount == 1) -> R >= 70%</code></li>
+<li><code>if (PullbackCount == 2) -> R >= 60%</code></li>
+<li><code>if (PullbackCount == 3) -> R >= 55%</code></li>
+</ul>
+</li>
+
+<li><code>Return% = ((CurrentPrice - PullbackLow) / abs(TrendlinePrice - PullbackLow)) * 100</code> (Must be <code>>= 40%</code>)</li>
+
+</ul>
+
+<h4>C. Candle Pattern Filters</h4>
+
+<ul>
+
+<li><code>abs(Close - Open) / (High - Low) <= 0.10</code></li>
+
+<li><code>(min(Open, Close) - Low) > (abs(Close - Open) * 2)</code> AND <code>abs(Close - Open) > ((High - Low) * 0.1)</code></li>
+
+<li>Last 6 candles of confirmation TF must contain <strong>at least 1 candle</strong> of the opposite color.</li>
+
+</ul>
+
+<h3>2. Confluence Engine Scoring logic</h3>
+
+<h4>A. Timeframe Weighting (Importance)</h4>
 
 <table>
 
@@ -396,24 +487,67 @@ Pullback 3 → ≥ 55%
 
 </table>
 
-</section>
+<p><em>Exception: ENTRY_PATTERN uses 15M = 1.0 and 5M = 0.9.</em></p>
 
-<section id="news">
-
-<h2>News Safety Window</h2>
+<h4>B. Scoring Formula</h4>
 
 <pre>
-Hard Block Window
+Total_Score = Σ (Valid_Cell_Weight)
 
-[NewsEventTime - 60 minutes]
-to
-[NewsEventTime + 30 minutes]
+Max_Score = Σ (Enabled_Cell_Weight)
 
-if restriction active
-    block entry
-    OR
-    reduce position to 33%
+Final_Confluence_Score = round((Total_Score / Max_Score) * 100)
 </pre>
+
+<h3>3. Order & Execution Math</h3>
+
+<h4>A. Pre-Order Validations</h4>
+
+<ul>
+
+<li><code>PriceDiff = abs(Price - LTP) / LTP * 100</code></li>
+
+<li><code>if (PriceDiff > 3%) -> REJECT</code></li>
+
+<li><code>if ((Target - Price) / (Price - SL) < 2.0) -> REJECT</code></li>
+
+</ul>
+
+<h4>B. Position Sizing</h4>
+
+<ul>
+
+<li><code>TradeCap = TotalCapital * RiskOption%</code></li>
+
+<li><code>Qty = floor(TradeCap / (OptionPremium * 25))</code></li>
+
+<li><code>FinalLotes = floor(Qty / 50)</code></li>
+
+<li><code>FinalOrderQty = FinalLotes * 50</code></li>
+
+</ul>
+
+<h4>C. Execution Reliability</h4>
+
+<ul>
+
+<li><code>if (OrderFailed == TRUE)</code> -> Wait <code>timeout / 2</code> and Retry (Max 3 times).</li>
+
+<li>Product forced to <code>PRODUCT.MIS</code></li>
+
+<li>Order type forced to <code>ORDER_TYPE.LIMIT</code></li>
+
+</ul>
+
+<h3>4. News Safety Window</h3>
+
+<ul>
+
+<li><strong>Hard Block Window:</strong> <code>[NewsEventTime - 60min] to [NewsEventTime + 30min]</code></li>
+
+<li><code>if (RestrictionActive == TRUE)</code> -> Block Entry OR Reduce Position to <strong>33.3%</strong> (<code>floor(CurrentQty * 0.33)</code>)</li>
+
+</ul>
 
 </section>
 
@@ -422,7 +556,7 @@ if restriction active
 </div>
 
 <footer>
-Trading System Documentation • Logic Blueprint
+Trading System Logic Documentation
 </footer>
 
 </body>
