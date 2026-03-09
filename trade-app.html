@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading System: Integrated Logic & Math Blueprint</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1100px; margin: 0 auto; padding: 20px; background-color: #f0f2f5; }
+        header { background: #1a2a3a; color: #ffffff; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        nav { background: #fff; padding: 10px; margin-bottom: 20px; border-radius: 0 0 8px 8px; display: flex; justify-content: center; gap: 20px; font-weight: bold; }
+        nav a { color: #2980b9; text-decoration: none; }
+        section { background: #fff; padding: 25px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 5px solid #2980b9; }
+        h2 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; }
+        h3 { color: #d35400; margin-top: 25px; border-left: 3px solid #d35400; padding-left: 10px; }
+        .formula { background: #f8f9fa; border: 1px solid #e1e4e8; padding: 15px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; margin: 15px 0; color: #27ae60; }
+        .logic-gate { background: #fff5f5; border: 1px solid #feb2b2; padding: 10px; border-radius: 5px; color: #c53030; font-weight: bold; margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; color: #2c3e50; }
+        .math-tag { vertical-align: super; font-size: 0.7em; color: #7f8c8d; margin-left: 4px; }
+        footer { text-align: center; padding: 20px; color: #7f8c8d; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>System Logic & Mathematical Specification</h1>
+    <p>Comprehensive Integration of Trading Rules and Raw Formulas</p>
+</header>
+
+<nav>
+    <a href="#gateway">Entrance Gateway</a>
+    <a href="#indicators">Indicators</a>
+    <a href="#confluence">Confluence Math</a>
+    <a href="#execution">Execution & Sizing</a>
+    <a href="#safety">Safety & News</a>
+</nav>
+
+<section id="gateway">
+    <h2>I. ENTRANCE GATEWAY (Pre-Trade Rules)</h2>
+    <h3>1. Chronological & Quota Logic</h3>
+    <ul>
+        [span_0](start_span)<li><strong>Time Block:</strong> <code>if (Time < 09:30 IST)</code> -> Trade Blocked[span_0](end_span).</li>
+        [span_1](start_span)<li><strong>Inventory Limit:</strong> <code>if (OpenPositions >= 1)</code> -> Trade Blocked[span_1](end_span).</li>
+        [span_2](start_span)<li><strong>Daily Limit:</strong> <code>if (ExecutedTradesToday >= 1)</code> -> Trade Blocked[span_2](end_span).</li>
+        [span_3](start_span)<li><strong>Trend Saturation:</strong> <code>if (CurrentTrendTradeCount >= 3)</code> -> Trade Blocked[span_3](end_span).</li>
+    </ul>
+
+    <h3>2. Confluence Pillars</h3>
+    <ul>
+        [span_4](start_span)<li><strong>Mandatory Validation:</strong> TREND_DIRECTION, MARKET_STRUCTURE, and KEY_LEVELS must all be VALID[span_4](end_span).</li>
+        <li><strong>Grid Density Threshold:</strong> <code>TotalGreenCells / TotalEnabledCells</code> must be <code>&ge; [span_5](start_span)0.70</code> (70%)[span_5](end_span).</li>
+        [span_6](start_span)<li><strong>Trigger Execution:</strong> <code>ENTRY_PATTERN</code> must be VALID on 15M or 5M timeframes[span_6](end_span).</li>
+    </ul>
+</section>
+
+<section id="indicators">
+    <h2>II. MATHEMATICAL INDICATOR LOGIC</h2>
+    
+    <h3>1. [span_7](start_span)MACD (Trend & Momentum)[span_7](end_span)</h3>
+    <div class="formula">
+        M = 2 / (Period + 1) <br>
+        EMA_today = (Price_today - EMA_yesterday) * M + EMA_yesterday <br>
+        MACD_Line = EMA(Close, 12) - EMA(Close, 26) <br>
+        Signal_Line = EMA(MACD_Line, 9) <br>
+        Histogram = MACD_Line - Signal_Line
+    </div>
+
+    <h3>2. [span_8](start_span)Pullback & Retracement Logic[span_8](end_span)</h3>
+    <p>Range is defined as: <code>HighestHigh - LowestLow</code> over the specific lookback period.</p>
+    <div class="formula">
+        R = ( (HighestHigh - CurrentClose) / Range ) * 100
+    </div>
+    <table>
+        <tr><th>Pullback Count</th><th>Retracement Requirement (R)</th></tr>
+        <tr><td>1</td><td>&ge; 70%</td></tr>
+        <tr><td>2</td><td>&ge; 60%</td></tr>
+        <tr><td>3</td><td>&ge; 55%</td></tr>
+    </table>
+    <p><strong>Trendline Return:</strong> <code>((CurrentPrice - PullbackLow) / abs(TrendlinePrice - PullbackLow)) * 100</code> must be <code>&ge; [span_9](start_span)40%</code>[span_9](end_span).</p>
+
+    <h3>3. [span_10](start_span)Candle Pattern Filters[span_10](end_span)</h3>
+    <ul>
+        <li><strong>Doji:</strong> <code>abs(Close - Open) / (High - Low) &le; 0.10</code>.</li>
+        <li><strong>Hammer:</strong> <code>(min(Open, Close) - Low) > (abs(Close - Open) * 2)</code> AND <code>abs(Close - Open) > ((High - Low) * 0.1)</code>.</li>
+        [span_11](start_span)<li><strong>Blind Momentum Protection:</strong> Last 6 candles of the confirmation timeframe must contain at least 1 candle of the opposite color[span_11](end_span).</li>
+    </ul>
+</section>
+
+<section id="confluence">
+    <h2>III. [span_12](start_span)CONFLUENCE ENGINE SCORING[span_12](end_span)</h2>
+    <p>Weights are assigned per timeframe to calculate the <strong>Final Confluence Score</strong>.</p>
+    
+    <table>
+        [span_13](start_span)<tr><th>Timeframe</th><th>Weight [cite: 58-61][cite_start]</th><th>Timeframe</th><th>Weight [cite: 58-61]</th></tr>
+        <tr><td>MN</td><td>0.8</td><td>2H</td><td>0.5</td></tr>
+        <tr><td>W1</td><td>0.9</td><td>1H</td><td>0.4</td></tr>
+        <tr><td>D1</td><td>1.0</td><td>45M</td><td>0.3</td></tr>
+        <tr><td>4H</td><td>0.7</td><td>30M</td><td>0.2</td></tr>
+        <tr><td>3H</td><td>0.6</td><td>15M / 5M</td><td>0.1 / 0.05</td></tr>
+    </table>
+    
+    <div class="formula">
+        1. Total_Score = &Sigma; (Valid_Cell_Weight) [cite_start][span_13](end_span)<br>
+        2. Max_Score = &Sigma; (Enabled_Cell_Weight) [span_14](start_span)<br>
+        3. Final_Confluence_Score = round( (Total_Score / Max_Score) * 100 )[span_14](end_span)
+    </div>
+</section>
+
+<section id="execution">
+    <h2>IV. ORDER & EXECUTION MATH</h2>
+    
+    <h3>1. [span_15](start_span)Strike Selection [cite: 10, 12-14]</h3>
+    <ul>
+        <li><strong>Call (CE):</strong> <code>floor(SpotPrice - 150)</code>.</li>
+        <li><strong>Put (PE):</strong> <code>ceil(SpotPrice + 150)</code>.</li>
+        <li><strong>ITM Requirement:</strong> Strikes must be at least 150 points In-The-Money.</li>
+    </ul>
+
+    <h3>2. [cite_start]Position Sizing (Nifty) [cite: 64-67]</h3>
+    <div class="formula">
+        TradeCap = TotalCapital * RiskOption% <br>
+        Qty = floor( TradeCap / (OptionPremium * 25) ) <br>
+        FinalLotes = floor( Qty / 50 ) <br>
+        FinalOrderQty = FinalLotes * 50
+    </div>
+    [cite_start]<div class="logic-gate">MINIMUM REJECT: if (FinalOrderQty < 50)[span_15](end_span)</div>
+
+    <h3>3. [span_16](start_span)Pre-Order Validations[span_16](end_span)</h3>
+    <ul>
+        <li><strong>Slippage:</strong> <code>abs(Price - LTP) / LTP * 100</code>. [span_17](start_span)If <code>> 3%</code> -> REJECT[span_17](end_span).</li>
+        <li><strong>Profit Expectancy (R/R):</strong> <code>(Target - Price) / (Price - SL)</code>. [span_18](start_span)If <code>< 2.0</code> -> REJECT[span_18](end_span).</li>
+    </ul>
+</section>
+
+<section id="safety">
+    <h2>V. [span_19](start_span)[span_20](start_span)SAFETY & NEWS SHIELD [cite: 41-43, 69]</h2>
+    <h3>1. News Window Block</h3>
+    <ul>
+        [cite_start]<li><strong>Hard Window:</strong> 60 mins before to 30 mins after a News Event[span_19](end_span)[span_20](end_span).</li>
+        [span_21](start_span)[span_22](start_span)<li><strong>Action (Restricted):</strong> Block Entry OR reduce position to 33.3%[span_21](end_span)[span_22](end_span).</li>
+        [span_23](start_span)[span_24](start_span)<li><strong>Position Reduction:</strong> <code>floor(CurrentQty * 0.33)</code>[span_23](end_span)[span_24](end_span).</li>
+    </ul>
+
+    <h3>2. [span_25](start_span)Automated Exit Triggers[span_25](end_span)</h3>
+    <ul>
+        <li><strong>Stop Loss:</strong> <code>LTP &le; StopLossLevel</code>.</li>
+        <li><strong>Target:</strong> <code>LTP &ge; TargetLevel</code>.</li>
+        [span_26](start_span)[span_27](start_span)<li><strong>Time-Out:</strong> <code>Duration == 2 Hours</code> (120 minutes)[span_26](end_span)[span_27](end_span).</li>
+    </ul>
+</section>
+
+<footer>
+    &copy; 2026 Trading System Logic Blueprint | All Mathematical Thresholds Finalized
+</footer>
+
+</body>
+</html>
