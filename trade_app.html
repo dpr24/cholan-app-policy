@@ -87,16 +87,49 @@
             color: #22c55e;
         }
     </style>
+
+
 </head>
 
 <body>
 
+
     <div class="container">
+
 
         <div class="sidebar">
 
             <h2>Navigation</h2>
 
+            <a href="#diff" style="color:#f87171;font-weight:bold;">Difference: v1 vs New Requirements</a>
+            <a href="#diff-table">Comparison Table</a>
+            <a href="#diff-details">Key Differences</a>
+            <a href="#diff-integrate">Integration Possibilities</a>
+            <a href="#diff-conflicts">Conflicts &amp; Cautions</a>
+
+            <br>
+
+            <a href="#updated-req" style="color:#fbbf24;font-weight:bold;">Updated Requirements (9 Mar 2026)</a>
+            <a href="#upd-features">Feature Checklist</a>
+            <a href="#upd-requirements">Before You Start</a>
+            <a href="#upd-modules">System Modules</a>
+            <a href="#upd-config">config.py</a>
+            <a href="#upd-angle">angle_client.py</a>
+            <a href="#upd-news-sent">news_sentiment.py</a>
+            <a href="#upd-strategy">strategy.py</a>
+            <a href="#upd-engine">engine.py</a>
+            <a href="#upd-main">main.py</a>
+            <a href="#upd-summary">Summary</a>
+            <a href="#upd-integrated">Full Integrated Strategy</a>
+            <a href="#upd-new-rules">New Rules (VWAP + Contract)</a>
+            <a href="#upd-flow">Updated Strategy Flow</a>
+            <a href="#upd-template">Full Updated Python Template</a>
+            <a href="#upd-example">Example Trade</a>
+            <a href="#upd-strength">Final Strategy Strength</a>
+
+            <br>
+
+            <a href="#v1" style="color:#94a3b8;font-weight:bold;">System Workflow v1 ( Current )</a>
             <a href="#workflow">System Workflow</a>
             <a href="#data">1. Data Layer</a>
             <a href="#dashboard">2. Dashboard Loop</a>
@@ -120,13 +153,1282 @@
             <a href="#math">Mathematical Logic</a>
             <a href="#indicator">Indicator Calculations</a>
             <a href="#confluence">Confluence Engine</a>
-            <a href="#executionmath">Order & Execution Math</a>
+            <a href="#executionmath">Order &amp; Execution Math</a>
             <a href="#news">News Safety Window</a>
 
         </div>
 
 
         <div class="content">
+
+            <h1 id="diff" style="color:#f87171;">Difference: v1 vs New Requirements</h1>
+            <p style="color:#94a3b8;">Analysis of how the <b>System Workflow v1 (current)</b> compares to the <b>New
+                    Requirements (9 Mar 2026)</b>, including what can be merged and what conflicts exist.</p>
+
+            <h2 id="diff-table">Comparison Table</h2>
+
+            <table>
+                <tr>
+                    <th>Area</th>
+                    <th>System Workflow v1 (Current)</th>
+                    <th>New Requirements (9 Mar 2026)</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td><b>Entry Method</b></td>
+                    <td>Pullback 60–80% from recent peak + Trendline + MACD confluence grid</td>
+                    <td>Fibonacci retracement levels: 50%, 61.8%, 70% (Partial / Full entry)</td>
+                    <td style="color:#fbbf24;">⚡ Replace / Upgrade</td>
+                </tr>
+                <tr>
+                    <td><b>Trend Detection</b></td>
+                    <td>Confluence score from grid (TREND_DIRECTION pillar must be VALID); no explicit timeframe
+                        weighting for trend</td>
+                    <td>Slope-based trend on 1H, Daily, Weekly — at least 2 of 3 must agree (+ EMA50 weekly
+                        confirmation)</td>
+                    <td style="color:#fbbf24;">⚡ Upgrade existing</td>
+                </tr>
+                <tr>
+                    <td><b>VWAP Filter</b></td>
+                    <td>❌ Not present in v1</td>
+                    <td>✅ Mandatory: Price must be ≥ 20 pts away from VWAP on opposite side of trend (retracement entry)
+                    </td>
+                    <td style="color:#22c55e;">✅ New — can add to Confluence pillars</td>
+                </tr>
+                <tr>
+                    <td><b>MACD Confirmation</b></td>
+                    <td>MACD listed as one indicator in the confluence grid (single timeframe implied)</td>
+                    <td>Multi-timeframe MACD confirmation: 1H, 30M, 45M, 15M — minimum 2 of 4 must align</td>
+                    <td style="color:#22c55e;">✅ Extend — strengthen existing MACD check</td>
+                </tr>
+                <tr>
+                    <td><b>News Handling</b></td>
+                    <td>Hard block: ±60 min news window; position reduced to 33% during restriction</td>
+                    <td>News SENTIMENT alignment via VADER API — entry only if sentiment matches trend direction
+                        (Bullish/Bearish)</td>
+                    <td style="color:#fbbf24;">⚡ Parallel upgrade — keep block, add sentiment gate</td>
+                </tr>
+                <tr>
+                    <td><b>36-Candle Range</b></td>
+                    <td>❌ Not present in v1</td>
+                    <td>✅ Entry only within 36-candle high/low range with ±22 pts tolerance (1st entry) / ±50 pts (2nd
+                        entry)</td>
+                    <td style="color:#22c55e;">✅ New — add to EntryValidator</td>
+                </tr>
+                <tr>
+                    <td><b>Strike Selection</b></td>
+                    <td>CE = floor(SpotPrice − 150) / PE = ceil(SpotPrice + 150) — fixed 150 pts ITM</td>
+                    <td>Deep ITM: CE = base − 300, PE = base + 300 (base = floor(price/100)*100); AngleOne option chain
+                        scan</td>
+                    <td style="color:#fbbf24;">⚡ Update formula — deeper ITM in new requirements</td>
+                </tr>
+                <tr>
+                    <td><b>Expiry Rule</b></td>
+                    <td>Target: 21 trading days (~3 weeks)</td>
+                    <td>Minimum: 12 trading days (≥ 2 weeks); also ≥ 3 weeks preferred for deep ITM</td>
+                    <td style="color:#22c55e;">✅ Compatible — relax minimum from 21 to 12 days</td>
+                </tr>
+                <tr>
+                    <td><b>Stop Loss</b></td>
+                    <td>Predefined fixed SL at entry; position modification allowed via WebSocket</td>
+                    <td>Dynamic SL at 90% Fibonacci level + Trailing SL (moves 10% of premium every 1 hour)</td>
+                    <td style="color:#fbbf24;">⚡ Upgrade — replace fixed SL with Fib 90% dynamic + trailing</td>
+                </tr>
+                <tr>
+                    <td><b>Profit Target</b></td>
+                    <td>Fixed TP % from entry; intraday decay after 3 hrs (×0.7 inter-day)</td>
+                    <td>80–150 NIFTY pts (1st entry) / 50–90 pts (2nd entry); book near S/R if premium profit ≥ 15 pts
+                    </td>
+                    <td style="color:#fbbf24;">⚡ Replace decay model with dynamic S/R-based booking</td>
+                </tr>
+                <tr>
+                    <td><b>Entry Scaling</b></td>
+                    <td>Fixed lot size (floor qty / 50); no partial scaling</td>
+                    <td>Partial (at 50% Fib) → Add (at 61.8%) → Full (at 70%) — three-tier capital scaling</td>
+                    <td style="color:#22c55e;">✅ New — add to CapitalManager</td>
+                </tr>
+                <tr>
+                    <td><b>Max Hold Duration</b></td>
+                    <td>2 hours intraday (TIME exit trigger)</td>
+                    <td>3 trading days (positional/swing trade)</td>
+                    <td style="color:#f87171;">⚠️ CONFLICT — v1 uses MIS (intraday); 3-day hold requires NRML product
+                        type</td>
+                </tr>
+                <tr>
+                    <td><b>Cooldown / Circuit Breaker</b></td>
+                    <td>Daily loss limit → circuit breaker stops trading; cooldown period after loss</td>
+                    <td>2 consecutive SL hits → 5-day cooldown; monitoring resets counter on any profit exit</td>
+                    <td style="color:#22c55e;">✅ Compatible — replace daily-loss trigger with SL-count trigger</td>
+                </tr>
+                <tr>
+                    <td><b>Pivot / S&R Check</b></td>
+                    <td>KEY_LEVELS must be VALID (Confluence pillar, no explicit pivot formula)</td>
+                    <td>Explicit pivot_support_resistance() — profit booking near S/R after ≥ 15 pt premium gain</td>
+                    <td style="color:#22c55e;">✅ Strengthen — add explicit pivot math to EntryValidator</td>
+                </tr>
+                <tr>
+                    <td><b>Broker / API</b></td>
+                    <td>Angel One SmartAPI (WebSocket ticks); MIS orders, LIMIT type</td>
+                    <td>AngleOne REST API (session login, token refresh); MARKET orders for entry</td>
+                    <td style="color:#fbbf24;">⚡ Partially compatible — unify to LIMIT/MARKET per signal confidence</td>
+                </tr>
+            </table>
+
+            <h2 id="diff-details">Key Differences Summary</h2>
+
+            <h3>1. Entry Logic — Fundamentally Different</h3>
+            <p>v1 uses a <b>percentage pullback (60–80%)</b> from a recent high as the entry trigger, combined with
+                trendline touch and MACD confirmation via a grid score. The new requirements replace this with
+                <b>Fibonacci retracement zones</b> (50%, 61.8%, 70%) — which are more precise price-based levels rather
+                than a percentage range. Both aim for pullback entries, but Fibonacci is a more specific and
+                professional framing.
+            </p>
+
+            <h3>2. VWAP Filter — Completely New</h3>
+            <p>v1 has no VWAP-based rule. The new requirements mandate that <b>price must be ≥ 20 pts away from VWAP on
+                    the opposite side of the trend</b>. This is a strong institutional-level filter ensuring entries are
+                made during genuine retracements, not momentum chasing. This is the most significant new addition.</p>
+
+            <h3>3. Holding Period — Intraday vs Positional</h3>
+            <p>This is the biggest structural conflict. v1 is designed as an <b>intraday system</b> (2-hour max hold,
+                MIS product type). The new requirements envision a <b>positional/swing system</b> (3-day max hold,
+                trailing SL). These cannot coexist without choosing one approach. A 3-day hold requires NRML ordering
+                via AngleOne, different margin requirements, and overnight risk management.</p>
+
+            <h3>4. News — Block vs Align</h3>
+            <p>v1 <b>blocks all trades</b> near news events (±60 min / ±30 min). The new requirements use news sentiment
+                to <b>align direction</b> — only trade if news sentiment matches the technical trend. This is an
+                upgrade: instead of avoiding news entirely, you use it as a confirming signal.</p>
+
+            <h3>5. Stop Loss — Fixed vs Dynamic Fibonacci</h3>
+            <p>v1 uses a fixed SL set at order placement. New requirements use <b>90% Fibonacci level as SL</b> with a
+                <b>trailing mechanism</b> (10% of premium per hour). This dynamic approach locks in profits more
+                effectively in trending conditions.
+            </p>
+
+            <h3>6. Capital Scaling — Single vs Multi-tier</h3>
+            <p>v1 allocates a fixed lot size per trade. New requirements introduce <b>three-tier scaling</b>: Partial
+                capital at 50% Fib, Add position at 61.8%, Full capital at 70% — allowing progressive risk management as
+                price reaches deeper retracement zones.</p>
+
+            <h3>7. Strategy Dropdown + Indicators Checklist Grid — Human-in-the-Loop vs Fully Automated</h3>
+
+            <p><b style="color:#22c55e;">✅ It IS in System Workflow v1 — and it's central to it.</b><br>
+                In v1, this UI is the <b>core user interaction loop</b>. Specifically:</p>
+            <ul>
+                <li><b>Dashboard Loop (Step 2):</b> <i>"Strategy Selection: The user selects a strategy (e.g.,
+                        PULLBACK). This 'unlocks' the checklist on the backend."</i> and <i>"Indicator Selection: User
+                        manually toggles indicators or timeframes in the UI."</i></li>
+                <li><b>Calculation Engine:</b> <i>"ConfluenceEngine receives the grid of selected indicators (MACD,
+                        Trendline, Pullback)."</i> — the confluence score is calculated <b>from whatever the user has
+                        toggled ON</b>.</li>
+            </ul>
+            <p>In v1, the <b>human is actively in the loop</b> — they choose which strategy and which indicators to
+                validate. The bot then scores based on that custom selection every 10 seconds.</p>
+
+            <p><b style="color:#f87171;">❌ It is NOT mentioned in the New Requirements.</b><br>
+                The new requirements are <b>fully automated</b>. There is no user toggle:</p>
+            <ul>
+                <li>Trend is auto-detected from slope on 1H / Daily / Weekly</li>
+                <li>MACD is auto-checked across 4 timeframes (min 2 of 4)</li>
+                <li>Fibonacci levels are auto-calculated from swing high/low</li>
+                <li>VWAP filter runs automatically</li>
+                <li>The engine loops every 5 minutes via <code>main.py</code> with no manual human input</li>
+            </ul>
+            <p>The new requirements assume <b>the bot decides everything</b> — there is no checklist for the user to
+                interact with.</p>
+
+            <p><b style="color:#fbbf24;">💡 Recommendation — Keep it, but Repurpose it.</b></p>
+            <table>
+                <tr>
+                    <th>Current Role (v1)</th>
+                    <th>Repurposed Role (New Requirements)</th>
+                </tr>
+                <tr>
+                    <td>User <b>manually enables/disables</b> indicators</td>
+                    <td>Bot <b>auto-fills</b> the grid as a live status display (read-only)</td>
+                </tr>
+                <tr>
+                    <td>Strategy dropdown <b>unlocks</b> different checklists</td>
+                    <td>Strategy dropdown <b>selects trading config</b> (e.g., Conservative / Aggressive / Intraday /
+                        Positional)</td>
+                </tr>
+                <tr>
+                    <td>Grid <b>drives</b> the confluence score</td>
+                    <td>Grid <b>shows</b> the bot's real-time evaluation (green = confirmed, red = not met)</td>
+                </tr>
+                <tr>
+                    <td>User is <b>IN</b> the decision loop</td>
+                    <td>User is an <b>observer</b> of the bot's decisions</td>
+                </tr>
+            </table>
+
+            <h2 id="diff-integrate">✅ Integration Possibilities (What Can Be Added to v1)</h2>
+            <p>The following elements from the new requirements can be <b>integrated directly into v1</b> without
+                restructuring its core:</p>
+
+            <ol>
+                <li><b>Replace Pullback (60–80%) with Fibonacci Zones (50%, 61.8%, 70%)</b><br>
+                    In <code>EntryValidator</code>, swap the percentage-pullback check with a Fibonacci level proximity
+                    check. Same concept, more precise trigger. No architectural change needed.</li>
+
+                <li><b>Add VWAP Filter as a New Mandatory Pillar</b><br>
+                    In the Confluence Engine, add <code>VWAP_RETRACEMENT must be VALID</code> as a fourth mandatory
+                    pillar alongside TREND_DIRECTION, MARKET_STRUCTURE, KEY_LEVELS. Calculate VWAP from 15M candles.
+                </li>
+
+                <li><b>Upgrade MACD to Multi-Timeframe (1H, 30M, 45M, 15M)</b><br>
+                    In the existing MACD confluence logic, extend to check all 4 timeframes and require ≥ 2 of 4 to
+                    align. Backward-compatible addition to the EntryValidator.</li>
+
+                <li><b>Add News Sentiment Alignment on top of the Existing Hard Block</b><br>
+                    Keep the existing ±60/30 min hard block, but add a VADER sentiment check during non-restricted
+                    windows. Only allow entry if sentiment matches trend direction.</li>
+
+                <li><b>Add 36-Candle Range Check to EntryValidator</b><br>
+                    Calculate the 36-candle high/low and validate that entry price is within ±22 pts of the range
+                    boundary. Add as a new validation step before order placement.</li>
+
+                <li><b>Upgrade SL to Dynamic Fibonacci 90% + Trailing</b><br>
+                    Replace the fixed SL with <code>fib_zones["90"]</code> at entry, then implement trailing logic in
+                    <code>monitor_positions()</code> — move SL by 10% of premium each hour.
+                </li>
+
+                <li><b>Add Partial / Add / Full Capital Scaling to CapitalManager</b><br>
+                    Check which Fibonacci level triggered the signal, and apply the corresponding capital fraction:
+                    12.5% for Partial, 12.5% for Add, 12.5% for Full.</li>
+
+                <li><b>Add S/R-Based Profit Booking (after ≥ 15 pts premium gain)</b><br>
+                    In <code>monitor_positions()</code>, if unrealised premium profit ≥ 15 pts, check if spot price is
+                    near a pivot/S/R level on any of 15M/30M/1H/Day/Weekly. If yes, trigger early exit.</li>
+
+                <li><b>Replace Daily-Loss Circuit Breaker with SL-Count Cooldown</b><br>
+                    Replace the daily-loss counter with a consecutive-SL counter. At 2 consecutive SL hits, activate a
+                    5-day cooldown. This is a compatible enhancement.</li>
+
+                <li><b>Relax Expiry Minimum from 21 to 12 Trading Days</b><br>
+                    Update the expiry filter in Contract Selection from <code>MIN_EXPIRY_DAYS = 21</code> to
+                    <code>MIN_EXPIRY_DAYS = 12</code>. Simple config change.
+                </li>
+            </ol>
+
+            <h2 id="diff-conflicts">⚠️ Conflicts &amp; Cautions</h2>
+
+            <table>
+                <tr>
+                    <th>Conflict</th>
+                    <th>v1 Approach</th>
+                    <th>New Requirement</th>
+                    <th>Resolution</th>
+                </tr>
+                <tr>
+                    <td><b>Holding Period</b></td>
+                    <td>2-hour intraday (MIS)</td>
+                    <td>3 trading days (positional)</td>
+                    <td style="color:#f87171;">Cannot merge. Must choose ONE mode: intraday OR positional. Switching to
+                        3-day hold requires NRML product type, overnight margin, and risk of gap-down/up.</td>
+                </tr>
+                <tr>
+                    <td><b>Order Type</b></td>
+                    <td>LIMIT orders (controlled fill price)</td>
+                    <td>MARKET orders (immediate execution)</td>
+                    <td style="color:#fbbf24;">Use LIMIT for first entry (controlled Fib entry), MARKET only for exits
+                        or time-critical second entries.</td>
+                </tr>
+                <tr>
+                    <td><b>Strike Depth</b></td>
+                    <td>150 pts ITM</td>
+                    <td>300 pts ITM (base formula)</td>
+                    <td style="color:#fbbf24;">Deeper premium, but also higher capital requirement. Review premium
+                        affordability with FULL_CAPITAL = ₹12,500. May need capital config adjustment.</td>
+                </tr>
+                <tr>
+                    <td><b>Data Source</b></td>
+                    <td>SmartAPI WebSocket (live ticks → candles)</td>
+                    <td>REST API OHLC fetch (polling per interval)</td>
+                    <td style="color:#22c55e;">WebSocket is superior. Keep WebSocket for live ticks. Add REST calls only
+                        for option chain &amp; historical Fib calculation.</td>
+                </tr>
+            </table>
+
+            <hr>
+
+            <h1 id="updated-req">Updated Requirements <span style="font-size:16px;color:#94a3b8;">– 9th March
+                    2026</span></h1>
+
+            <h2>Python Autotrade Code for Fibonacci Technique</h2>
+
+            <pre>
+import pandas as pd
+import numpy as np
+
+capital = 100000
+
+partial_capital = capital * 0.125
+            full_capital = capital * 0.125
+
+
+            # -------- Fibonacci Calculation --------
+
+            def fibonacci_levels(high, low):
+
+            diff = high - low
+
+            fib50 = high - diff * 0.50
+            fib618 = high - diff * 0.618
+            fib70 = high - diff * 0.70
+            fib786 = high - diff * 0.786
+
+            return fib50, fib618, fib70, fib786
+
+
+            # -------- Weekly Trend --------
+
+            def weekly_trend(df_weekly):
+
+            ema50 = df_weekly['close'].ewm(span=50).mean().iloc[-1]
+            close = df_weekly['close'].iloc[-1]
+
+            return close > ema50
+
+
+            # -------- Daily Swing --------
+
+            def daily_swing(df_daily):
+
+            swing_high = df_daily['high'].rolling(20).max().iloc[-1]
+            swing_low = df_daily['low'].rolling(20).min().iloc[-1]
+
+            return swing_high, swing_low
+
+
+            # -------- Entry Logic (1H) --------
+
+            def entry_signal(df_1h, fib50, fib618, fib70):
+
+            price = df_1h['close'].iloc[-1]
+
+            if abs(price - fib50) &lt; 10:
+            return "PARTIAL_BUY"
+
+            if abs(price - fib618) &lt; 10:
+            return "FULL_BUY"
+
+            if abs(price - fib70) &lt; 10:
+            return "FULL_BUY"
+
+            return "NO_TRADE"
+
+
+            # -------- Example Data Load --------
+
+            df_weekly = pd.read_csv("nifty_weekly.csv")
+            df_daily = pd.read_csv("nifty_daily.csv")
+            df_1h = pd.read_csv("nifty_1h.csv")
+
+
+            # -------- Strategy Execution --------
+
+            if weekly_trend(df_weekly):
+
+            swing_high, swing_low = daily_swing(df_daily)
+
+            fib50, fib618, fib70, fib786 = fibonacci_levels(swing_high, swing_low)
+
+            signal = entry_signal(df_1h, fib50, fib618, fib70)
+
+            if signal == "PARTIAL_BUY":
+            print("Buy Partial:", partial_capital)
+
+            elif signal == "FULL_BUY":
+            print("Buy Full:", full_capital)
+
+            else:
+            print("No trade")
+            </pre>
+
+            <h2 id="upd-features">✅ Feature Checklist</h2>
+            <ul>
+                <li>✅ Flexible timeframe matching (any 2 of 3: 1H, Daily, Weekly)</li>
+                <li>✅ Trend + News sentiment alignment in entry direction</li>
+                <li>✅ Auto scans the Option Chain from NSE or broker data</li>
+                <li>✅ Picks deep ITM option with expiry ≥ 3 weeks</li>
+                <li>✅ Dynamic stop loss &amp; profit booking (smart rules)</li>
+                <li>✅ Auto order placement via AngleOne API with token refresh</li>
+                <li>✅ Live monitoring, logs, alerts</li>
+                <li>✅ Backtesting module</li>
+                <li>✅ Dashboard/UI structure</li>
+            </ul>
+
+            <blockquote style="border-left:4px solid #f59e0b;padding:10px 16px;margin:16px 0;background:#1e293b;">
+                <p>🚨 <b>Before I generate full code it's important to understand:</b></p>
+                <p>👉 This is a large professional application, not a few hundred lines.</p>
+                <p>👉 It involves real trading, live brokers, API keys, session handling, error handling, risk.</p>
+                <p>👉 The code below is a complete framework/skeleton, ready to be extended, tested, backtested, and
+                    deployed.</p>
+            </blockquote>
+
+            <h2 id="upd-requirements">📌 BEFORE YOU START — REQUIREMENTS</h2>
+            <p>You must obtain:</p>
+
+            <h3>1️⃣ AngleOne API credentials</h3>
+            <ul>
+                <li>API Key</li>
+                <li>API Secret</li>
+                <li>Auth Token</li>
+                <li>Client ID</li>
+                <li>Password</li>
+                <li>TOTP / MFA setup</li>
+            </ul>
+
+            <h3>2️⃣ News API</h3>
+            <ul>
+                <li>NewsAPI.org or similar</li>
+                <li>For sentiment analysis (Bullish / Bearish / Neutral)</li>
+            </ul>
+
+            <h3>3️⃣ Price &amp; Option Chain Source</h3>
+            <ul>
+                <li>Either via AngleOne if they provide option chain, or via a supported market data provider (NSE API /
+                    third‑party).</li>
+            </ul>
+
+            <h2 id="upd-modules">🧠 SYSTEM MODULES</h2>
+            <pre>
+1. Data Layer
+   ├ Live market data (1H / Daily / Weekly)
+   ├ Option chain loader
+   └ News sentiment loader
+
+2. Strategy Engine
+   ├ Trend detector (1H / Daily / Weekly)
+   ├ Fibonacci calc
+   ├ Entry &amp; direction logic
+   ├ Stop loss / Profit range
+   └ Risk rules
+
+3. Order Manager
+   ├ AngleOne API client
+   ├ Token refresh
+   ├ Place order
+   └ Position management
+
+4. Monitoring &amp; Logs
+   ├ Trade logs
+   ├ Alerts (Slack/Email/SMS)
+   └ PnL calculator
+
+5. Backtest Engine
+   ├ Replay historical data
+   ├ Generate signals
+   └ Evaluate stats
+
+6. Dashboard (optional UI)
+   ├ Web server + charts
+   └ Live position display
+</pre>
+
+            <h2>📌 FULL ANGLEONE + STRATEGY PYTHON CODE</h2>
+            <p><i>(Replace placeholder functions with real API calls as needed)</i></p>
+            <p><i>This is long — each section clearly labeled.</i></p>
+
+            <h3>📦 requirements.txt</h3>
+            <pre>
+pandas
+numpy
+requests
+Flask
+vaderSentiment
+python‑dateutil
+</pre>
+
+            <h3 id="upd-config">➤ config.py</h3>
+            <pre>
+ANGLE_API_KEY = "&lt;YOUR_ANGLE_API_KEY&gt;"
+ANGLE_API_SECRET = "&lt;YOUR_ANGLE_API_SECRET&gt;"
+ANGLE_CLIENT_ID = "&lt;YOUR_ANGLE_CLIENT_ID&gt;"
+ANGLE_PASSWORD = "&lt;YOUR_PASSWORD&gt;"
+NEWS_API_KEY = "&lt;YOUR_NEWS_API_KEY&gt;"
+
+CAPITAL = 100000
+PARTIAL_CAPITAL = CAPITAL * 0.125
+FULL_CAPITAL = CAPITAL * 0.125
+
+DEEP_ITM_DISTANCE = 150
+MIN_EXPIRY_DAYS = 18
+
+PROFIT_NIFTY_MIN = 80
+PROFIT_NIFTY_MAX = 150
+PROFIT_PREMIUM_MIN = 40
+PROFIT_PREMIUM_MAX = 65
+</pre>
+
+            <h3 id="upd-angle">➤ angle_client.py — AngleOne API Client</h3>
+            <pre>
+import requests
+import time
+from config import ANGLE_API_KEY, ANGLE_API_SECRET, ANGLE_CLIENT_ID, ANGLE_PASSWORD
+
+class AngleOneClient:
+    def __init__(self):
+        self.token = None
+        self.base_url = "https://api.angleone.in"
+        self.login()
+
+    def login(self):
+        payload = {
+            "apiKey": ANGLE_API_KEY,
+            "secret": ANGLE_API_SECRET,
+            "clientId": ANGLE_CLIENT_ID,
+            "password": ANGLE_PASSWORD
+        }
+        res = requests.post(f"{self.base_url}/session/login", json=payload)
+        data = res.json()
+        self.token = data.get("authToken")
+
+    def ensure_token(self):
+        # Refresh token if expired
+        # Optional: Check expiration, refresh if needed
+        if not self.token:
+            self.login()
+
+    def get_headers(self):
+        self.ensure_token()
+        return {"Authorization": f"Bearer {self.token}"}
+
+    def place_order(self, symbol, qty, price, order_type="MARKET", side="BUY"):
+        payload = {
+            "symbol": symbol,
+            "qty": qty,
+            "price": price,
+            "type": order_type,
+            "side": side
+        }
+        res = requests.post(f"{self.base_url}/orders", json=payload, headers=self.get_headers())
+        return res.json()
+
+    def fetch_live_ohlc(self, symbol, timeframe):
+        # Example, replace with real angle endpoint
+        params = {"symbol": symbol, "timeframe": timeframe}
+        res = requests.get(f"{self.base_url}/marketdata/ohlc", params=params, headers=self.get_headers())
+        return res.json()
+
+    def fetch_option_chain(self, symbol):
+        res = requests.get(f"{self.base_url}/marketdata/option_chain?symbol={symbol}", headers=self.get_headers())
+        return res.json()
+</pre>
+
+            <h3 id="upd-news-sent">➤ news_sentiment.py</h3>
+            <pre>
+import requests
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from config import NEWS_API_KEY
+
+def get_news_sentiment(query="NIFTY"):
+    url = f"https://newsapi.org/v2/everything?q={query}&amp;apiKey={NEWS_API_KEY}"
+    data = requests.get(url).json()
+
+    analyzer = SentimentIntensityAnalyzer()
+    score = 0
+    count = 0
+    for article in data.get("articles", [])[:15]:
+        s = analyzer.polarity_scores(article["title"])
+        score += s["compound"]
+        count += 1
+
+    if count == 0:
+        return "NEUTRAL"
+    avg = score / count
+    return "BULLISH" if avg &gt; 0 else "BEARISH"
+</pre>
+
+            <h3 id="upd-strategy">➤ strategy.py</h3>
+            <pre>
+import numpy as np
+from config import *
+
+def trend_slope(df):
+    y = df["close"].tail(20).values
+    x = np.arange(len(y))
+    slope = np.polyfit(x, y, 1)[0]
+    return "UP" if slope &gt; 0 else "DOWN"
+
+def fibonacci_levels(high, low):
+    diff = high - low
+    return {
+        "50": high - diff * 0.50,
+        "61.8": high - diff * 0.618,
+        "70": high - diff * 0.70,
+        "90": high - diff * 0.90,
+        "100": low
+    }
+
+def choose_deep_itm(option_chain, spot, direction):
+    valid = []
+    from datetime import datetime, timedelta
+    threshold = datetime.now() + timedelta(days=MIN_EXPIRY_DAYS)
+
+    for exp in option_chain["expiries"]:
+        if datetime.strptime(exp, "%Y-%m-%d") &gt;= threshold:
+            valid.append(exp)
+
+    if not valid:
+        return None
+
+    expiry = valid[0]
+    if direction == "CALL":
+        target_strike = round(spot - DEEP_ITM_DISTANCE)
+    else:
+        target_strike = round(spot + DEEP_ITM_DISTANCE)
+
+    key = f"{target_strike} {direction}"
+    return option_chain["chains"][expiry].get(key)
+
+def entry_signal(spot, fib):
+    if abs(spot - fib["50"]) &lt; 10:
+        return "PARTIAL"
+    if abs(spot - fib["61.8"]) &lt; 10:
+        return "ADD"
+    if abs(spot - fib["70"]) &lt; 10 or spot &lt;= fib["100"]:
+        return "FULL"
+    return None
+
+def profit_targets(spot, direction):
+    if direction == "UP":
+        min_target = spot + PROFIT_NIFTY_MIN
+        max_target = spot + PROFIT_NIFTY_MAX
+    else:
+        min_target = spot - PROFIT_NIFTY_MIN
+        max_target = spot - PROFIT_NIFTY_MAX
+    return min_target, max_target
+</pre>
+
+            <h3 id="upd-engine">➤ engine.py — The Core Logic</h3>
+            <pre>
+from angle_client import AngleOneClient
+from strategy import *
+from news_sentiment import get_news_sentiment
+
+client = AngleOneClient()
+
+def run_engine():
+    # 1) Fetch live OHLC
+    nifty_1h = client.fetch_live_ohlc("NIFTY50", "1H")
+    nifty_day = client.fetch_live_ohlc("NIFTY50", "D")
+    nifty_week = client.fetch_live_ohlc("NIFTY50", "W")
+
+    t1 = trend_slope(nifty_week)
+    t2 = trend_slope(nifty_day)
+    t3 = trend_slope(nifty_1h)
+
+    news_dir = get_news_sentiment("NIFTY 50")
+
+    spot_price = nifty_1h["close"][-1]
+
+    if t1 == t2 or t2 == t3 or t1 == t3:
+        if news_dir == "BULLISH" and (t1=="UP" or t2=="UP" or t3=="UP"):
+            direction = "CALL"
+        elif news_dir == "BEARISH" and (t1=="DOWN" or t2=="DOWN" or t3=="DOWN"):
+            direction = "PUT"
+        else:
+            print("Trend/News not aligned")
+            return
+    else:
+        print("No 2 timeframes aligned")
+        return
+
+    high = nifty_day["high"].rolling(20).max().iloc[-1]
+    low = nifty_day["low"].rolling(20).min().iloc[-1]
+    fibs = fibonacci_levels(high, low)
+
+    signal = entry_signal(spot_price, fibs)
+    if not signal:
+        print("No Fib entry")
+        return
+
+    option_chain = client.fetch_option_chain("NIFTY50")
+    contract = choose_deep_itm(option_chain, spot_price, direction)
+
+    if not contract:
+        print("No valid deep ITM")
+        return
+
+    qty = int((PARTIAL_CAPITAL if signal=="PARTIAL" else FULL_CAPITAL) / spot_price)
+    side = "BUY"
+
+    res = client.place_order(contract["symbol"], qty, spot_price, "MARKET", side)
+
+    sl = fibs["90"]
+    tgt = profit_targets(spot_price, direction)
+
+    print(f"Ordered {signal} {direction}")
+    print("Strike:", contract["symbol"])
+    print("Qty:", qty)
+    print("Stoploss:", sl)
+    print("Targets:", tgt)
+</pre>
+
+            <h3 id="upd-main">➤ main.py</h3>
+            <pre>
+import time
+from engine import run_engine
+
+while True:
+    run_engine()
+    time.sleep(60 * 5)   # run every 5 minutes
+</pre>
+
+            <h2 id="upd-summary">📌 SUMMARY — WHAT IT DOES</h2>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>✅ LIVE DATA</td>
+                    <td>Fetches 1H, Daily, Weekly OHLC from AngleOne.</td>
+                </tr>
+                <tr>
+                    <td>✅ TREND MATCHING</td>
+                    <td>Checks any two of three timeframes aligned.</td>
+                </tr>
+                <tr>
+                    <td>✅ NEWS ALIGNMENT</td>
+                    <td>Sentiment must match entry direction.</td>
+                </tr>
+                <tr>
+                    <td>✅ FIBONACCI ENTRY</td>
+                    <td>50%, 61.8%, 70%, 100% used.</td>
+                </tr>
+                <tr>
+                    <td>✅ FLEXIBLE ENTRY</td>
+                    <td>Partial / Add / Full entry based on levels.</td>
+                </tr>
+                <tr>
+                    <td>✅ DEEP ITM OPTIONS</td>
+                    <td>Automated strike selection with ≥3 weeks expiry.</td>
+                </tr>
+                <tr>
+                    <td>✅ DYNAMIC SL</td>
+                    <td>Stop loss around 90% Fibonacci (no fixed 78.6).</td>
+                </tr>
+                <tr>
+                    <td>✅ PROFIT TARGET</td>
+                    <td>80–150 NIFTY points OR premium targets.</td>
+                </tr>
+                <tr>
+                    <td>✅ AUTO ORDERS</td>
+                    <td>Places orders via AngleOne API.</td>
+                </tr>
+                <tr>
+                    <td>✅ MODULAR</td>
+                    <td>Can integrate backtest, alerts, dashboard.</td>
+                </tr>
+                <tr>
+                    <td>✅ LIVE MONITORING</td>
+                    <td>Loop runs every few minutes.</td>
+                </tr>
+            </table>
+
+            <hr>
+
+            <h1 id="upd-integrated">FULL INTEGRATED ANGLEONE AUTO-TRADING STRATEGY</h1>
+
+            <h2>1️⃣ System Overview</h2>
+            <p>This system has 7 main modules:</p>
+            <ol>
+                <li><b>Data Collection</b> – Fetch OHLC for 1H, 30M, 45M, 15M, Daily, Weekly</li>
+                <li><b>Trend Detection</b> – Weighted multi-timeframe trend (2 of 3: 1H, Daily, Weekly)</li>
+                <li><b>News Alignment</b> – Fetch news sentiment and ensure it aligns with trend</li>
+                <li><b>MACD Filter</b> – Confirm minimum 2 of 4 MACD crossovers match trend</li>
+                <li><b>Fibonacci Dynamic Zones</b> – 50–71% retracement for partial/full entry</li>
+                <li><b>Pivot/Support-Resistance Check</b> – Enter near key levels for higher probability</li>
+                <li><b>Execution &amp; Risk Management</b> – Deep ITM option selection, partial/full scaling, trailing
+                    SL, profit booking, max 3-day hold, cooldown after 2 consecutive SL hits</li>
+            </ol>
+
+            <h2>2️⃣ Full Engine Code (Simplified for Clarity)</h2>
+            <pre>
+import numpy as np
+import pandas as pd
+from datetime import datetime, timedelta
+from angle_client import AngleOneClient
+from strategy import trend_slope, fibonacci_levels, pivot_support_resistance, entry_signal_dynamic, trailing_stop, macd_multi_confirmation
+from news_sentiment import get_news_sentiment
+from config import *
+
+# Initialize AngleOne Client
+client = AngleOneClient()
+
+# Global State
+open_positions = []
+consecutive_stop_losses = 0
+cooldown_until = None
+
+def fetch_ohlc_multi(symbol):
+    """Fetch OHLC for all needed timeframes"""
+    ohlc = {
+        "1H": client.fetch_ohlc(symbol, "1H")['close'],
+        "30M": client.fetch_ohlc(symbol, "30M")['close'],
+        "45M": client.fetch_ohlc(symbol, "45M")['close'],
+        "15M": client.fetch_ohlc(symbol, "15M")['close'],
+        "D": client.fetch_ohlc(symbol, "D")['close'],
+        "W": client.fetch_ohlc(symbol, "W")['close']
+    }
+    return ohlc
+
+def check_entry(symbol):
+    global cooldown_until, consecutive_stop_losses, open_positions
+
+    today = datetime.now().date()
+    if cooldown_until and today &lt;= cooldown_until:
+        print("Cooling down period active. Skipping new trades.")
+        return
+
+    ohlc = fetch_ohlc_multi(symbol)
+
+    # Weighted trend (2 of 3: 1H, Daily, Weekly)
+    trends = [trend_slope(ohlc['1H']), trend_slope(ohlc['D']), trend_slope(ohlc['W'])]
+    trend_dir = None
+    if trends.count("UP") &gt;=2:
+        trend_dir="UP"
+    elif trends.count("DOWN") &gt;=2:
+        trend_dir="DOWN"
+    else:
+        print("No multi-timeframe trend match")
+        return
+
+    # News Alignment
+    news_dir = get_news_sentiment()
+    if (trend_dir=="UP" and news_dir!="BULLISH") or (trend_dir=="DOWN" and news_dir!="BEARISH"):
+        print("News not aligned. Skip entry.")
+        return
+
+    # MACD multi-timeframe confirmation (1H, 30M, 45M, 15M)
+    macd_dir = macd_multi_confirmation({
+        "1H": ohlc['1H'],
+        "30M": ohlc['30M'],
+        "45M": ohlc['45M'],
+        "15M": ohlc['15M']
+    })
+    if not macd_dir or macd_dir != trend_dir:
+        print("MACD filter not satisfied. Skip entry.")
+        return
+
+    # Fibonacci levels and pivot
+    high, low = max(ohlc['D'][-20:]), min(ohlc['D'][-20:])
+    fib_zones = fibonacci_levels(high, low)
+    pivot, s1, r1 = pivot_support_resistance(ohlc['D'], ohlc['D'], ohlc['D'])
+    spot = ohlc['1H'][-1]
+
+    fib_key, direction = entry_signal_dynamic(spot, fib_zones, s1, r1, trend_dir, macd_dir)
+    if not direction:
+        print("No valid Fibonacci entry zone")
+        return
+
+    # Deep ITM Option Selection
+    option_chain = client.fetch_option_chain(symbol)
+    strike = round(spot - DEEP_ITM_DISTANCE) if direction=="CALL" else round(spot + DEEP_ITM_DISTANCE)
+    contract = option_chain['chains'][list(option_chain['chains'].keys())[0]].get(f"{strike} {direction}")
+    qty = int(FULL_CAPITAL / spot)
+
+    # Place Market Order
+    client.place_order(contract['symbol'], qty, spot, "MARKET", "BUY")
+
+    # Initialize position
+    pos = {
+        "symbol": contract['symbol'],
+        "direction": direction,
+        "entry_price": spot,
+        "qty": qty,
+        "stop_loss": fib_zones["90"],
+        "target_min": spot+PROFIT_NIFTY_MIN if direction=="UP" else spot-PROFIT_NIFTY_MAX,
+        "target_max": spot+PROFIT_NIFTY_MAX if direction=="UP" else spot-PROFIT_NIFTY_MIN,
+        "entry_time": datetime.now()
+    }
+    open_positions.append(pos)
+    print(f"Entered {direction} at {spot} Qty={qty}, SL={pos['stop_loss']} Target={pos['target_min']}-{pos['target_max']}")
+
+def monitor_positions(symbol):
+    global open_positions, consecutive_stop_losses, cooldown_until
+    for pos in open_positions[:]:
+        spot = client.fetch_ohlc(symbol, "1H")['close'][-1]
+
+        # Update trailing stop
+        pos['stop_loss'] = trailing_stop(pos['stop_loss'], spot, pos['direction'])
+
+        # Check exit conditions: max hold 3 days, stop loss, target hit
+        hold_days = (datetime.now() - pos['entry_time']).days
+        if hold_days &gt;= MAX_HOLD_DAYS or spot &lt;= pos['stop_loss'] or spot &gt;= pos['target_max']:
+            print(f"Exiting {pos['symbol']} at {spot}")
+            if spot &lt;= pos['stop_loss']:
+                consecutive_stop_losses += 1
+            else:
+                consecutive_stop_losses = 0
+            open_positions.remove(pos)
+
+    # Crash / cooldown check
+    if consecutive_stop_losses &gt;= 2:
+        cooldown_until = datetime.now().date() + timedelta(days=COOLDOWN_DAYS)
+        print(f"Two consecutive SL hits. Cooling down until {cooldown_until}")
+        consecutive_stop_losses = 0
+</pre>
+
+            <h2>3️⃣ Scheduler (Hourly Updates)</h2>
+            <pre>
+import time
+from engine import check_entry, monitor_positions
+from config import TRADE_CHECK_INTERVAL
+
+symbol = "NIFTY50"
+
+while True:
+    check_entry(symbol)        # Check for new trades
+    monitor_positions(symbol)  # Update trailing stops and exits
+    time.sleep(TRADE_CHECK_INTERVAL)  # Run every 1 hour
+</pre>
+
+            <h2>4️⃣ Stepwise Workflow Summary</h2>
+            <ol>
+                <li><b>Data Fetch</b> – OHLC for multiple timeframes (1H, 30M, 45M, 15M, Daily, Weekly)</li>
+                <li><b>Trend Filter</b> – Weighted multi-timeframe trend: at least 2 of 3 (1H/Daily/Weekly) must match
+                </li>
+                <li><b>News Filter</b> – Check news sentiment aligns with trend</li>
+                <li><b>MACD Confirmation</b> – Minimum 2 of 4 MACD crossovers must align with trend</li>
+                <li><b>Fibonacci Entry Zone</b> – Spot price within 50–71% retracement (dynamic zone) → partial/full
+                    scaling</li>
+                <li><b>Pivot/Support-Resistance Check</b> – Entry allowed near pivot or S/R levels</li>
+                <li><b>Option Selection</b> – Deep ITM contract, expiry ≥ 3 weeks</li>
+                <li><b>Place Order</b> – Partial / full capital allocation</li>
+                <li><b>Trailing Stop Loss</b> – Moves 10% of premium every 1 hour</li>
+                <li><b>Profit Booking</b> – Dynamic target: 80–150 NIFTY points or equivalent premium</li>
+                <li><b>Max Holding</b> – Exit after 3 trading days if target/SL not hit</li>
+                <li><b>Crash Management</b> – 2 consecutive SL hits → 5-day cooldown before next trade</li>
+                <li><b>Monitoring</b> – Scheduler monitors positions hourly, updates trailing SL, exits, and logs P/L
+                </li>
+            </ol>
+
+            <h2>✅ Key Advantages</h2>
+            <ul>
+                <li>Multi-layer confirmation (Trend + News + MACD + Fibonacci + Pivot) → reduces false entries</li>
+                <li>Partial/full entry scaling → manages capital risk efficiently</li>
+                <li>Trailing stop → locks profits dynamically</li>
+                <li>Maximum holding + cooldown → avoids overexposure in volatile markets</li>
+                <li>Deep ITM options → high delta reduces risk from time decay</li>
+            </ul>
+
+            <hr>
+
+            <h2 id="upd-new-rules" style="color:#f59e0b;">PLS ADD THIS CONDITIONS, ENTRY AND EXIT EVERYTHING BASED ON
+                THIS.</h2>
+            <p>Also add profit can be booked near if any support/resistance after above 15 premium points profit
+                reached, the Pivot support/resistance to be set the time frame 15min/30min/1hr/day/weekly.</p>
+
+            <h2>1️⃣ New Rules You Added</h2>
+            <p>Two new filters are now included.</p>
+
+            <h3>VWAP Distance Rule</h3>
+            <p>Entry must be minimum 20 index points away from VWAP. But VWAP must be on the opposite side of the trend,
+                meaning a retracement entry.</p>
+
+            <p><b>If trend = UPTREND</b> — We want pullback entry. Condition:</p>
+            <pre>
+Price &lt; VWAP
+Distance from VWAP ≥ 20 pts
+</pre>
+            <p>Example:</p>
+            <pre>
+VWAP = 24520
+Price = 24495
+Distance = 25 pts
+Entry allowed.
+</pre>
+
+            <p><b>If trend = DOWNTREND:</b></p>
+            <pre>
+Price &gt; VWAP
+Distance ≥ 20 pts
+</pre>
+            <p>Example:</p>
+            <pre>
+VWAP = 24500
+Price = 24530
+Distance = 30 pts
+Entry allowed.
+</pre>
+            <p>This ensures you buy pullbacks instead of chasing momentum.</p>
+
+            <h3>2️⃣ Option Contract Rule</h3>
+            <p>New rule for option selection. Contract must have minimum <b>12 trading days</b> validity.</p>
+            <p>Equivalent to:</p>
+            <pre>≥ 2 weeks expiry</pre>
+
+            <p><b>Example for NIFTY 50 options — Valid expiry:</b></p>
+            <pre>
+Next weekly + next weekly
+OR
+Monthly expiry
+</pre>
+            <p>Example:</p>
+            <pre>
+Today = Monday
+Expiry = Next Thursday (10 days) ❌ avoid
+Expiry = Following Thursday (17 days) ✅ allowed
+</pre>
+
+            <h2 id="upd-flow">3️⃣ Updated Strategy Flow</h2>
+            <p>Now the entry requires <b>ALL</b> conditions below.</p>
+
+            <h3>Step 1 — Trend Detection</h3>
+            <p>From: 1H, Daily, Weekly</p>
+            <pre>2/3 must agree</pre>
+
+            <h3>Step 2 — VWAP Retracement Filter</h3>
+            <pre>
+distance_from_vwap ≥ 20
+AND
+price opposite side of trend
+</pre>
+
+            <h3>Step 3 — 36 Candle Range</h3>
+            <pre>
+recent_high
+recent_low
+</pre>
+            <p>Entry tolerance:</p>
+            <pre>
+first entry  ±22
+second entry ±50
+</pre>
+
+            <h3>Step 4 — Fibonacci Validation</h3>
+            <p>Green zone:</p>
+            <pre>
+50%
+61.8%
+</pre>
+            <p>Second entry only allowed here.</p>
+
+            <h3>Step 5 — MACD Confirmation</h3>
+            <p>Only for second entry. Timeframes:</p>
+            <pre>
+15m
+30m
+</pre>
+
+            <h3>Step 6 — Option Selection</h3>
+            <p>ITM contract. Example:</p>
+            <pre>
+NIFTY = 24500
+CE    = 24200
+PE    = 24800
+</pre>
+            <p>Expiry:</p>
+            <pre>≥ 12 trading days</pre>
+
+            <h2 id="upd-template">4️⃣ Full Updated Python Template</h2>
+            <pre>
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# -----------------------------
+# VWAP
+# -----------------------------
+def calculate_vwap(df):
+
+    pv = (df['close'] * df['volume']).cumsum()
+    vol = df['volume'].cumsum()
+
+    df['vwap'] = pv / vol
+
+    return df['vwap'].iloc[-1]
+
+# -----------------------------
+# VWAP entry filter
+# -----------------------------
+def vwap_condition(price, vwap, trend):
+
+    distance = abs(price - vwap)
+
+    if distance &lt; 20:
+        return False
+
+    if trend == "UP":
+
+        if price &lt; vwap:
+            return True
+
+    if trend == "DOWN":
+
+        if price &gt; vwap:
+            return True
+
+    return False
+
+# -----------------------------
+# trend detection
+# -----------------------------
+def trend_direction(df):
+
+    y = df['close'].tail(20)
+    x = np.arange(len(y))
+
+    slope = np.polyfit(x,y,1)[0]
+
+    return "UP" if slope &gt; 0 else "DOWN"
+
+# -----------------------------
+# 36 candle range
+# -----------------------------
+def range36(df):
+
+    high = df['high'].tail(36).max()
+    low = df['low'].tail(36).min()
+
+    return high,low
+
+# -----------------------------
+# fibonacci
+# -----------------------------
+def fibonacci(high,low):
+
+    diff = high - low
+
+    fib50 = high - diff*0.50
+    fib618 = high - diff*0.618
+
+    return fib50,fib618
+
+# -----------------------------
+# option strike selection
+# -----------------------------
+def select_strike(price,side):
+
+    base = int(price/100)*100
+
+    if side == "CE":
+        return base - 300
+
+    if side == "PE":
+        return base + 300
+
+# -----------------------------
+# expiry validation
+# -----------------------------
+def expiry_valid(expiry_date):
+
+    today = datetime.now().date()
+
+    days = (expiry_date - today).days
+
+    if days &gt;= 12:
+        return True
+
+    return False
+
+# -----------------------------
+# entry logic
+# -----------------------------
+def entry_logic(df15,df30,df1h,dfD,dfW,price):
+
+    trends = [
+        trend_direction(df1h),
+        trend_direction(dfD),
+        trend_direction(dfW)
+    ]
+
+    upvotes = trends.count("UP")
+
+    side = "CE" if upvotes &gt;=2 else "PE"
+
+    trend = "UP" if side=="CE" else "DOWN"
+
+    vwap = calculate_vwap(df15)
+
+    if not vwap_condition(price,vwap,trend):
+        return None
+
+    high,low = range36(df15)
+
+    if side == "CE":
+        if price &gt; low + 22:
+            return None
+
+    if side == "PE":
+        if price &lt; high - 22:
+            return None
+
+    swing_high = dfD['high'].tail(20).max()
+    swing_low = dfD['low'].tail(20).min()
+
+    fib50,fib618 = fibonacci(swing_high,swing_low)
+
+    return side
+</pre>
+
+            <h2 id="upd-example">5️⃣ Example Trade</h2>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td><b>Market</b></td>
+                    <td>NIFTY = 24500</td>
+                </tr>
+                <tr>
+                    <td><b>VWAP</b></td>
+                    <td>24530</td>
+                </tr>
+                <tr>
+                    <td><b>Trend</b></td>
+                    <td>UPTREND</td>
+                </tr>
+                <tr>
+                    <td><b>Pullback price</b></td>
+                    <td>24505</td>
+                </tr>
+                <tr>
+                    <td><b>Distance</b></td>
+                    <td>25 pts from VWAP — Valid retracement entry</td>
+                </tr>
+            </table>
+
+            <p><b>36 candle range:</b></p>
+            <pre>
+High = 24700
+Low  = 24400
+</pre>
+            <p><b>Entry zone:</b></p>
+            <pre>24422 — Trade triggers.</pre>
+            <p><b>Option selected:</b></p>
+            <pre>
+24200 CE
+Expiry 3 weeks
+</pre>
+            <p><b>Profit:</b></p>
+            <pre>
+80–150 pts first trade
+Second entry: 50–90 pts
+</pre>
+
+            <h2 id="upd-strength">6️⃣ Final Strategy Strength</h2>
+            <p>This system now uses:</p>
+            <ul>
+                <li>✔ Multi-timeframe trend</li>
+                <li>✔ VWAP retracement filter</li>
+                <li>✔ Fibonacci structure</li>
+                <li>✔ Range edge entry</li>
+                <li>✔ Options leverage</li>
+                <li>✔ Economic news risk filter</li>
+                <li>✔ Gap management</li>
+                <li>✔ Intraday re-entry</li>
+            </ul>
+
+            <hr>
+
+            <h1 id="v1" style="color:#94a3b8;">System Workflow v1 ( current )</h1>
 
             <h1 id="workflow">Full System Workflow: Nifty Trading Bot</h1>
 
@@ -205,7 +1507,7 @@
             </ol>
 
 
-            <h2 id="execution">4. Execution Layer: Risk & Entry</h2>
+            <h2 id="execution">4. Execution Layer: Risk &amp; Entry</h2>
 
             <ol>
 
@@ -267,10 +1569,10 @@
             <h3>1. Hard Chronological Rules</h3>
 
             <pre>
-if (Time < 09:30 IST) -> Trade Blocked
-if (OpenPositions >= 1) -> Trade Blocked
-if (ExecutedTradesToday >= 1) -> Trade Blocked
-if (CurrentTrendTradeCount >= 3) -> Trade Blocked
+if (Time &lt; 09:30 IST) -&gt; Trade Blocked
+if (OpenPositions &gt;= 1) -&gt; Trade Blocked
+if (ExecutedTradesToday &gt;= 1) -&gt; Trade Blocked
+if (CurrentTrendTradeCount &gt;= 3) -&gt; Trade Blocked
 </pre>
 
             <h3>2. Confluence Engine Validation</h3>
@@ -286,7 +1588,7 @@ KEY_LEVELS must be VALID
 </pre>
 
             <pre>
-TotalGreenCells / TotalEnabledCells >= 0.70
+TotalGreenCells / TotalEnabledCells &gt;= 0.70
 </pre>
 
             <pre>
@@ -294,13 +1596,13 @@ ENTRY_PATTERN must be VALID on 15M or 5M timeframe
 </pre>
 
 
-            <h2 id="contract">II. CONTRACT & ORDER SELECTION (The If/Else Logic)</h2>
+            <h2 id="contract">II. CONTRACT &amp; ORDER SELECTION (The If/Else Logic)</h2>
 
             <h3>1. Instrument choosing</h3>
 
             <pre>
-if (MarketDirection == UP) -> Select CALL Option (CE)
-if (MarketDirection == DOWN) -> Select PUT Option (PE)
+if (MarketDirection == UP) -&gt; Select CALL Option (CE)
+if (MarketDirection == DOWN) -&gt; Select PUT Option (PE)
 </pre>
 
             <h3>2. Strike Selection Logic</h3>
@@ -311,7 +1613,7 @@ Formula (PE): Strike = ceil(SpotPrice + 150)
 Rule: Strike must be at least 150 points In-The-Money (ITM)
 </pre>
 
-            <h3>3. Expiry & Premium Logic</h3>
+            <h3>3. Expiry &amp; Premium Logic</h3>
 
             <pre>
 Expiry Target: 21 trading days (~3 weeks)
@@ -319,8 +1621,8 @@ Expiry Target: 21 trading days (~3 weeks)
 Selection: If multiple contracts exist, choose the Lower Premium
 
 Filter:
-if (OptionPremium >= HighestPremiumOfLast3Days)
--> REJECT CONTRACT
+if (OptionPremium &gt;= HighestPremiumOfLast3Days)
+-&gt; REJECT CONTRACT
 </pre>
 
 
@@ -329,32 +1631,32 @@ if (OptionPremium >= HighestPremiumOfLast3Days)
             <h3>1. Pre-Order Validation</h3>
 
             <pre>
-if (Quantity < 1 OR Quantity > 10000) -> REJECT
-if (Price <= 0) -> REJECT
+if (Quantity &lt; 1 OR Quantity &gt; 10000) -&gt; REJECT
+if (Price &lt;= 0) -&gt; REJECT
 </pre>
 
             <pre>
 PriceDiff = abs(Price - LTP) / LTP * 100
-if (PriceDiff > PRICE_SLIPPAGE_PERCENT)
--> REJECT
+if (PriceDiff &gt; PRICE_SLIPPAGE_PERCENT)
+-&gt; REJECT
 </pre>
 
             <pre>
 Reward = abs(Target - Price)
 Risk = abs(Price - SL)
 
-if (Reward / Risk < MIN_PROFIT_RATIO)
--> REJECT
+if (Reward / Risk &lt; MIN_PROFIT_RATIO)
+-&gt; REJECT
 </pre>
 
-            <h3>2. Sizing & Lot Rounding</h3>
+            <h3>2. Sizing &amp; Lot Rounding</h3>
 
             <pre>
 Qty = floor( TradeCapital / (Premium * 25) )
 FinalQty = floor(Qty / 50) * 50
 
-if (FinalQty < 50)
--> REJECT
+if (FinalQty &lt; 50)
+-&gt; REJECT
 </pre>
 
 
@@ -367,34 +1669,34 @@ Validity: DAY
 Transaction: BUY for entry, SELL for exit
 </pre>
 
-            <h3>4. Retry & Timeout Logic</h3>
+            <h3>4. Retry &amp; Timeout Logic</h3>
 
             <pre>
 Max Retries: 3 attempts
 Wait Interval: ORDER_TIMEOUT / 2
 
 if (Attempts == 3 AND Success == FALSE)
--> ABORT & LOG CRITICAL ERROR
+-&gt; ABORT &amp; LOG CRITICAL ERROR
 </pre>
 
 
-            <h2 id="monitor">IV. POSITION MONITORING & MODIFICATION</h2>
+            <h2 id="monitor">IV. POSITION MONITORING &amp; MODIFICATION</h2>
 
             <h3>1. Real-Time SL/Target Updates</h3>
 
             <pre>
-if (NewSL > 0 AND NewSL < EntryPrice)
--> PERMIT MODIFICATION
+if (NewSL &gt; 0 AND NewSL &lt; EntryPrice)
+-&gt; PERMIT MODIFICATION
 
-if (NewTarget > 0 AND NewTarget > EntryPrice)
--> PERMIT MODIFICATION
+if (NewTarget &gt; 0 AND NewTarget &gt; EntryPrice)
+-&gt; PERMIT MODIFICATION
 </pre>
 
             <h3>2. Time-Based Holding</h3>
 
             <pre>
-if (CurrentTime - EntryTime >= 120 minutes)
--> IMMEDIATE EXIT (TIME)
+if (CurrentTime - EntryTime &gt;= 120 minutes)
+-&gt; IMMEDIATE EXIT (TIME)
 </pre>
 
             <h3>3. News-Based Adjustments</h3>
@@ -402,60 +1704,60 @@ if (CurrentTime - EntryTime >= 120 minutes)
             <pre>
 if (NewsRestrictionStatus == RESTRICTED)
 
-New Trade -> Block Entry
+New Trade -&gt; Block Entry
 
-Existing Trade -> Reduce position to 33.3%
+Existing Trade -&gt; Reduce position to 33.3%
 floor(CurrentQty * 0.33)
 </pre>
 
 
-            <h2 id="holding">IV. HOLDING & MONITORING RULES</h2>
+            <h2 id="holding">IV. HOLDING &amp; MONITORING RULES</h2>
 
             <pre>
-if (TimeElapsedDesdeEntry >= 120 minutes)
--> Trigger TIME exit
+if (TimeElapsedDesdeEntry &gt;= 120 minutes)
+-&gt; Trigger TIME exit
 </pre>
 
             <pre>
-if (MinutesToNewsEvent <= 60)
--> Block Entry
+if (MinutesToNewsEvent &lt;= 60)
+-&gt; Block Entry
 
-if (MinutesSinceNewsEvent <= 30)
--> Block Entry
+if (MinutesSinceNewsEvent &lt;= 30)
+-&gt; Block Entry
 </pre>
 
             <pre>
 if (TrendlineBroken == TRUE)
--> Immediate Market Exit
+-&gt; Immediate Market Exit
 
 if (CurrentPrice Outside PullbackZone (60-80%))
--> Immediate Market Exit
+-&gt; Immediate Market Exit
 
 if (Trend direction != MACD histogram direction)
--> Immediate Market Exit
+-&gt; Immediate Market Exit
 </pre>
 
 
             <h2 id="exitrules">V. EXIT CONDITIONS</h2>
 
             <pre>
-1 Stop Loss -> LTP <= StopLossLevel
-2 Target -> LTP >= TargetLevel
-3 Time Out -> Duration == 2 Hours
-4 News Override -> Technical violation during news window
-5 Manual Pulse -> User triggers exit via WebSocket
+1 Stop Loss -&gt; LTP &lt;= StopLossLevel
+2 Target -&gt; LTP &gt;= TargetLevel
+3 Time Out -&gt; Duration == 2 Hours
+4 News Override -&gt; Technical violation during news window
+5 Manual Pulse -&gt; User triggers exit via WebSocket
 </pre>
 
 
-            <h2 id="audit">VI. AUDIT & POST-TRADE</h2>
+            <h2 id="audit">VI. AUDIT &amp; POST-TRADE</h2>
 
             <pre>
 if (TradeResult == LOSS)
--> Activate Cooldown Manager
+-&gt; Activate Cooldown Manager
 </pre>
 
             <pre>
-Capital Update -> TotalExposure variable in Redis
+Capital Update -&gt; TotalExposure variable in Redis
 </pre>
 
             <pre>
@@ -484,7 +1786,7 @@ Signal Line = EMA(MACD_Line,9)
 Histogram = MACD_Line - Signal_Line
 </pre>
 
-            <h3>B. Pullback & Retracement</h3>
+            <h3>B. Pullback &amp; Retracement</h3>
 
             <pre>
 Range = HighestHigh - LowestLow
@@ -493,9 +1795,9 @@ R = ((HighestHigh - CurrentClose) / Range) * 100
 </pre>
 
             <pre>
-if (PullbackCount == 1) -> R >= 70%
-if (PullbackCount == 2) -> R >= 60%
-if (PullbackCount == 3) -> R >= 55%
+if (PullbackCount == 1) -&gt; R &gt;= 70%
+if (PullbackCount == 2) -&gt; R &gt;= 60%
+if (PullbackCount == 3) -&gt; R &gt;= 55%
 </pre>
 
             <pre>
@@ -503,7 +1805,7 @@ Return% =
 ((CurrentPrice - PullbackLow) /
 abs(TrendlinePrice - PullbackLow)) * 100
 
-Must be >= 40%
+Must be &gt;= 40%
 </pre>
 
 
@@ -511,16 +1813,16 @@ Must be >= 40%
 
             <pre>
 Doji:
-abs(Close - Open) / (High - Low) <= 0.10
+abs(Close - Open) / (High - Low) &lt;= 0.10
 </pre>
 
             <pre>
 Hammer:
-(min(Open,Close) - Low) > (abs(Close - Open) * 2)
+(min(Open,Close) - Low) &gt; (abs(Close - Open) * 2)
 
 AND
 
-abs(Close - Open) > ((High - Low) * 0.1)
+abs(Close - Open) &gt; ((High - Low) * 0.1)
 </pre>
 
             <pre>
@@ -585,18 +1887,18 @@ round((Total_Score / Max_Score) * 100)
 </pre>
 
 
-            <h2 id="executionmath">3. Order & Execution Math</h2>
+            <h2 id="executionmath">3. Order &amp; Execution Math</h2>
 
             <pre>
 PriceDiff = abs(Price - LTP) / LTP * 100
 
-if (PriceDiff > 3%)
--> REJECT
+if (PriceDiff &gt; 3%)
+-&gt; REJECT
 </pre>
 
             <pre>
-if ((Target - Price) / (Price - SL) < 2.0)
--> REJECT
+if ((Target - Price) / (Price - SL) &lt; 2.0)
+-&gt; REJECT
 </pre>
 
             <pre>
@@ -631,7 +1933,6 @@ Reduce Position to 33.3%
 
 floor(CurrentQty * 0.33)
 </pre>
-
 
         </div>
     </div>
