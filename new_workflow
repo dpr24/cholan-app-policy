@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Strategy Workflow - MACD & Retracement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        section {
+            padding: 20px;
+            margin: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #0f172a;
+        }
+
+        h3 {
+            color: #1e293b;
+        }
+
+        ul {
+            line-height: 1.6;
+        }
+
+        .code {
+            background: #111;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Trading App Workflow</h1>
+        <p>MACD Crossover + Retracement Strategy (Professional Breakdown)</p>
+    </header>
+
+    <section>
+        <h2>Phase 1: Timeframe Selection</h2>
+        <p>
+            The first step is selecting a timeframe such as <b>1 Hour (1H)</b> or <b>45 Minutes (45M)</b>.
+            This timeframe determines how candles are formed and how signals are interpreted.
+        </p>
+        <ul>
+            <li>All calculations depend on the selected timeframe.</li>
+            <li>Once selected, the same timeframe should be used for consistency.</li>
+            <li>Shorter timeframe = more signals but more noise.</li>
+            <li>Higher timeframe = fewer signals but stronger reliability.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Phase 2: MACD Crossover Detection</h2>
+        <p>
+            The system identifies the exact point where the <b>MACD line crosses the Signal line</b>.
+            This crossover defines the market direction.
+        </p>
+        <ul>
+            <li><b>Bullish crossover:</b> MACD crosses above Signal → Uptrend</li>
+            <li><b>Bearish crossover:</b> MACD crosses below Signal → Downtrend</li>
+            <li>The candle at crossover becomes the <b>Reference Candle</b></li>
+        </ul>
+        <p>
+            This reference candle is extremely important because all future calculations are based on it.
+        </p>
+    </section>
+
+    <section>
+        <h2>Phase 3: Analyze Second Candle</h2>
+        <p>
+            After identifying the reference candle, the second candle is observed.
+        </p>
+        <ul>
+            <li>Check if price retraces into defined zones (51% - 80%).</li>
+            <li>If yes → partial entry (50% capital).</li>
+            <li>If deeper retracement (Zone 2) → enter remaining 50%.</li>
+            <li>If no retracement → no trade.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Phase 4: Analyze Third Candle</h2>
+        <p>
+            If the second candle does not confirm entry, the third candle is analyzed.
+        </p>
+        <ul>
+            <li>If retracement happens → trade can be taken.</li>
+            <li>If not → setup is invalid.</li>
+            <li>Only second and third candles are considered.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Phase 5: Entry Logic (Pullback Verification)</h2>
+        <p>
+            The strategy relies on entering during a pullback rather than chasing price.
+        </p>
+        <ul>
+            <li>Zone 1: 51%–80% retracement → First entry</li>
+            <li>Zone 2: Deeper retracement → Second entry</li>
+            <li>Capital is split to manage risk</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Retracement Calculation Logic</h2>
+        <p>
+            The reference candle defines the price range:
+        </p>
+        <ul>
+            <li><b>Range = High - Low</b></li>
+        </ul>
+
+        <h3>Bullish (Green Candle)</h3>
+        <ul>
+            <li>Market direction: Uptrend</li>
+            <li>We buy on dips</li>
+            <li>Formula: <b>Target Price = High - (Range × Retracement %)</b></li>
+        </ul>
+
+        <h3>Bearish (Red Candle)</h3>
+        <ul>
+            <li>Market direction: Downtrend</li>
+            <li>We sell on pullbacks</li>
+            <li>Formula: <b>Target Price = Low + (Range × Retracement %)</b></li>
+        </ul>
+
+        <h3>Important Logic</h3>
+        <ul>
+            <li>Always use IF/ELSE logic based on trend direction</li>
+            <li>Do NOT use same formula for both directions</li>
+            <li>Wrong formula = invalid trades</li>
+        </ul>
+
+        <div class="code">
+            if (isUptrend) {
+            target = high - (range * retracement);
+            } else {
+            target = low + (range * retracement);
+            }
+        </div>
+    </section>
+
+    <section>
+        <h2>Profit & Risk Management</h2>
+
+        <h3>1. Capital Allocation Strategy</h3>
+        <ul>
+            <li>Total capital is divided into <b>two equal parts (50% + 50%)</b>.</li>
+            <li>First entry is taken at Zone 1 (initial retracement).</li>
+            <li>Second entry is taken only if price reaches deeper retracement (Zone 2).</li>
+            <li>This reduces risk of entering too early and improves average entry price.</li>
+        </ul>
+
+        <h3>2. Stop Loss (SL) Placement</h3>
+        <ul>
+            <li>Stop loss is standardized to <b>30% of the Reference Candle range</b>.</li>
+            <li>First compute range: <b>Range = High - Low</b>.</li>
+            <li>SL distance = <b>Range × 30%</b>.</li>
+            <li><b>Bullish Trade:</b> SL = Entry Price - (Range × 30%).</li>
+            <li><b>Bearish Trade:</b> SL = Entry Price + (Range × 30%).</li>
+            <li>This creates a consistent, rule-based risk model instead of arbitrary SL placement.</li>
+        </ul>
+
+        <h3>3. Take Profit (TP) Strategy</h3>
+        <ul>
+            <li>Primary target is typically the <b>High (bullish)</b> or <b>Low (bearish)</b> of the reference candle.
+            </li>
+            <li>Advanced traders can trail profits beyond this level for extended moves.</li>
+            <li>Partial profit booking can be done after price moves in favor.</li>
+        </ul>
+
+        <h3>4. Risk-Reward Ratio (Detailed Explanation)</h3>
+        <ul>
+            <li><b>Risk</b> = Distance between Entry and Stop Loss.</li>
+            <li><b>Reward</b> = Distance between Entry and Target Price.</li>
+            <li>Formula: <b>Risk-Reward = Reward ÷ Risk</b></li>
+        </ul>
+
+        <p><b>Example (Bullish Trade):</b></p>
+        <ul>
+            <li>Reference Candle Range = 100 points</li>
+            <li>30% SL = 30 points</li>
+            <li>Entry at retracement → suppose 60 points below High</li>
+            <li>Target = back to High → reward ≈ 60 points</li>
+            <li>Risk = 30 points</li>
+            <li><b>RR = 60 / 30 = 1:2</b></li>
+        </ul>
+
+        <p><b>Interpretation:</b></p>
+        <ul>
+            <li>1:1 → You gain equal to what you risk (minimum acceptable)</li>
+            <li>1:1.5 → Good trade</li>
+            <li>1:2 or higher → High-quality setup</li>
+        </ul>
+
+        <p><b>Why this matters:</b></p>
+        <ul>
+            <li>You don’t need high accuracy to be profitable.</li>
+            <li>Even with 50% win rate, a 1:2 RR makes you consistently profitable.</li>
+            <li>Example: Lose 1 trade (-30), win 1 trade (+60) → Net +30</li>
+        </ul>
+
+        <p><b>Key Rule:</b></p>
+        <ul>
+            <li>If calculated reward is <b>less than 30% SL distance</b>, skip the trade.</li>
+            <li>This ensures every trade has a mathematical edge.</li>
+        </ul>
+
+        <h3>5. Trade Invalidation Rules</h3>
+        <ul>
+            <li>If price breaks the reference candle range before entry → <b>Cancel trade</b>.</li>
+            <li>If no retracement occurs within 2nd and 3rd candles → <b>No trade</b>.</li>
+            <li>Avoid forcing trades outside defined rules.</li>
+        </ul>
+
+        <h3>6. Position Management</h3>
+        <ul>
+            <li>Once first entry is taken, monitor price reaction closely.</li>
+            <li>If second entry is triggered, average entry price improves.</li>
+            <li>Move SL to breakeven once price reaches halfway to target.</li>
+            <li>This protects capital and reduces emotional trading.</li>
+        </ul>
+
+        <h3>7. Key Principle</h3>
+        <p>
+            The goal is not to win every trade, but to ensure that <b>wins are larger than losses</b>.
+            Consistent application of risk management ensures long-term profitability.
+        </p>
+
+    </section>
+
+    <section>
+        <h2>Reference Image</h2>
+        <p>The following image represents the full workflow visually:</p>
+        <img src="WhatsApp Image 2026-03-31 at 3.28.49 PM.jpeg" alt="Trading Workflow">
+    </section>
+
+</body>
+
+</html>
