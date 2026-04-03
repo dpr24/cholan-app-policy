@@ -190,10 +190,10 @@ This document serves as the professional blueprint for the 'Final Option Buying 
 * **Halt Function:** If the market is closed (weekends, holidays, etc.), the system safely aborts and halts completely.
 * **Flow Continuation:** Subsequent strategy validation rules are executed *only* after an "Open Market" status is confirmed.
 
-### 2.2 Directional Bias (1H / 45M MACD Basis)
-The initial trade direction is deterministically established using purely the 1H or 45M Timeframe MACD (Moving Average Convergence Divergence) Crossover.
-* **Bullish Signal Context:** Requires a buy action on **CALL**.
-* **Bearish Signal Context:** Requires a buy action on **PUT**.
+### 2.2 Directional Bias & VWAP Configuration
+The initial trade direction is deterministically established using purely the 1H or 45M Timeframe MACD Crossover combined explicitly with the VWAP (Volume Weighted Average Price) validation marker.
+* **Bullish Signal Context:** Requires a buy action on **CALL**. Asset price must structurally explicitly track **ABOVE the VWAP line**.
+* **Bearish Signal Context:** Requires a buy action on **PUT**. Asset price must structurally explicitly track **BELOW the VWAP line**.
 * **CRITICAL CONSTRAINT:** The system strictly confines execution to **ONLY ONE directional bias per day**.
 
 ### 2.3 Chronological Workflows (Time Rules)
@@ -227,15 +227,16 @@ The initial trade direction is deterministically established using purely the 1H
   1. No engagement into ongoing technical Breakouts (NO CHASING).
   2. No execution if the market price is isolated excessively far from the active trendline.
 
-### 4.2 Entry Confirmation Gate (7-Point Test)
+### 4.2 Entry Confirmation Gate (8-Point Test)
 The definitive ENTRY requires synchronous approval of the following structural conditions:
 1. Valid directional stance established under 1H/45M MACD context.
-2. Valid geometrical projection of trendline (≥ 40° pitch angle).
-3. Trendline strictly projected longitudinally by 180 forward candles.
-4. Definitive price action confirming a "pullback test" functionally close to the trendline (validated precisely using the **Fibonacci 0.5 - 0.6 Zone** detection).
-5. Absolute alignment confirmation from a lower-bracket **15-Minute or 30-Minute MACD**.
-6. Spatial proximity constraint: Execution order placement must be situated near the trendline.
-7. Upon validation spanning states 1 through 6: Initialize allocation to the directional **CALL/PUT**.
+2. Price action direction validated precisely against **VWAP criteria** (Above VWAP for CALL / Below VWAP for PUT).
+3. Valid geometrical projection of trendline (≥ 40° pitch angle).
+4. Trendline strictly projected longitudinally by 180 forward candles.
+5. Definitive price action confirming a "pullback test" functionally close to the trendline (validated precisely using the **Fibonacci 0.5 - 0.6 Zone** detection).
+6. Absolute alignment confirmation from a lower-bracket **15-Minute or 30-Minute MACD**.
+7. Spatial proximity constraint: Execution order placement must be situated near the trendline.
+8. Upon validation spanning states 1 through 7: Initialize allocation to the directional **CALL/PUT**.
 
 ### 4.3 Pattern Decay Context: Weak Trendline Reversals
 * **Decay Threshold Parameter:** The occurrence of exactly **3 separate touches** onto a regular trendline diminishes its structural validity—it is designated subsequently as "weakened".
@@ -257,6 +258,7 @@ Before finalizing an order ticket, the system must precisely select the correct 
 > * **Expiry Verification:** The system skips the active current-week option chain (e.g., 12th April) and immediately targets the **second-week option chain** (e.g., 19th April).
 > * **Strike Application (CALL Configuration):** Under a bullish MACD setup, the system calculates a +100 to +150 offset. It securely selects either the **22,100 CE** or **22,150 CE** strike.
 > * **Strike Application (PUT Configuration):** Under a bearish MACD setup, the system calculates a -100 to -150 offset. It securely selects either the **21,900 PE** or **21,850 PE** strike.
+
 
 ### 5.2 Three-Phase Incremental Procurement Scheme (Fibonacci Scaled Entry)
 Capital scaling is fragmented strictly into 2-lot increments triggering within mathematically defined Fibonacci pullback limits:
@@ -308,6 +310,7 @@ Re-entrant operations observe rigid defensive parameters; market extraction orde
 - [ ] System validated the actively OPEN status of the market for today.
 - [ ] Active execution schedule is valid (9:45 AM – 2:00 PM).
 - [ ] Daily Bias fixed strictly to either CALL or PUT.
+- [ ] Asset structurally validated natively against VWAP bounds (CALL>VWAP / PUT<VWAP).
 - [ ] Overall Trades iteration confirms > 2 limit hasn't tripped. 
 - [ ] Trendline evaluates operationally active (≥ 40° Arch Angle).
 - [ ] Trendline accurately pushed forward by 180 positional instances.
@@ -334,7 +337,7 @@ graph TD
     A[START] --> A1{Is Market OPEN Today?}
     A1 -->|NO| A2[HALT - No Trading Operations]
     A1 -->|YES| B[Wait until 9:45 AM]
-    B --> C[Evaluate 1H / 45M MACD]
+    B --> C[Evaluate 1H / 45M MACD + VWAP Status]
     C --> D{Fix Bias Direction}
     D -->|Bullish| E(Assume CALL Bias)
     D -->|Bearish| F(Assume PUT Bias)
