@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Option Buying System (V2)</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Marked.js for rendering markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Mermaid.js for flowcharts -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --border-color: #334155;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 40px 20px;
+            padding: 40px 50px;
+            background: var(--surface-color);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-color);
+        }
+
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            margin-top: 2em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            color: #e2e8f0;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: #93c5fd;
+            margin-top: 1.5em;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: #cbd5e1;
+            font-size: 1.05rem;
+        }
+
+        li {
+            margin-bottom: 0.6rem;
+        }
+
+        strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--accent-color);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 16px 24px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            color: #e2e8f0;
+            font-style: italic;
+        }
+        
+        blockquote p {
+            margin: 0;
+            color: #e2e8f0;
+        }
+
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            accent-color: var(--accent-color);
+            transform: scale(1.2);
+            margin-right: 12px;
+            cursor: default;
+        }
+
+        /* Mermaid Graph Container */
+        .mermaid {
+            background: var(--bg-color);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            margin: 24px 0;
+            overflow-x: auto;
+        }
+
+        /* Code block wrapper (in case there's regular code blocks) */
+        pre {
+            background: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            color: #e2e8f0;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color); 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px 10px;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="content">Loading requirements...</div>
+
+    <script id="markdown-content" type="text/markdown">
+# REQUIREMENTS FOR FINAL OPTION BUYING SYSTEM UPDATE 5 (V2)
+
+## 1. System Overview
+This document serves as the professional blueprint for the 'Final Option Buying System (PRO Version)'. It lays out the operational logic, deterministic entry/exit parameters, time barriers, risk controls, and algorithmic guidelines governing the trading system.
+
+### 1.1 Simulated Execution Environment (Mock Trading Mode)
+* **Current Operational State:** To rigorously test and structurally validate the underlying strategy accuracy before risking live funds, the system will exclusively operate within a secure **Virtual Paper Trading Environment** initially.
+* **Capital Setup Limits:** The algorithmic trading system will be seeded with precisely **1,00,000 INR (1 Lakh) of virtual mock capital**.
+* **Real-Time Data Matrix:** Despite utilizing simulated mock collateral, the system restricts data-blindness by aggressively consuming entirely **live real-market data connections**—including real dynamic spot prices, live options chains, and real execution premiums—calculating all strategies exactly identically to a live deployment framework.
+* **P&L Synthesization Mechanism:** Upon seamlessly entering or fully liquidating fractional 2-lot scale executions, the core systemic engine physically updates actively shifting Profit & Loss stat metrics matching absolutely accurately corresponding directly functionally against real-time market action updates natively. *(TLDR: Real Life Market Conditions & Real Signal Checks evaluated cleanly using 1 Lakh Virtual Funds).*
+
+## 2. Core Trading Logic Strategy 
+### 2.1 Market State Verification (Initial Gate)
+* **Primary Requirement:** The system must explicitly verify whether the market is officially OPEN for the current calendar day. 
+* **Halt Function:** If the market is closed (weekends, holidays, etc.), the system safely aborts and halts completely.
+* **Flow Continuation:** Subsequent strategy validation rules are executed *only* after an "Open Market" status is confirmed.
+
+### 2.2 Directional Bias (1H / 45M MACD Basis)
+The initial trade direction is deterministically established using purely the 1H or 45M Timeframe MACD (Moving Average Convergence Divergence) Crossover.
+* **Bullish Signal Context:** Requires a buy action on **CALL**.
+* **Bearish Signal Context:** Requires a buy action on **PUT**.
+* **CRITICAL CONSTRAINT:** The system strictly confines execution to **ONLY ONE directional bias per day**.
+
+### 2.3 Chronological Workflows (Time Rules)
+* **Opening Window Constraint:** Initial entries are strictly prohibited before **9:45 AM**.
+* **Closing Window Constraint:** New entries are explicitly barred after **2:00 PM**.
+* **Mandatory Exit Rule:** A strictly prioritized closure of all open positions must occur at exactly **3:10 PM**.
+
+### 2.4 Executional Architecture Context (Trade Structure)
+* **Session Cap Limit:** A hard ceiling restriction of **2 distinct trade executions** per session (day).
+* **Re-entry Prerequisites:** Re-entry trades are exclusively authorized if and only if:
+  1. The first trade sequence attained a booked, realized profit.
+  2. The final definitive exit of the first trade occurred before precisely **12:30 PM**.
+
+## 3. Predictive Trendline Criteria (Finalized Logic)
+### 3.1 Line Architecture & Blueprint
+* **Anchors:** Lines must invariably be drawn attaching to the most recent swing highs and/or low anchors.
+* **Forward Projection:** Trendlines must be physically extended a minimum of **180 candles into the future timeframe axis**.
+
+### 3.2 Formative Geometry (The ≥ 40° Angle Constraint)
+* **Requirement:** The trendline inclination/declination angle must consistently exhibit an angle measuring **above ~40° from the absolute horizontal**.
+* **Rejection Mandate:** If an indicated trendline presents a shallow angle (flat trajectory), the system dictates **NO OPERATION**; the trend is designated as inherently *weak*.
+* **Permitted Timeframes:** Geometrical trend projection is bounded to **1 Hour (1H)** and **45 Minutes (45M)** resolutions.
+
+## 4. Entry Protocol Specification (Strict Pullback Mode)
+### 4.1 Permitted Model Context (Pullback Integration)
+* **Exclusive Format:** Only *Pullback / Retracement* formatted entries are certified valid.
+* **Pullback Origin Logic (MACD Marker):** To systematically measure and detect a pullback, the system officially flags the exact **MACD Crossover Candle** as the reference origin point. Active pullback scanning operations begin anchored directly from this originating crossover candle.
+* **Sequence Logic:** Market price must distinctly separate/move away from the designated trendline, and then exhibit a technical "return framework" to test the prior boundaries.
+* **Fibonacci Confluence (Detection Tool):** Use the Fibonacci retracement tool to mathematically confirm the pullback. A retracement landing exactly within the **0.5 to 0.6 Zone** can be utilized to definitively validate the pullback phase.
+* **Violation Constraints:** 
+  1. No engagement into ongoing technical Breakouts (NO CHASING).
+  2. No execution if the market price is isolated excessively far from the active trendline.
+
+### 4.2 Entry Confirmation Gate (7-Point Test)
+The definitive ENTRY requires synchronous approval of the following structural conditions:
+1. Valid directional stance established under 1H/45M MACD context.
+2. Valid geometrical projection of trendline (≥ 40° pitch angle).
+3. Trendline strictly projected longitudinally by 180 forward candles.
+4. Definitive price action confirming a "pullback test" functionally close to the trendline (validated precisely using the **Fibonacci 0.5 - 0.6 Zone** detection).
+5. Absolute alignment confirmation from a lower-bracket **15-Minute or 30-Minute MACD**.
+6. Spatial proximity constraint: Execution order placement must be situated near the trendline.
+7. Upon validation spanning states 1 through 6: Initialize allocation to the directional **CALL/PUT**.
+
+### 4.3 Pattern Decay Context: Weak Trendline Reversals
+* **Decay Threshold Parameter:** The occurrence of exactly **3 separate touches** onto a regular trendline diminishes its structural validity—it is designated subsequently as "weakened".
+* **Alternative Trading Sequence Under Pattern Decay:**
+  1. Detect the existence of an inverse MACD trend crossover.
+  2. Perceive the market price retreating spatially from the prior anchor trendline axis.
+  3. Effectuate an off-line entry execution directly away from the old trendline.
+  4. Synthesize a brand-new Trendline construct.
+  5. Extend the latest line iteratively by 180 forward candles.
+
+## 5. Contract Selection & Capital Disbursement Structure
+### 5.1 Options Contract Selection Criteria
+Before finalizing an order ticket, the system must precisely select the correct option bounds:
+* **Expiry Search Constraint:** The system must specifically search for and select **second-week contract strikes** strictly.
+* **Strike Points Selection:** The strike price targeted must universally possess a precise offset constraint of **100 to 150 points** respectively, applying identically to both CALL and PUT executions.
+
+> **Practical Execution Example (NIFTY50 Focus):**  
+> * **Condition Match:** NIFTY50 spot price currently hovers near **22,000**. 
+> * **Expiry Verification:** The system skips the active current-week option chain (e.g., 12th April) and immediately targets the **second-week option chain** (e.g., 19th April).
+> * **Strike Application (CALL Configuration):** Under a bullish MACD setup, the system calculates a +100 to +150 offset. It securely selects either the **22,100 CE** or **22,150 CE** strike.
+> * **Strike Application (PUT Configuration):** Under a bearish MACD setup, the system calculates a -100 to -150 offset. It securely selects either the **21,900 PE** or **21,850 PE** strike.
+
+### 5.2 Three-Phase Incremental Procurement Scheme (Fibonacci Scaled Entry)
+Capital scaling is fragmented strictly into 2-lot increments triggering within mathematically defined Fibonacci pullback limits:
+* **Zone 1 Structure:** Activate **2 lots** exactly as price enters the **0.3 to 0.5** Fibonacci zone.
+* **Zone 2 Structure:** Activate **2 lots** exactly as price enters the **0.5 to 0.6** Fibonacci zone.
+* **Zone 3 Structure:** Activate **2 lots** exactly as price enters the **0.6 to 0.7** Fibonacci zone.
+*(Note: Maximum positional allocation sequence totals 6 lots executed directly based on depth of pullback).*
+
+### 5.3 Fractional Realization Standard (Initial Exit for FIRST TRADE)
+* **Tier 1 (50% Positional Liquidation from total filled units):**
+  * Divested precisely upon earning either a numerical **10%** equity profit OR earning structurally **12 to 15 premium points**. 
+* **Tier 2 (Defending the Remaining 50% Positional Balance):** 
+  * Dictated actively by the standard holistic exit protocols defined below. 
+
+## 6. Comprehensive Exit Criteria 
+### 6.1 First Trade Core Exit Protocol
+Total market extraction is ordered sequentially when **ANY single parameter** is positively triggered:
+* Profit trajectory yielding **18% to 27% ROI** (measured proportionally from absolute high to low).
+* Alternatively, if a **5% to 8% return threshold** is met actively within a timeframe under **1 Hour post-entry**. 
+  *(Note: A contingent Re-entry may be executed safely under this clause strictly requiring a > 40% structural pullback localized to the earlier profit-booked candle).*
+* Price objective directly intercepts a Pivot / Support & Resistance structural wall (mandatory operational yield must validate a ≥ 12 absolute points minimum threshold).
+* Emergence of an **Opposite facing MACD** technical signal. 
+* Breakage in structural Trendline support (Validated exclusively when an overarching **15-Minute specific candle definitively closes entirely isolated/outside** the trendline perimeter).
+* Final execution block hits daily operational constraint timeouts at exactly **3:10 PM**.
+
+### 6.2 Secondary Phase Context (The Re-Entry Exit Parameters)
+Re-entrant operations observe rigid defensive parameters; market extraction ordered linearly via ANY of the localized rule sets:
+* Inverse action denoted by an Opposite trajectory facing MACD indicator spanning **15-Min / 30-Min timeframe thresholds**. 
+* Trendline breakage sequence functioning exactly under **15-Minute timeline closures** positioned entirely outside parameters. 
+* Final structural timeout clock terminates effectively reaching **3:10 PM**. 
+
+### 6.3 Absolute Pivot & S&R Interaction filtering
+* **Entry Approval Gate:** Operations allowed natively near designated Support/Resistance levels *only if the foundational trendline analysis correlates efficiently with the intended direction*.
+* **Limit Approval Target:** Validation for extraction at a Pivot or S&R zone mandates that the exit provides an absolute total net baseline of **≥ 12 positive points threshold**.
+
+## 7. Performance Theses & Checklist Reviews
+### 7.1 Key System Assertions (The Trade Edge)
+* **Expected Aggregate Statistical Return Profile:** Win Rate consistently evaluates dynamically between **~78% and 85%**.
+* **Logical Bedrock Assurances:** Success parameters logically synthesized by:
+  1. Methodical operational dependencies upon active predictive trendlines.
+  2. Disallowing chasing FOMO errors by inherently mandating strict pullback-only entry frameworks. 
+  3. Formative geometry requiring > 40° angles intrinsically isolating valid action points from volatile random planar distribution. 
+
+### 7.2 Core Philosophy Synthesis (Rule Matrix)
+> *"Assess the 1H/45M MACD → Draw strong trendlines (≥40° + extrapolate 180 sequence points) → Maintain fierce patience for physical pullbacks → Initialize fractional operational CALLs / PUTs directly onto bounds → Abide strictly to rigid mathematical rule-bound exits parameter triggers → NEVER chase a structural breakout."*
+
+### 7.3 Operational Trade Action Matrix Checklist
+**PRE-ENTRY (Validation Limits):**
+- [ ] System validated the actively OPEN status of the market for today.
+- [ ] Active execution schedule is valid (9:45 AM – 2:00 PM).
+- [ ] Daily Bias fixed strictly to either CALL or PUT.
+- [ ] Overall Trades iteration confirms > 2 limit hasn't tripped. 
+- [ ] Trendline evaluates operationally active (≥ 40° Arch Angle).
+- [ ] Trendline accurately pushed forward by 180 positional instances.
+- [ ] System actively anchored pullback detection scanning originating structurally from the MACD Crossover Candle.
+- [ ] Evaluated asset pricing exhibits localized pullback to the trendline directly (utilize Fibonacci 0.5 - 0.6 zone for precision if required). 
+- [ ] Confirmed internal time-weighted indicators (15m/30m MACD aligns correctly). 
+- [ ] Evaluated strictly no conditions of breakout chasing phenomena. 
+- [ ] Validated Contract Selection: Second-Week Expiry selected matching a 100-150 point parameter offset.
+
+**ACTIVE TRADE (Positional Action):**
+- [ ] Sub-matrix scaling initialized strictly based on Fibonacci Zone depth hits (2 lots @ 0.3-0.5, 0.5-0.6, 0.6-0.7).
+- [ ] Actively redrawing parameters relative to trendline alterations. 
+- [ ] Continuing consistent macro verification traversing the MACDs. 
+- [ ] Assuring the 15-Minute closure actions correctly align without overreaching trendline structural integrity limits.
+
+**EXPULSION BOUNDARIES:**
+- [ ] **Initial First Trade Framework:** Ensure partial allocations yield successful extraction limits natively → Execute ultimate Final Exit protocols dynamically under trigger action limitations.
+- [ ] **Re-Entry Structure Sequence Protocol:** Enforce rigorous closure strictly isolated to exact MACD inversions / Broken Trendlines bounds / Temporal Time Limit stops exclusively.
+
+## 8. Master Architectural Execution Protocol Flowchart
+
+```mermaid
+graph TD
+    A[START] --> A1{Is Market OPEN Today?}
+    A1 -->|NO| A2[HALT - No Trading Operations]
+    A1 -->|YES| B[Wait until 9:45 AM]
+    B --> C[Evaluate 1H / 45M MACD]
+    C --> D{Fix Bias Direction}
+    D -->|Bullish| E(Assume CALL Bias)
+    D -->|Bearish| F(Assume PUT Bias)
+    E --> G[Draw Predictive Trendline Architecture]
+    F --> G
+    G --> H{Assess Geometry Matrix}
+    H -->|Angle < 40° OR Projection < 180 Candles| I[Reject Setup - SKIP]
+    H -->|Angle >= 40° AND Projection >= 180 Candles| J[Await Retracement / Pullback to Trendline]
+    J --> K[Obtain Confirmation via 15m/30m MACD]
+    K --> K1[Select Contract: Second-Week Expiry + 100-150 pts offset]
+    K1 --> L[EXECUTE TIERED ENTRY FRAMEWORK]
+    L --> M{Does Price Enter Fibonacci Zones?}
+    M -->|YES| N[Deploy 2 Lots discretely inside 0.3-0.5, 0.5-0.6, and 0.6-0.7 Zones]
+    N --> O[Construct Parallel Trendline Encapsulation Channel Box]
+    O --> P[FIRST TRADE SURVEILLANCE RULES ACTIVATED]
+    P --> Q[Execute 50% Asset Priority Extraction at: 10% ROI OR 12-15 Pts Yield]
+    Q --> R{Do Remaining 50% Risk Parameters Intercept Active Extraction Commands?}
+    R -->|Action Interfaces Opposing Parallel Limits| T[INITIATE FULL POSITIONAL EXTRACTION]
+    R -->|Confirming Exit Oriented Opposite MACD Signature| T
+    R -->|15-Minute Component Closes Explicitly Beyond Active Axes| T
+    R -->|Terminal Halting Function at 3:10 PM| T
+    T --> U{Did Full Exit Occur Before 12:30 PM Constraint?}
+    U -->|NO| V[OPERATIONAL SYSTEM COMPLETE - END TRADING DAY]
+    U -->|YES| W[RE-ENTRY PROTOCOL READY STATE VERIFIED]
+    W --> X[Revalidate Unified Direction Focus Pattern]
+    X --> Y[Re-Establish Trendline & Validated Pullback]
+    Y --> Z[RE-ENTRY DEPLOYMENT FULL EXECUTED]
+    Z --> AA[RE-ENTRY STRICT ENFORCED SURVEILLANCE ACTIVATED]
+    AA --> AB{Re-Entry Bounds Exit Triggers Hit?}
+    AB -->|Opposite MACD Bound Condition Identified| AC[FULL EXIT ENACTED - LIQUIDATION PROCEDURES]
+    AB -->|Confirmed Broken Trendline Structure on 15-Min Close| AC
+    AB -->|System Exhausted Timeout - 3:10 PM Reached| AC
+    AC --> AD[OPERATIONAL SEQUENCE COMPLETE - END OF SESSION]
+```
+
+## 9. Mobile Application Interface & Monitoring Configuration
+A strictly "Read-Only" Mobile Application will interface directly with the algorithmic trading engine to provide live visibility without interrupting core execution logic. It relies exclusively on a robust WebSocket data transmission layer.
+
+### 9.1 Real-Time Dashboard Analytics 
+The core operational dashboard securely streams high-fidelity data reflecting identical metrics aggressively used by the execution engine:
+* **Core Price Telemetry:** Current Market LTP, exact spot/strike price differencing streams, and OHLC data feeds.
+* **Live Operational Charting:** Integration of an interactive candlestick chart rendering systemic logic elements natively: actively generated Predictive Trendlines, identified Pivot matrices, and live MACD indicator logic outputs.
+* **Executional Constraints Monitor:** 
+  * Displays active traded limits (Trades taken today vs limit remaining bounds).
+  * Global system toggle status (Idle / In-Trade active state).
+  * Capital and Sizing States (Tracking absolute Total System Capital, Active Used/Deployed Capital, and the exact scaled Lot volume deployed across execution zones).
+  * Current Trading Day's Profit / Loss margins parameters. 
+
+### 9.2 Actionable Push Notification Matrix 
+Automated telemetry will dynamically fire actionable notifications outlining system behaviors directly securely explicitly strictly to the human operator:
+* **Setup Warning Alert / Setup Detected:** Triggers immediately when the core engine detects significantly reasonable market characteristics aligning natively towards a potential pullback Entry Sequence matrix. 
+* **Execution Limit Confirmed (Entry limits):** Upon capital deployment, fires notification containing comprehensive Entry execution details.
+* **Expulsion Verified Protocol (Exit checks):** Fires securely definitively upon systemic order liquidation, outputting strictly mapping exact exit details natively corresponding directly structurally against exact extraction timestamps.
+
+### 9.3 Systematic Audit & Diagnostic Tracing Logs
+To ensure flawless internal verification functionality, the app displays granular operational tracing logs directly highlighting exactly *why* and *when* the system shifts internal limits bounds statuses functionally:
+* **Timestamp Enforcements:** Every systemic trace log is irrevocably stamped with precise Date and Time boundaries limits functionality. 
+* **Sub-Logic Event Log Tracing Sequences (Examples):**
+  * Condition Verification: *"System validated absolute directional 1H crossover."*
+  * Trendline Verification: *"Valid predictive trend criteria fully established."*
+  * Wait Operations: *"Valid pullback bounds detected - System actively holding state waiting for pullback confirmation candle."*
+  * Extraction Events: *"System successfully evaluated an exit trigger - executing complete liquidation logic."*
+* **Audit Life-cycle Span Constraints:** Guarantees an uninterrupted sequence of plain-text system logs spanning from initial pre-flight market checks linearly through complete setup validation, active position constraints monitoring, and terminal exit condition execution.
+    </script>
+
+    <script>
+        // Configure Mermaid to support dark mode professionally
+        mermaid.initialize({ 
+            startOnLoad: false, 
+            theme: 'dark',
+            securityLevel: 'loose'
+        });
+
+        // Fetch markdown text
+        const markdownContent = document.getElementById('markdown-content').textContent;
+        
+        // Custom rendering extension for checkboxes (read-only styling)
+        const renderer = new marked.Renderer();
+        const originalListitem = renderer.listitem.bind(renderer);
+        renderer.listitem = function(text, task, checked) {
+            if (task) {
+                // Return custom styled div wrapper mimicking native lists
+                return `<li style="list-style-type: none; display: flex; align-items: flex-start; margin-left: -1.5rem;"><input type="checkbox" disabled="" ${checked ? 'checked=""' : ''}> <span style="margin-top: 1px;">${text}</span></li>`;
+            }
+            return originalListitem(text, task, checked);
+        };
+        
+        // Parse and Inject HTML
+        document.getElementById('content').innerHTML = marked.parse(markdownContent, { renderer: renderer });
+
+        // Extract <pre> blocks targeting mermaid, format them directly so Mermaid can run autonomously without syntax errors
+        const renderMermaid = async () => {
+            const preTags = document.querySelectorAll('pre code.language-mermaid');
+            preTags.forEach((codeBlock) => {
+                const pre = codeBlock.parentElement;
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                mermaidDiv.textContent = codeBlock.textContent;
+                pre.replaceWith(mermaidDiv);
+            });
+            await mermaid.run();
+        };
+
+        // Fire render
+        renderMermaid();
+    </script>
+</body>
+</html>
