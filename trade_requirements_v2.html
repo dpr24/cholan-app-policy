@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +47,10 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-color);
         }
 
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             color: #ffffff;
             margin-top: 2em;
             margin-bottom: 0.5em;
@@ -58,6 +62,7 @@
             text-align: center;
             background: linear-gradient(135deg, #60a5fa, #3b82f6);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
             margin-top: 1rem;
@@ -82,7 +87,8 @@
             font-size: 1.05rem;
         }
 
-        ul, ol {
+        ul,
+        ol {
             margin-bottom: 1.5rem;
             padding-left: 1.5rem;
             color: #cbd5e1;
@@ -107,7 +113,7 @@
             color: #e2e8f0;
             font-style: italic;
         }
-        
+
         blockquote p {
             margin: 0;
             color: #e2e8f0;
@@ -147,28 +153,33 @@
             width: 8px;
             height: 8px;
         }
+
         ::-webkit-scrollbar-track {
-            background: var(--bg-color); 
+            background: var(--bg-color);
         }
+
         ::-webkit-scrollbar-thumb {
-            background: var(--border-color); 
+            background: var(--border-color);
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569; 
+            background: #475569;
         }
-        
+
         @media (max-width: 768px) {
             .container {
                 margin: 20px 10px;
                 padding: 20px;
             }
+
             h1 {
                 font-size: 1.8rem;
             }
         }
     </style>
 </head>
+
 <body>
 
     <div class="container" id="content">Loading requirements...</div>
@@ -177,13 +188,13 @@
 # REQUIREMENTS FOR TRADE SYSTEM UPDATE 5 (V2)
 
 ## 1. System Overview
-This document serves as the professional blueprint for the trading system v2. It lays out the operational logic, deterministic entry/exit parameters, time barriers, risk controls, and algorithmic guidelines governing the trading system.
+This document serves as the professional blueprint for the 'Final Option Buying System (PRO Version)'. It lays out the operational logic, deterministic entry/exit parameters, time barriers, risk controls, and algorithmic guidelines governing the trading system.
 
 ### 1.1 Simulated Execution Environment (Mock Trading Mode)
 * **Current Operational State:** To rigorously test and structurally validate the underlying strategy accuracy before risking live funds, the system will exclusively operate within a secure **Virtual Paper Trading Environment** initially.
 * **Capital Setup Limits:** The algorithmic trading system will be seeded with precisely **1,00,000 INR (1 Lakh) of virtual mock capital**.
 * **Real-Time Data Matrix:** Despite utilizing simulated mock collateral, the system restricts data-blindness by aggressively consuming entirely **live real-market data connections**—including real dynamic spot prices, live options chains, and real execution premiums—calculating all strategies exactly identically to a live deployment framework.
-* **P&L Synthesization Mechanism:** Upon seamlessly entering or fully liquidating fractional 2-lot scale executions, the core systemic engine physically updates actively shifting Profit & Loss stat metrics matching absolutely accurately corresponding directly functionally against real-time market action updates natively. *(TLDR: Real Life Market Conditions & Real Signal Checks evaluated cleanly using 1 Lakh Virtual Funds).*
+* **P&L Synthesization Mechanism:** Upon seamlessly entering or fully liquidating risk-scaled fractional executions, the core systemic engine physically updates actively shifting Profit & Loss stat metrics matching absolutely accurately corresponding directly functionally against real-time market action updates natively. *(TLDR: Real Life Market Conditions & Real Signal Checks evaluated cleanly using 1 Lakh Virtual Funds).*
 
 ## 2. Core Trading Logic Strategy 
 ### 2.1 Market State Verification (Initial Gate)
@@ -193,8 +204,13 @@ This document serves as the professional blueprint for the trading system v2. It
 
 ### 2.2 Directional Bias & VWAP Configuration
 The initial trade direction is deterministically established using purely the 1H or 45M Timeframe MACD Crossover combined explicitly with the VWAP (Volume Weighted Average Price) validation marker.
-* **Bullish Signal Context:** Requires a buy action on **CALL**. Asset price must structurally explicitly track **ABOVE the VWAP line**.
-* **Bearish Signal Context:** Requires a buy action on **PUT**. Asset price must structurally explicitly track **BELOW the VWAP line**.
+* **Bullish Signal Context:** Requires a buy action on **CALL**. Asset price must structurally explicitly track **BELOW the VWAP line**.
+* **Bearish Signal Context:** Requires a buy action on **PUT**. Asset price must structurally explicitly track **ABOVE the VWAP line**.
+
+> **Detailed Execution Example (VWAP Pullback Logic):**
+> * **CALL Scenario:** If the 1H or 45M MACD crossover safely detects an impending macro uptrend (Bullish), the engine explicitly hunts for a pullback. It will initialize the ENTRY **only when the asset price dips below the VWAP line**. By executing below VWAP during an uptrend, the system functionally "buys the dip".
+> * **PUT Scenario:** Conversely, if the MACD detects a macro downtrend (Bearish), the engine actively awaits a retracement spike. It will initialize the ENTRY **only when the asset price surges above the VWAP line**. By executing above VWAP during a downtrend, the system functionally "sells the exhaustion high".
+
 * **CRITICAL CONSTRAINT:** The system strictly confines execution to **ONLY ONE directional bias per day**.
 
 ### 2.3 Chronological Workflows (Time Rules)
@@ -231,7 +247,7 @@ The initial trade direction is deterministically established using purely the 1H
 ### 4.2 Entry Confirmation Gate (8-Point Test)
 The definitive ENTRY requires synchronous approval of the following structural conditions:
 1. Valid directional stance established under 1H/45M MACD context.
-2. Price action direction validated precisely against **VWAP criteria** (Above VWAP for CALL / Below VWAP for PUT).
+2. Price action direction validated precisely against **VWAP criteria** (Below VWAP for CALL / Above VWAP for PUT).
 3. Valid geometrical projection of trendline (≥ 40° pitch angle).
 4. Trendline strictly projected longitudinally by 180 forward candles.
 5. Definitive price action confirming a "pullback test" functionally close to the trendline (validated precisely using the **Fibonacci 0.5 - 0.6 Zone** detection).
@@ -251,22 +267,23 @@ The definitive ENTRY requires synchronous approval of the following structural c
 ## 5. Contract Selection & Capital Disbursement Structure
 ### 5.1 Options Contract Selection Criteria
 Before finalizing an order ticket, the system must precisely select the correct option bounds:
-* **Expiry Search Constraint:** The system must specifically search for and select **second-week contract strikes** strictly.
-* **Strike Points Selection:** The strike price targeted must universally possess a precise offset constraint of **100 to 150 points** respectively, applying identically to both CALL and PUT executions.
+* **Expiry Search Constraint:** The system must specifically search for and select **second-week contract strikes** strictly. Additionally, the selected expiration date must explicitly provide a minimum of **7 active trading days** remaining to expiration (strictly excluding structural non-trading days such as weekends and market holidays).
+* **Strike Points Selection:** The strike price targeted must universally possess a precise **In-The-Money (ITM)** offset constraint of **100 to 150 points** respectively, applying identically to both CALL and PUT executions.
+* **Option Chain Availability Check:** Before finalizing the order, the system must actively query the live option chain matrix to mathematically verify that the calculated ITM strike price formally exists and is actively tradable. If the mathematically derived strike is unavailable, the system safely selects the nearest actively traded ITM strike within the defined offset boundaries.
 
-> **Practical Execution Example (NIFTY50 Focus):**  
+> **Practical Execution Example (NIFTY50 Focus - Buying ITM):**  
 > * **Condition Match:** NIFTY50 spot price currently hovers near **22,000**. 
-> * **Expiry Verification:** The system skips the active current-week option chain (e.g., 12th April) and immediately targets the **second-week option chain** (e.g., 19th April).
-> * **Strike Application (CALL Configuration):** Under a bullish MACD setup, the system calculates a +100 to +150 offset. It securely selects either the **22,100 CE** or **22,150 CE** strike.
-> * **Strike Application (PUT Configuration):** Under a bearish MACD setup, the system calculates a -100 to -150 offset. It securely selects either the **21,900 PE** or **21,850 PE** strike.
+> * **Expiry Verification:** The system skips the active current-week option chain (e.g., 12th April) and immediately targets the **second-week option chain** (e.g., 19th April), rigorously assuring there are at least 7 actionable trading days remaining before that contract expires. 
+> * **Strike Application (CALL Configuration):** Under a bullish MACD setup, the system calculates a **-100 to -150 ITM offset**. It securely selects either the **21,900 CE** or **21,850 CE** strike.
+> * **Strike Application (PUT Configuration):** Under a bearish MACD setup, the system calculates a **+100 to +150 ITM offset**. It securely selects either the **22,100 PE** or **22,150 PE** strike.
 
 
-### 5.2 Three-Phase Incremental Procurement Scheme (Fibonacci Scaled Entry)
-Capital scaling is fragmented strictly into 2-lot increments triggering within mathematically defined Fibonacci pullback limits:
-* **Zone 1 Structure:** Activate **2 lots** exactly as price enters the **0.3 to 0.5** Fibonacci zone.
-* **Zone 2 Structure:** Activate **2 lots** exactly as price enters the **0.5 to 0.6** Fibonacci zone.
-* **Zone 3 Structure:** Activate **2 lots** exactly as price enters the **0.6 to 0.7** Fibonacci zone.
-*(Note: Maximum positional allocation sequence totals 6 lots executed directly based on depth of pullback).*
+### 5.2 Dynamic Risk-Adjusted Procurement Scheme (Fibonacci Scaled Entry)
+Capital scaling is dynamically determined by capital allocation limits predefined by the risk management level (e.g., 25% of total capital allowance per zone scale). The number of executable lots per trade is calculated sequentially based on this available risk allowance rather than a fixed lot count.
+* **Allocation Calculation Example:** If a risk management limit of 25% translates to precisely **3 achievable lots**:
+  * **Zone 1 Entry (0.3 to 0.5 Fibonacci zone):** Disburse initial sequence allocating **1 lot** exactly as price enters the first zone limits.
+  * **Zone 2 Entry (0.5 to 0.6 Fibonacci zone):** Maintain capital reserve and strictly deploy the remaining **2 lots** safely if the price directly touches the secondary baseline.
+*(Note: Positional allocation relies on fluid capital scaling adjusting identically to available risk limits matching cascaded depth of the pullback).*
 
 ### 5.3 Fractional Realization Standard (Initial Exit for FIRST TRADE)
 * **Tier 1 (50% Positional Liquidation from total filled units):**
@@ -280,7 +297,7 @@ Total market extraction is ordered sequentially when **ANY single parameter** is
 * Profit trajectory yielding **18% to 27% ROI** (measured proportionally from absolute high to low).
 * Alternatively, if a **5% to 8% return threshold** is met actively within a timeframe under **1 Hour post-entry**. 
   *(Note: A contingent Re-entry may be executed safely under this clause strictly requiring a > 40% structural pullback localized to the earlier profit-booked candle).*
-* Price objective directly intercepts a Pivot / Support & Resistance structural wall (mandatory operational yield must validate a ≥ 12 absolute points minimum threshold).
+* Price objective directly intercepts a Pivot / Support & Resistance structural wall (mandatory operational yield must validate a **≥ 12 absolute points minimum threshold**; furthermore, if intercepting a **PIVOT line exclusively**, the trade is allowed to maximize up to an absolute **maximum threshold of 50 points**).
 * Emergence of an **Opposite facing MACD** technical signal. 
 * Breakage in structural Trendline support (Validated exclusively when an overarching **15-Minute specific candle definitively closes entirely isolated/outside** the trendline perimeter).
 * Final execution block hits daily operational constraint timeouts at exactly **3:10 PM**.
@@ -293,7 +310,11 @@ Re-entrant operations observe rigid defensive parameters; market extraction orde
 
 ### 6.3 Absolute Pivot & S&R Interaction filtering
 * **Entry Approval Gate:** Operations allowed natively near designated Support/Resistance levels *only if the foundational trendline analysis correlates efficiently with the intended direction*.
-* **Limit Approval Target:** Validation for extraction at a Pivot or S&R zone mandates that the exit provides an absolute total net baseline of **≥ 12 positive points threshold**.
+* **Limit Approval Target:** Validation for extraction at a Pivot or S&R zone mandates that the exit provides an absolute total net baseline of **≥ 12 positive points minimum threshold**. *Crucially, if the targeted structure is specifically a PIVOT line, the system allows aggressively maximizing the run distance up to an exclusive **maximum cap threshold of 50 points**.*
+
+> **Practical Exit Limit Example (Executing a CALL at 100 Premium):**  
+> * **Standard Resistance Interaction:** If the option premium is at **110 (+10 points profit)** when hitting a standard Resistance wall, the system **IGNORES** the wall (does not exit) because the ≥ 12 points minimum threshold hasn't been met. If it hits the Resistance at **115 (+15 points)**, the system successfully bounds the exit and actively takes profit.
+> * **PIVOT Line Interaction (The 50 Cap):** If the price surges securely past standard resistance and runs hard toward a major PIVOT line, the system allows profits to aggressively scale. **If the price physically intercepts the PIVOT line at > 12 points (e.g., +30 points), it exits immediately.** However, if the Pivot line is extremely far away, the absolute moment the profit strictly registers exactly **+50 points (premium hits 150)**, the system guarantees a **mandatory auto-liquidation**—even prior to the Pivot touch—to hard-lock the maximum 50 points safely.
 
 ## 7. Performance Theses & Checklist Reviews
 ### 7.1 Key System Assertions (The Trade Edge)
@@ -311,7 +332,7 @@ Re-entrant operations observe rigid defensive parameters; market extraction orde
 - [ ] System validated the actively OPEN status of the market for today.
 - [ ] Active execution schedule is valid (9:45 AM – 2:00 PM).
 - [ ] Daily Bias fixed strictly to either CALL or PUT.
-- [ ] Asset structurally validated natively against VWAP bounds (CALL>VWAP / PUT<VWAP).
+- [ ] Asset structurally validated natively against VWAP bounds (CALL<VWAP / PUT>VWAP).
 - [ ] Overall Trades iteration confirms > 2 limit hasn't tripped. 
 - [ ] Trendline evaluates operationally active (≥ 40° Arch Angle).
 - [ ] Trendline accurately pushed forward by 180 positional instances.
@@ -319,10 +340,10 @@ Re-entrant operations observe rigid defensive parameters; market extraction orde
 - [ ] Evaluated asset pricing exhibits localized pullback to the trendline directly (utilize Fibonacci 0.5 - 0.6 zone for precision if required). 
 - [ ] Confirmed internal time-weighted indicators (15m/30m MACD aligns correctly). 
 - [ ] Evaluated strictly no conditions of breakout chasing phenomena. 
-- [ ] Validated Contract Selection: Second-Week Expiry selected matching a 100-150 point parameter offset.
+- [ ] Validated Contract Selection: Second-Week Expiry selected (spanning exactly ≥ 7 functional trading days) matching a 100-150 point parameter offset.
 
 **ACTIVE TRADE (Positional Action):**
-- [ ] Sub-matrix scaling initialized strictly based on Fibonacci Zone depth hits (2 lots @ 0.3-0.5, 0.5-0.6, 0.6-0.7).
+- [ ] Sub-matrix scaling initialized dynamically based strictly on available Risk Management lots computed matching sequential Fibonacci depth hits.
 - [ ] Actively redrawing parameters relative to trendline alterations. 
 - [ ] Continuing consistent macro verification traversing the MACDs. 
 - [ ] Assuring the 15-Minute closure actions correctly align without overreaching trendline structural integrity limits.
@@ -348,10 +369,10 @@ graph TD
     H -->|Angle < 40° OR Projection < 180 Candles| I[Reject Setup - SKIP]
     H -->|Angle >= 40° AND Projection >= 180 Candles| J[Await Retracement / Pullback to Trendline]
     J --> K[Obtain Confirmation via 15m/30m MACD]
-    K --> K1[Select Contract: Second-Week Expiry + 100-150 pts offset]
+    K --> K1[Select Contract: Second-Week Expiry w/ ≥ 7 Trading Days + 100-150 pts offset]
     K1 --> L[EXECUTE TIERED ENTRY FRAMEWORK]
     L --> M{Does Price Enter Fibonacci Zones?}
-    M -->|YES| N[Deploy 2 Lots discretely inside 0.3-0.5, 0.5-0.6, and 0.6-0.7 Zones]
+    M -->|YES| N[Deploy Allocated Lots dynamically strictly dependent on Risk capital limits across the 0.3-0.5, 0.5-0.6, and 0.6-0.7 Zones]
     N --> O[Construct Parallel Trendline Encapsulation Channel Box]
     O --> P[FIRST TRADE SURVEILLANCE RULES ACTIVATED]
     P --> Q[Execute 50% Asset Priority Extraction at: 10% ROI OR 12-15 Pts Yield]
@@ -406,26 +427,26 @@ To ensure flawless internal verification functionality, the app displays granula
 
     <script>
         // Configure Mermaid to support dark mode professionally
-        mermaid.initialize({ 
-            startOnLoad: false, 
+        mermaid.initialize({
+            startOnLoad: false,
             theme: 'dark',
             securityLevel: 'loose'
         });
 
         // Fetch markdown text
         const markdownContent = document.getElementById('markdown-content').textContent;
-        
+
         // Custom rendering extension for checkboxes (read-only styling)
         const renderer = new marked.Renderer();
         const originalListitem = renderer.listitem.bind(renderer);
-        renderer.listitem = function(text, task, checked) {
+        renderer.listitem = function (text, task, checked) {
             if (task) {
                 // Return custom styled div wrapper mimicking native lists
                 return `<li style="list-style-type: none; display: flex; align-items: flex-start; margin-left: -1.5rem;"><input type="checkbox" disabled="" ${checked ? 'checked=""' : ''}> <span style="margin-top: 1px;">${text}</span></li>`;
             }
             return originalListitem(text, task, checked);
         };
-        
+
         // Parse and Inject HTML
         document.getElementById('content').innerHTML = marked.parse(markdownContent, { renderer: renderer });
 
@@ -446,4 +467,5 @@ To ensure flawless internal verification functionality, the app displays granula
         renderMermaid();
     </script>
 </body>
+
 </html>
