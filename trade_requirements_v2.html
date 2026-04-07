@@ -188,7 +188,7 @@
 # REQUIREMENTS FOR TRADE SYSTEM UPDATE 5 (V2)
 
 ## 1. System Overview
-This document serves as the professional blueprint for the 'TRADE SYSTEM V2'. It lays out the operational logic, deterministic entry/exit parameters, time barriers, risk controls, and algorithmic guidelines governing the trading system.
+This document serves as the professional blueprint for the 'Final Option Buying System (PRO Version)'. It lays out the operational logic, deterministic entry/exit parameters, time barriers, risk controls, and algorithmic guidelines governing the trading system.
 
 ### 1.1 Simulated Execution Environment (Mock Trading Mode)
 * **Current Operational State:** To rigorously test and structurally validate the underlying strategy accuracy before risking live funds, the system will exclusively operate within a secure **Virtual Paper Trading Environment** initially.
@@ -297,7 +297,8 @@ Total market extraction is ordered sequentially when **ANY single parameter** is
 * Profit trajectory yielding **18% to 27% ROI** (measured proportionally from absolute high to low).
 * Alternatively, if a **5% to 8% return threshold** is met actively within a timeframe under **1 Hour post-entry**. 
   *(Note: A contingent Re-entry may be executed safely under this clause strictly requiring a > 40% structural pullback localized to the earlier profit-booked candle).*
-* Price objective directly intercepts a Pivot / Support & Resistance structural wall (mandatory operational yield must validate a **≥ 12 absolute points minimum threshold**; furthermore, if intercepting a **PIVOT line exclusively**, the trade is allowed to maximize up to an absolute **maximum threshold of 50 points**).
+* Price objective directly intercepts a **PIVOT line**: Mandatory operational yield must validate a **≥ 12 absolute profit points minimum threshold**, allowing the trade to maximize up to an absolute **maximum profit threshold of 50 points**. 
+* Price objective directly intercepts a **Support or Resistance (S&R) wall**: The system does not exit immediately precisely on the touch. If the price pushes past the S&R boundary, the trade is structurally allowed to stretch exactly **50 spot index points** beyond the S&R line before triggering a mandatory exit. (The ≥ 12 absolute points minimum safety yield is still heavily enforced).
 * Emergence of an **Opposite facing MACD** technical signal. 
 * Breakage in structural Trendline support (Validated exclusively when an overarching **15-Minute specific candle definitively closes entirely isolated/outside** the trendline perimeter).
 * Final execution block hits daily operational constraint timeouts at exactly **3:10 PM**.
@@ -310,11 +311,12 @@ Re-entrant operations observe rigid defensive parameters; market extraction orde
 
 ### 6.3 Absolute Pivot & S&R Interaction filtering
 * **Entry Approval Gate:** Operations allowed natively near designated Support/Resistance levels *only if the foundational trendline analysis correlates efficiently with the intended direction*.
-* **Limit Approval Target:** Validation for extraction at a Pivot or S&R zone mandates that the exit provides an absolute total net baseline of **≥ 12 positive points minimum threshold**. *Crucially, if the targeted structure is specifically a PIVOT line, the system allows aggressively maximizing the run distance up to an exclusive **maximum cap threshold of 50 points**.*
+* **PIVOT Limit Approval:** Validation for extraction at a PIVOT zone strictly requires a **≥ 12 positive points minimum profit threshold**. The system heavily allows aggressive maximization up to a **maximum cap profit threshold of 50 points**.
+* **S&R Limit Extension Approval:** If the system explicitly intercepts a standard Support or Resistance wall and systematically crosses it, it heavily delays immediate liquidation. The active trade is strictly permitted to geometrically extend precisely **50 spot index points** completely beyond the crossed S&R line, enforcing an absolute mandatory hard-exit directly when the spot index safely clears that 50-point external barrier metric.
 
-> **Practical Exit Limit Example (Executing a CALL at 100 Premium):**  
-> * **Standard Resistance Interaction:** If the option premium is at **110 (+10 points profit)** when hitting a standard Resistance wall, the system **IGNORES** the wall (does not exit) because the ≥ 12 points minimum threshold hasn't been met. If it hits the Resistance at **115 (+15 points)**, the system successfully bounds the exit and actively takes profit.
-> * **PIVOT Line Interaction (The 50 Cap):** If the price surges securely past standard resistance and runs hard toward a major PIVOT line, the system allows profits to aggressively scale. **If the price physically intercepts the PIVOT line at > 12 points (e.g., +30 points), it exits immediately.** However, if the Pivot line is extremely far away, the absolute moment the profit strictly registers exactly **+50 points (premium hits 150)**, the system guarantees a **mandatory auto-liquidation**—even prior to the Pivot touch—to hard-lock the maximum 50 points safely.
+> **Practical Exit Limit Example (Executing a CALL):**  
+> * **Standard Resistance Crossover (50 Index Point Run):** Assume a CALL execution where a major Resistance wall natively exists tracking at exactly **22,000 spot limit**. When Nifty strictly touches 22,000, the system correctly avoids immediate liquidation. The system dynamically monitors the external crossover, permitting the spot to run aggressively exactly to **22,050 (Resistance + 50 index points)**. The absolute fundamental moment the spot intercepts the 22,050 upper extension, auto-liquidation triggers. 
+> * **PIVOT Line Interaction (The 50 Profit Range Cap):** If the price surges securely hitting a major PIVOT line exclusively, the system guarantees an exit upon physical interception if profit > 12 points (e.g., locking securely +30 points directly). However, if the active PIVOT wall evaluates extraordinarily far out mechanically, the system strictly guarantees a mandatory auto-liquidation actively to hard-lock the maximum 50 points (e.g., premium organically hits 150) completely safely regardless of an active Pivot collision.
 
 ## 7. Performance Theses & Checklist Reviews
 ### 7.1 Key System Assertions (The Trade Edge)
