@@ -184,306 +184,107 @@
     <div class="container" id="content">Loading requirements...</div>
 
     <script id="markdown-content" type="text/markdown">
-# REQUIREMENTS FOR TRADE SYSTEM UPDATE 6 (V2)
+# REQUIREMENTS FOR JAPOON V3 — MACD & PREMIUM PULLBACK
 
 ## 1. System Overview
-This document serves as the professional blueprint for the 'TRADE SYSTEM V2'. It lays out the operational logic, deterministic entry/exit parameters, time barriers, risk controls, and algorithmic guidelines governing the trading system.
+This document establishes the professional blueprint for 'JAPOON V3'. It establishes the operational logic, deterministic entry/exit parameters, risk controls, and algorithmic guidelines for automated NIFTY 50 options trading. V3 prioritizes high-confidence MACD crossovers followed by mathematically precise premium-price pullbacks.
 
-### 1.1 Simulated Execution Environment (Mock Trading Mode)
-* **Current Operational State:** To rigorously test and structurally validate the underlying strategy accuracy before risking live funds, the system will exclusively operate within a secure **Virtual Paper Trading Environment** initially.
-* **Capital Setup Limits:** The algorithmic trading system will be seeded with precisely **1,00,000 INR (1 Lakh) of virtual mock capital**.
-* **Real-Time Data Matrix:** Despite utilizing simulated mock collateral, the system restricts data-blindness by aggressively consuming entirely **live real-market data connections**—including real dynamic spot prices, live options chains, and real execution premiums—calculating all strategies exactly identically to a live deployment framework.
-* **P&L Synthesization Mechanism:** Upon seamlessly entering or fully liquidating risk-scaled fractional executions, the core systemic engine physically updates actively shifting Profit & Loss stat metrics matching absolutely accurately corresponding directly functionally against real-time market action updates natively. *(TLDR: Real Life Market Conditions & Real Signal Checks evaluated cleanly using 1 Lakh Virtual Funds).*
+### 1.1 Execution Environment
+* **Virtual Paper Trading:** The system operates securely within a **Virtual Paper Trading Environment** (Mock Mode).
+* **Capital Simulation:** Seeded with **1,00,000 INR (1 Lakh)** virtual capital.
+* **Real-Market Data:** All decisions, premiums, and contract selections utilize live real-market data feeds, ensuring identical performance behavior to a live account.
 
-## 2. Core Trading Logic Strategy 
-### 2.1 Market State Verification (Initial Gate)
-* **Primary Requirement:** The system must explicitly verify whether the market is officially OPEN for the current calendar day. 
-* **Halt Function:** If the market is closed (weekends, holidays, etc.), the system safely aborts and halts completely.
-* **Flow Continuation:** Subsequent strategy validation rules are executed *only* after an "Open Market" status is confirmed.
+## 2. Core Operational Constraints
+### 2.1 Asset Universe & Instrument
+* **Primary Underlying:** NIFTY 50 (Spot Index).
+* **Instrument:** Weekly/Weekly+ ITM Options (CE/PE).
+* **Directional Signal:** 1-Hour (1H) MACD Crossover.
 
-### 2.2 Directional Bias & VWAP Configuration
-The initial trade direction is deterministically established using purely the 1H or 45M Timeframe MACD Crossover combined explicitly with the VWAP (Volume Weighted Average Price) validation marker.
-* **Bullish Signal Context:** Requires a buy action on **CALL**. Asset price must structurally explicitly track **BELOW the VWAP line**.
-* **Bearish Signal Context:** Requires a buy action on **PUT**. Asset price must structurally explicitly track **ABOVE the VWAP line**.
+### 2.2 Directional Logic & Bias Lock
+* **Bullish Crossover (CALL):** MACD Line crosses ABOVE the Signal Line on 1H timeframe.
+* **Bearish Crossover (PUT):** MACD Line crosses BELOW the Signal Line on 1H timeframe.
+* **Daily Bias Lock:** Once a valid crossover occurs and is accepted, the system locks that direction (CALL or PUT) for the remainder of the session.
+* **Staleness Filter:** Crossover signals must have occurred within the last 10 candles (10 hours) to be eligible.
 
-> **Detailed Execution Example (VWAP Pullback Logic):**
-> * **CALL Scenario:** If the 1H or 45M MACD crossover safely detects an impending macro uptrend (Bullish), the engine explicitly hunts for a pullback. It will initialize the ENTRY **only when the asset price dips below the VWAP line**. By executing below VWAP during an uptrend, the system functionally "buys the dip".
-> * **PUT Scenario:** Conversely, if the MACD detects a macro downtrend (Bearish), the engine actively awaits a retracement spike. It will initialize the ENTRY **only when the asset price surges above the VWAP line**. By executing above VWAP during a downtrend, the system functionally "sells the exhaustion high".
+### 2.3 Chronological Barriers (IST)
+* **Opening Entry Window:** No entry sequences permitted before **09:45 AM**.
+* **Closing Entry Window:** New entries are strictly barred after **2:00 PM**.
+* **Hard Mandatory Exit:** Total liquidation of all positions occurs exactly at **3:10 PM**.
 
-* **CRITICAL CONSTRAINT:** The system strictly confines execution to **ONLY ONE directional bias per day**.
+> **Real-Life Example (Temporal Flow):**
+> * **10:00 AM:** MACD 1H Bullish Cross detected. Bias locked to **CALL**.
+> * **1:30 PM:** Market remains within bias; system continues monitoring for pullback triggers.
+> * **2:05 PM:** Even if a massive dip occurs, new entries are blocked by the 2:00 PM cutoff.
 
-### 2.3 Chronological Workflows (Time Rules)
-* **Opening Window Constraint:** Initial entries are strictly prohibited before **9:45 AM**.
-* **Closing Window Constraint:** New entries are explicitly barred after **2:00 PM**.
-* **Mandatory Exit Rule:** A strictly prioritized closure of all open positions must occur at exactly **3:10 PM**.
+## 3. Entry ProtocolSpecification (The Premium Pullback)
+### 3.1 Crossover Anchor Capture (CrossPrice)
+The moment a valid MACD 1H crossover is verified, the system identifies the prime ITM contract and captures its current Last Traded Price (LTP). This is the **CrossPrice** baseline from which all pullbacks are measured.
 
-> **Real-Life Example (Time Limit Constraint):**
-> * **9:30 AM:** A MACD crossover happens. The system completely ignores the setup because it's aggressively earlier than the strictly defined 9:45 AM opening window.
-> * **1:55 PM:** Another crossover safely completes. The system confidently accepts this algorithmic setup and optimally attempts an entry sequence.
-> * **3:10 PM:** An open running trade dynamically holds a minor small profit limit currently. The core system abruptly liquidates explicitly terminating the entire trade explicitly exactly at 3:10 PM inherently to absolutely enforce the mandatory hard exit rule universally regardless of unmatched unhit parameter targets.
+### 3.2 Two-Tier Entry Strategy (Scaling)
+The system executes a "buy the dip" approach based on the Option Premium's distance from the `CrossPrice`.
 
-### 2.4 Executional Architecture Context (Trade Structure)
-* **Session Cap Limit:** A hard ceiling restriction of **2 distinct trade executions** per session (day).
-* **Re-entry Prerequisites:** Re-entry trades are exclusively authorized if and only if:
-  1. The first trade sequence attained a booked, realized profit.
-  2. The final definitive exit of the first trade occurred before precisely **12:30 PM**.
-  3. The Re-Entry structurally utilizes the **same exact MACD crossover direction**.
-  4. The Re-Entry occurs exactly as a pullback **near the actively formed Trendline** (which can now efficiently be drawn utilizing the newly formed candles during the first trade duration).
+* **Tier 1 — Partial Entry (1 Lot):**
+    * Triggered when the contract premium drops **≥ 10 points** below the `CrossPrice`.
+* **Tier 2 — Deep Entry (1 Lot):**
+    * Triggered when the contract premium drops **≥ 22 points** below the `CrossPrice`.
 
-> **Real-Life Example (Re-Entry Prerequisites Verification):**
-> * A trader naturally takes a successful positional CALL trade securely generated near 10:15 AM and functionally extracts a booked 20% limit actively profit around 11:30 AM natively. Since this safely occurred before 12:30 PM, this session actively shifts cleanly to "Re-Entry Eligible".
-> * The live Nifty chart progressively then naturally dips recursively, forming a newly aligned mathematical pullback interfacing strictly with the predictive trendline locally at specifically 1:15 PM. Because the overarching 1H MACD definitively effectively remains Bullish successfully (purely matching the identical valid direction of Trade 1), the absolute core computational algorithmic engine safely exactly correctly executes the safely mapped structurally 2nd correctly established active trade seamlessly.
+*(Note: Fibonacci zones and Trendlines are explicitly removed. Entry is strictly governed by the premium's absolute point reduction from the crossover moment).*
 
+> **Real-Life Example (Scaling Context):**
+> * AT 10:15 AM: MACD Cross occurs. 22200 CE is at ₹150 (`CrossPrice`).
+> * AT 10:45 AM: Market dips; CE hits ₹140 (10 pt drop). **Tier 1 Entry: 1 Lot.**
+> * AT 11:20 AM: Deeper volatility; CE hits ₹128 (22 pt drop). **Tier 2 Entry: 1 Lot.**
+> * Result: Position averaged between two tiers of the pullback.
 
-## 3. Predictive Trendline Criteria (Strictly for Re-Entry)
-*(System Logic Update: Trendline geometry is exclusively deployed during Re-Entry sequences. Immediately following a primary 1H/45M MACD Crossover, insufficient candle generation inherently restricts safe trendline drawing. Therefore, initial entries disregard trendline proximity and strictly utilize Fibonacci pullback measurements. Once primary trade resolves and more candles exist, the trendline protocol activates for Re-Entry).*
+## 4. Contract Selection (ITM & Expiry)
+### 4.1 Strike Selection (100+ ITM)
+* **Requirement:** Sticks to Deep In-The-Money (ITM) strikes to minimize time decay (Theta) and maximize Delta.
+* **Offset:** Strikes must be at least **100 points** ITM (Spot - 100 for CALL, Spot + 100 for PUT).
 
-### 3.1 Line Architecture & Blueprint
-* **Anchors:** Lines must invariably be drawn attaching to the most recent swing highs and/or low anchors.
-* **Forward Projection:** Trendlines must be physically extended a minimum of **180 candles into the future timeframe axis**.
+### 4.2 Expiry Validation (≥ 7 Days)
+* **Requirement:** System specifically targets contracts with a minimum of **7 active trading days** to expiration. 
+* **Logic:** If current week expiry is < 7 days away, the system rolls to the next weekly series.
 
-### 3.2 Formative Geometry (The ≥ 40° Angle Constraint)
-* **Requirement:** The trendline inclination/declination angle must consistently exhibit an angle measuring **above ~40° from the absolute horizontal**.
-* **Rejection Mandate:** If an indicated trendline presents a shallow angle (flat trajectory), the system dictates **NO OPERATION**; the trend is designated as inherently *weak*.
-* **Permitted Timeframes:** Geometrical trend projection is bounded to **1 Hour (1H)** and **45 Minutes (45M)** resolutions.
+## 5. Comprehensive Exit Matrix
+### 5.1 Partial Profit Realization (78% Success Target)
+* **Tier 1 (50% Volume):** Divested upon hitting **10% ROI** OR earning **12 absolute premium points**.
 
-> **Real-Life Example (Trendline Geometry Selection):**
-> * During the foundational first trade sequence (e.g., 10:00 AM to 12:00 PM), the Nifty 50 generated 8 new cohesive 15-minute candles. The computational system rigorously traces the swing lows of these candles and effectively projects a line forward. Since the upward angle physically measures 45° (steep, aggressive trend), it unequivocally approves this line for securely tracking the afternoon Re-Entry pullback logic.
+### 5.2 Full Liquidation Rules
+The system liquidates the entire position if **ANY** of these parameters hit:
+1. **Target ROI:** Hits **27%** absolute return.
+2. **Rapid ROI:** Hits **8%** return within less than **1 Hour** post-entry.
+3. **Pivot Interaction:** Price hits a Pivot line (R1/R2/R3/S1/S2/S3/Pivot) with a minimum **12-point** profit.
+4. **S&R Extension:** Price pushes **50 index points** past a major Pivot wall.
+5. **Opposite MACD:** A 15-Minute or 30-Minute MACD Flip (histogram crossing zero against the bias).
+6. **Force Exit:** Daily hard cutoff at **3:10 PM**.
 
-## 4. Entry Protocol Specification (Strict Pullback Mode)
-### 4.1 Permitted Model Context (Pullback Integration)
-* **Exclusive Format:** Only *Pullback / Retracement* formatted entries are certified valid.
-* **Pullback Origin Logic (MACD Marker):** To systematically measure and detect a pullback, the system officially flags the exact **MACD Crossover Candle** as the reference origin point. Active pullback scanning operations begin anchored directly from this originating crossover candle.
-* **Sequence Logic:** Market price must distinctly separate/move away from the crossover origin point, and then exhibit a technical "return framework" to test the prior boundaries via mathematical pullback.
-* **Fibonacci Confluence (Detection Tool):** Use the Fibonacci retracement tool to mathematically confirm the pullback. A retracement landing exactly within the **0.5 to 0.6 Zone** can be utilized to definitively validate the pullback phase.
-* **Violation Constraints:** 
-  1. No engagement into ongoing technical Breakouts (NO CHASING).
+## 6. Operational Checklist
+- [ ] **Market Status:** Verified OPEN (9:15 - 15:10).
+- [ ] **Setup Detection:** 1H MACD Crossover confirmed within 10 hours.
+- [ ] **Anchor Capture:** `CrossPrice` recorded for the target ITM contract.
+- [ ] **Tier 1 Validation:** Contract price dropped 10 pts from anchor.
+- [ ] **Tier 2 Validation:** Contract price dropped 22 pts from anchor.
+- [ ] **Audit Trail:** Plain-text logs tracing capture → partial entry → deep entry → exit.
 
-### 4.2 Entry Confirmation Gate (Initial Trade Verification)
-The definitive FIRST ENTRY requires synchronous approval of the following concise conditions:
-1. Valid directional stance established under 1H/45M MACD context.
-2. Price action direction validated precisely against **VWAP criteria** (Below VWAP for CALL / Above VWAP for PUT).
-3. Definitive price action confirming a "pullback test" (validated precisely using the **Fibonacci 0.5 - 0.6 Zone** detection measured natively from crossover candle origin).
-4. Absolute alignment confirmation from a lower-bracket **15-Minute or 30-Minute MACD**.
-5. Upon validation spanning states 1 through 4: Initialize fractional positional allocation linearly to the directional **CALL/PUT**.
-
-*(Critical Path Change: Initial entries do NOT utilize trendline proximity checks, as insufficient candles exist post-crossover to form stable lines).*
-
-> **Real-Life Example (Initial Entry - Strict Pullback Mode):**
-> * **Setup:** At exactly 10:00 AM, the 1H MACD successfully fires a bullish crossover while the NIFTY spot hits 22,000. Since it's legitimately the *first trade*, the algorithm intelligently bypasses drawing trendlines.
-> * **Validation:** The price is strictly tracking structurally below VWAP at 21,980 (validating the "buy the dip" constraint). 
-> * **Execution:** The MACD Crossover structurally happened when NIFTY surged aggressively from 21,800 to 22,000. Mapping Fibonacci from that swing places the crucial 0.5 - 0.6 retracement zone between 21,900 to 21,880. When NIFTY securely drifts down hitting 21,895, the system immediately executes a fractional positional allocation (CALL buy) seamlessly without requiring any parallel trendlines.
-
-### 4.3 Re-Entry Confirmation Gate (Trendline Confluence)
-Re-Entry operations distinctly differ from the initial operation by demanding trendline alignment:
-1. Re-Entry must structurally maintain the **SAME EXACT MACD Crossover Direction** utilized by the primary trade.
-2. Sufficient candle generation now inherently allows calculation of the structural Predictive Trendline.
-3. Trendline explicitly exhibits a **≥ 40° pitch angle** and is projected 180 forward candles.
-4. Execution exclusively occurs precisely when the measured **pullback closely touches/tests the newly formed Trendline**.
-
-> **Real-Life Example (Re-Entry on Active Trendline Touch):**
-> * **Setup:** The initial directional trade safely locked profit by 11:30 AM. By 1:00 PM, the 1H MACD safely remains definitively bullish.
-> * **Validation:** Because several hours have passed, a robust 45° geometrical upwards trendline is now flawlessly mapped natively touching the earlier 10:00 AM and 10:45 AM localized swing lows.
-> * **Execution:** At roughly 1:15 PM, Nifty aggressively consolidates dipping slightly downwards. Instead of just indiscriminately relying on pure math, the system exclusively waits recursively until the localized dip physically interfaces with the structural trendline around the 22,050 spot zone. Once proximity is validated near the active structurally formed line, the RE-ENTRY is triggered securely.
-
-### 4.4 Pattern Decay Context: Weak Trendline Reversals
-* **Decay Threshold Parameter:** The occurrence of exactly **3 separate touches** onto a regular trendline diminishes its structural validity—it is designated subsequently as "weakened".
-* **Alternative Trading Sequence Under Pattern Decay:**
-  1. Detect the existence of an inverse MACD trend crossover.
-  2. Perceive the market price retreating spatially from the prior anchor trendline axis.
-  3. Effectuate an off-line entry execution directly away from the old trendline.
-  4. Synthesize a brand-new Trendline construct.
-  5. Extend the latest line iteratively by 180 forward candles.
-
-> **Real-Life Example (Trendline Decay & Inverse Re-Allocation):**
-> * A bullish trendline has securely supported price bounces successfully at 10:30 AM, 11:15 AM, and 12:00 PM. Reaching exactly **3 separate touches**, structural integrity evaluates computationally as "failed/weakened". 
-> * At exactly 1:30 PM, the price violently crashes below this severely weakened trendline. Synchronously, the localized 15-minute MACD fires a heavy Bearish crossover signal.
-> * The core system decisively initiates a new Bearish (PUT) bias, actively disregards the legacy breached line, and flawlessly synthesizes a brand new downward tracking structural trendline.
-
-## 5. Contract Selection & Capital Disbursement Structure
-### 5.1 Options Contract Selection Criteria
-Before finalizing an order ticket, the system must precisely select the correct option bounds:
-* **Expiry Search Constraint:** The system must specifically search for and select **second-week contract strikes** strictly. Additionally, the selected expiration date must explicitly provide a minimum of **7 active trading days** remaining to expiration (strictly excluding structural non-trading days such as weekends and market holidays).
-* **Strike Points Selection:** The strike price targeted must universally possess a precise **In-The-Money (ITM)** offset constraint of **100 to 150 points** respectively, applying identically to both CALL and PUT executions.
-* **Option Chain Availability Check:** Before finalizing the order, the system must actively query the live option chain matrix to mathematically verify that the calculated ITM strike price formally exists and is actively tradable. If the mathematically derived strike is unavailable, the system safely selects the nearest actively traded ITM strike within the defined offset boundaries.
-
-> **Practical Execution Example (NIFTY50 Focus - Buying ITM):**  
-> * **Condition Match:** NIFTY50 spot price currently hovers near **22,000**. 
-> * **Expiry Verification:** The system skips the active current-week option chain (e.g., 12th April) and immediately targets the **second-week option chain** (e.g., 19th April), rigorously assuring there are at least 7 actionable trading days remaining before that contract expires. 
-> * **Strike Application (CALL Configuration):** Under a bullish MACD setup, the system calculates a **-100 to -150 ITM offset**. It securely selects either the **21,900 CE** or **21,850 CE** strike.
-> * **Strike Application (PUT Configuration):** Under a bearish MACD setup, the system calculates a **+100 to +150 ITM offset**. It securely selects either the **22,100 PE** or **22,150 PE** strike.
-
-
-### 5.2 Dynamic Risk-Adjusted Procurement Scheme (Fibonacci Scaled Entry)
-Capital scaling is dynamically determined by capital allocation limits predefined by the risk management level (e.g., 25% of total capital allowance per zone scale). The number of executable lots per trade is calculated sequentially based on this available risk allowance rather than a fixed lot count.
-* **Allocation Calculation Example:** If a risk management limit of 25% translates to precisely **3 achievable lots**:
-  * **Zone 1 Entry (0.3 to 0.5 Fibonacci zone):** Disburse initial sequence allocating **1 lot** exactly as price enters the first zone limits.
-  * **Zone 2 Entry (0.5 to 0.6 Fibonacci zone):** Maintain capital reserve and strictly deploy the remaining **2 lots** safely if the price directly touches the secondary baseline.
-*(Note: Positional allocation relies on fluid capital scaling adjusting identically to available risk limits matching cascaded depth of the pullback).*
-
-> **Real-Life Example (Mathematical Dynamic Lot Scaling):**
-> * A human user natively assigns a fixed maximum 25% risk limit actively per trade constraint. Calculating inherently against the 1 Lakh capital block, this equates definitively to **3 actionable lots**.
-> * Nifty dips precisely into the 0.3 Fibonacci localized boundary first. The systemic engine accurately fires directly exactly **1 lot**. 
-> * Nifty unexpectedly continues dropping downwards heavily into the deeper 0.5 - 0.6 Fibonacci zone. The engine intelligently deploys the systemic remaining **2 lots** safely averaging out optimal entry strike premiums perfectly without exhausting margin excessively.
-
-### 5.3 Fractional Realization Standard (Initial Exit for FIRST TRADE)
-* **Tier 1 (50% Positional Liquidation from total filled units):**
-  * Divested precisely upon earning either a numerical **10%** equity profit OR earning structurally **12 to 15 premium points**. 
-* **Tier 2 (Defending the Remaining 50% Positional Balance):** 
-  * Dictated actively by the standard holistic exit protocols defined below. 
-
-> **Real-Life Example (Tiered Fractional Profit Extraction):**
-> * Executional system automatically buys **4 actionable lots** of the safely selected 22,000 CE accurately locked exactly at ₹100 premium.
-> * **Tier 1:** Contract actively hits exactly ₹115. (+15 absolute premium points yield effectively achieved). The architecture immediately auto-sells exactly **2 lots** (50% fraction extracted), strictly locking in safe foundational realized profit permanently.
-> * **Tier 2:** The retained remaining **2 lots** are effectively left structurally to surge dynamically forward controlled exclusively by the firm stop-losses securely tied strictly to the absolute S&R or the hard absolute 3:10 PM extraction rule.
-
-## 6. Comprehensive Exit Criteria 
-### 6.1 First Trade Core Exit Protocol
-Total market extraction is ordered sequentially when **ANY single parameter** is positively triggered:
-* Profit trajectory yielding **18% to 27% ROI** (measured proportionally from absolute high to low).
-* Alternatively, if a **5% to 8% return threshold** is met actively within a timeframe under **1 Hour post-entry**. 
-  *(Note: A contingent Re-entry may be executed safely under this clause strictly requiring a > 40% structural pullback localized to the earlier profit-booked candle).*
-* Price objective directly intercepts a **PIVOT line**: Mandatory operational yield must validate a **≥ 12 absolute profit points minimum threshold**, allowing the trade to maximize up to an absolute **maximum profit threshold of 50 points**. 
-* Price objective directly intercepts a **Support or Resistance (S&R) wall**: The system does not exit immediately precisely on the touch. If the price pushes past the S&R boundary, the trade is structurally allowed to stretch exactly **50 spot index points** beyond the S&R line before triggering a mandatory exit. (The ≥ 12 absolute points minimum safety yield is still heavily enforced).
-* Emergence of an **Opposite facing MACD** technical signal. 
-* Breakage in structural Trendline support (Validated exclusively when an overarching **15-Minute specific candle definitively closes entirely isolated/outside** the trendline perimeter).
-* Final execution block hits daily operational constraint timeouts at exactly **3:10 PM**.
-
-> **Real-Life Example (Holistic Parameter Extraction Matrix):**
-> * **Scenario A (Target Yield Lock):** The active position surges flawlessly granting a maximum +25% ROI cleanly measured structurally from absolute entry limits. The system activates maximum full priority closure instantaneously.
-> * **Scenario B (System Safety against Time Decay):** Positional allocation drags sluggishly actively for directly 50 minutes cleanly post-entry. Relying upon the defined strictly 1-Hour return rule constraint, directly because positional premium safely yields an adequate +6% safely, the system ruthlessly forces manual closure defensively aggressively overriding potentially bleeding premium decay directly. 
-> * **Scenario C (Trendline Architecture Failure):** An active deeply retracing localized 15-Minute candlestick decisively prints securely its entirely closed limits completely externally *below* the drawn defensive support trendline boundary. Recognizing explicitly pattern corruption natively, full-exits safely execute entirely immediately natively.
-
-### 6.2 Secondary Phase Context (The Re-Entry Exit Parameters)
-Re-entrant operations observe rigid defensive parameters; market extraction ordered linearly via ANY of the localized rule sets:
-* Inverse action denoted by an Opposite trajectory facing MACD indicator spanning **15-Min / 30-Min timeframe thresholds**. 
-* Trendline breakage sequence functioning exactly under **15-Minute timeline closures** positioned entirely outside parameters. 
-* Final structural timeout clock terminates effectively reaching **3:10 PM**. 
-
-### 6.3 Absolute Pivot & S&R Interaction filtering
-* **Entry Approval Gate:** Operations allowed natively near designated Support/Resistance levels *only if the foundational trendline analysis correlates efficiently with the intended direction*.
-* **PIVOT Limit Approval:** Validation for extraction at a PIVOT zone strictly requires a **≥ 12 positive points minimum profit threshold**. The system heavily allows aggressive maximization up to a **maximum cap profit threshold of 50 points**.
-* **S&R Limit Extension Approval:** If the system explicitly intercepts a standard Support or Resistance wall and systematically crosses it, it heavily delays immediate liquidation. The active trade is strictly permitted to geometrically extend precisely **50 spot index points** completely beyond the crossed S&R line, enforcing an absolute mandatory hard-exit directly when the spot index safely clears that 50-point external barrier metric.
-
-> **Practical Exit Limit Example (Executing a CALL):**  
-> * **Standard Resistance Crossover (50 Index Point Run):** Assume a CALL execution where a major Resistance wall natively exists tracking at exactly **22,000 spot limit**. When Nifty strictly touches 22,000, the system correctly avoids immediate liquidation. The system dynamically monitors the external crossover, permitting the spot to run aggressively exactly to **22,050 (Resistance + 50 index points)**. The absolute fundamental moment the spot intercepts the 22,050 upper extension, auto-liquidation triggers. 
-> * **PIVOT Line Interaction (The 50 Profit Range Cap):** If the price surges securely hitting a major PIVOT line exclusively, the system guarantees an exit upon physical interception if profit > 12 points (e.g., locking securely +30 points directly). However, if the active PIVOT wall evaluates extraordinarily far out mechanically, the system strictly guarantees a mandatory auto-liquidation actively to hard-lock the maximum 50 points (e.g., premium organically hits 150) completely safely regardless of an active Pivot collision.
-
-## 7. Performance Theses & Checklist Reviews
-### 7.1 Key System Assertions (The Trade Edge)
-* **Expected Aggregate Statistical Return Profile:** Win Rate consistently evaluates dynamically between **~78% and 85%**.
-* **Logical Bedrock Assurances:** Success parameters logically synthesized by:
-  1. Methodical operational dependencies upon active predictive trendlines.
-  2. Disallowing chasing FOMO errors by inherently mandating strict pullback-only entry frameworks. 
-  3. Formative geometry requiring > 40° angles intrinsically isolating valid action points from volatile random planar distribution. 
-
-### 7.2 Core Philosophy Synthesis (Rule Matrix)
-> *"Assess the 1H/45M MACD → Draw strong trendlines (≥40° + extrapolate 180 sequence points) → Maintain fierce patience for physical pullbacks → Initialize fractional operational CALLs / PUTs directly onto bounds → Abide strictly to rigid mathematical rule-bound exits parameter triggers → NEVER chase a structural breakout."*
-
-### 7.3 Operational Trade Action Matrix Checklist
-**INITIAL PRE-ENTRY (Validation Limits):**
-- [ ] System validated the actively OPEN status of the market for today.
-- [ ] Active execution schedule is valid (9:45 AM – 2:00 PM).
-- [ ] Daily Bias fixed strictly to either CALL or PUT based on 1H/45M MACD.
-- [ ] Asset structurally validated natively against VWAP bounds (CALL<VWAP / PUT>VWAP).
-- [ ] Overall Trades iteration confirms > 2 limit hasn't tripped. 
-- [ ] System actively anchored pullback detection scanning originating structurally from the MACD Crossover Candle.
-- [ ] Evaluated asset pricing exhibits localized pullback (utilize Fibonacci 0.5 - 0.6 zone for precision). 
-- [ ] Confirmed internal time-weighted indicators (15m/30m MACD aligns correctly). 
-- [ ] Evaluated strictly no conditions of breakout chasing phenomena. 
-- [ ] Validated Contract Selection: Second-Week Expiry selected (spanning exactly ≥ 7 functional trading days) matching a 100-150 point parameter offset.
-
-**RE-ENTRY PRE-CHECK (Trendline Limits):**
-- [ ] The first trade sequence definitively exited with realized profit before 12:30 PM.
-- [ ] The identical MACD crossover direction is strictly maintained.
-- [ ] Trendline evaluates operationally active (≥ 40° Arch Angle).
-- [ ] Trendline accurately pushed forward by 180 positional instances.
-- [ ] Evaluated asset pricing exhibits localized pullback closely interacting with the newly formed trendline.
-
-**ACTIVE TRADE (Positional Action):**
-- [ ] Sub-matrix scaling initialized dynamically based strictly on available Risk Management lots computed matching sequential Fibonacci depth hits.
-- [ ] Actively redrawing parameters relative to trendline alterations. 
-- [ ] Continuing consistent macro verification traversing the MACDs. 
-- [ ] Assuring the 15-Minute closure actions correctly align without overreaching trendline structural integrity limits.
-
-**EXPULSION BOUNDARIES:**
-- **Initial First Trade Framework:** Ensure partial allocations yield successful extraction limits natively → Execute ultimate Final Exit protocols dynamically under trigger action limitations.
-- **Re-Entry Structure Sequence Protocol:** Enforce rigorous closure strictly isolated to exact MACD inversions / Broken Trendlines bounds / Temporal Time Limit stops exclusively.
-
-## 8. Master Architectural Execution Protocol Flowchart
+## 7. Master Architectural Flow
 
 ```mermaid
 graph TD
-    A[START] --> A1{Is Market OPEN Today?}
-    A1 -->|NO| A2[HALT - No Trading Operations]
-    A1 -->|YES| B[Wait until 9:45 AM]
-    B --> C[Evaluate 1H / 45M MACD + VWAP Status]
-    C --> D{Fix Bias Direction}
-    D -->|Bullish| E(Assume CALL Bias)
-    D -->|Bearish| F(Assume PUT Bias)
-    E --> J[Await Retracement / Pullback to Fibonacci 0.5-0.6 Zone]
-    F --> J
-    J --> K[Obtain Confirmation via 15m/30m MACD]
-    K --> K1[Select Contract: Second-Week Expiry w/ ≥ 7 Trading Days + 100-150 pts offset]
-    K1 --> L[EXECUTE TIERED ENTRY FRAMEWORK]
-    L --> M{Does Price Enter Fibonacci Zones?}
-    M -->|YES| N[Deploy Allocated Lots dynamically strictly dependent on Risk capital limits across the 0.3-0.5, 0.5-0.6, and 0.6-0.7 Zones]
-    N --> O[Construct Parallel Trendline Encapsulation Channel Box]
-    O --> P[FIRST TRADE SURVEILLANCE RULES ACTIVATED]
-    P --> Q[Execute 50% Asset Priority Extraction at: 10% ROI OR 12-15 Pts Yield]
-    Q --> R{Do Remaining 50% Risk Parameters Intercept Active Extraction Commands?}
-    R -->|Action Interfaces Opposing Parallel Limits| T[INITIATE FULL POSITIONAL EXTRACTION]
-    R -->|Confirming Exit Oriented Opposite MACD Signature| T
-    R -->|15-Minute Component Closes Explicitly Beyond Active Axes| T
-    R -->|Terminal Halting Function at 3:10 PM| T
-    T --> U{Did Full Exit Occur Before 12:30 PM Constraint?}
-    U -->|NO| V[OPERATIONAL SYSTEM COMPLETE - END TRADING DAY]
-    U -->|YES| W[RE-ENTRY PROTOCOL READY STATE VERIFIED]
-    W --> X[Revalidate Exact Same MACD Direction]
-    X --> Y1[Draw Predictive Trendline Architecture >= 40° Angle]
-    Y1 --> Y[Await Pullback Close To Actively Formed Trendline]
-    Y --> Z[RE-ENTRY DEPLOYMENT FULL EXECUTED]
-    Z --> AA[RE-ENTRY STRICT ENFORCED SURVEILLANCE ACTIVATED]
-    AA --> AB{Re-Entry Bounds Exit Triggers Hit?}
-    AB -->|Opposite MACD Bound Condition Identified| AC[FULL EXIT ENACTED - LIQUIDATION PROCEDURES]
-    AB -->|Confirmed Broken Trendline Structure on 15-Min Close| AC
-    AB -->|System Exhausted Timeout - 3:10 PM Reached| AC
-    AC --> AD[OPERATIONAL SEQUENCE COMPLETE - END OF SESSION]
+    A[Market State Verification] --> B{Time Check: >= 9:45 AM?}
+    B -->|Yes| C{MACD 1H Crossover?}
+    C -->|Yes| D[Capture Option CrossPrice]
+    D --> E{Wait for Pullback}
+    E -->|10 Pt Premium Drop| F[ENTRY TIER 1 - PARTIAL]
+    F --> G{Monitor Position}
+    G -->|22 Pt Premium Drop| H[ENTRY TIER 2 - DEEP]
+    G --> I{Any Exit Trigger Hit?}
+    H --> I
+    I -->|Yes| J[FULL LIQUIDATION]
+    I -->|No| G
+    B -->|No| B
+    B -->|Time = 3:10 PM| J
 ```
-
-## 9. Mobile Application Interface & Monitoring Configuration
-The Mobile Application will interface directly with the algorithmic trading engine to provide live visibility and allow essential system parameter configurations without interrupting core execution logic. It relies exclusively on a robust WebSocket data transmission layer.
-
-### 9.1 User Configuration & Control Options
-The mobile app provides explicit inputs to parameterize core system behavior directly:
-* **Risk Management Level:** The app will have an option to set the risk management level (determining explicitly how many percent of the capital amount the system can use to trade).
-* **Timeframe Selection:** The app also has an option to change the active functional timeframe dynamically between **1H to 45M**.
-
-### 9.2 Real-Time Dashboard Analytics 
-The core operational dashboard securely streams high-fidelity data reflecting identical metrics aggressively used by the execution engine:
-* **Core Price Telemetry:** Current Market LTP, exact spot/strike price differencing streams, and OHLC data feeds.
-* **Live Operational Charting:** Integration of an interactive candlestick chart rendering systemic logic elements natively: actively generated Predictive Trendlines, identified Pivot matrices, and live MACD indicator logic outputs.
-* **Executional Constraints Monitor:** 
-  * Displays active traded limits (Trades taken today vs limit remaining bounds).
-  * Global system toggle status (Idle / In-Trade active state).
-  * Capital and Sizing States (Tracking absolute Total System Capital, Active Used/Deployed Capital, and the exact scaled Lot volume deployed across execution zones).
-  * Current Trading Day's Profit / Loss margins parameters. 
-
-### 9.3 Actionable Push Notification Matrix 
-Automated telemetry will dynamically fire actionable notifications outlining system behaviors directly securely explicitly strictly to the human operator:
-* **Setup Warning Alert / Setup Detected:** Triggers immediately when the core engine detects significantly reasonable market characteristics aligning natively towards a potential pullback Entry Sequence matrix. 
-* **Execution Limit Confirmed (Entry limits):** Upon capital deployment, fires notification containing comprehensive Entry execution details.
-* **Expulsion Verified Protocol (Exit checks):** Fires securely definitively upon systemic order liquidation, outputting strictly mapping exact exit details natively corresponding directly structurally against exact extraction timestamps.
-
-### 9.4 Systematic Audit & Diagnostic Tracing Logs
-To ensure flawless internal verification functionality, the app displays granular operational tracing logs directly highlighting exactly *why* and *when* the system shifts internal limits bounds statuses functionally:
-* **Timestamp Enforcements:** Every systemic trace log is irrevocably stamped with precise Date and Time boundaries limits functionality. 
-* **Sub-Logic Event Log Tracing Sequences (Examples):**
-  * Condition Verification: *"System validated absolute directional 1H crossover."*
-  * Trendline Verification: *"Valid predictive trend criteria fully established."*
-  * Wait Operations: *"Valid pullback bounds detected - System actively holding state waiting for pullback confirmation candle."*
-  * Extraction Events: *"System successfully evaluated an exit trigger - executing complete liquidation logic."*
-* **Audit Life-cycle Span Constraints:** Guarantees an uninterrupted sequence of plain-text system logs spanning from initial pre-flight market checks linearly through complete setup validation, active position constraints monitoring, and terminal exit condition execution.
+monitoring, and terminal exit condition execution.
 
     </script>
 
