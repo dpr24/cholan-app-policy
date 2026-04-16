@@ -247,6 +247,12 @@ The system executes a "buy the dip" approach based on the Option Premium's dista
 * **Requirement:** System specifically targets contracts with a minimum of **7 active trading days** to expiration. 
 * **Logic:** If current week expiry is < 7 days away, the system rolls to the next weekly series.
 
+### 4.3 Dynamic Option Chain Discovery
+* **Scrip Master Integration:** The system automatically downloads the Angel One Scrip Master JSON to identify all legally valid NIFTY contracts.
+* **Intelligent Caching:** The 10MB master file is cached locally for **24 hours** to ensure optimal performance and avoid broker API throttling.
+* **Dynamic Filtering:** Upon a signal, the system scans all available NIFTY contracts and selects the top **50 strikes** surrounding the current Spot Price (ATM +/- 15 strikes).
+* **Live Valuation:** The system fetches real-time "LTP" for these 50 contracts to build a live Option Chain, ensuring the mathematical entry targets are based on true market premiums.
+
 ## 5. Comprehensive Exit Matrix
 ### 5.1 Partial Profit Realization (78% Success Target)
 * **Tier 1 (50% Volume):** Divested upon hitting **10% ROI** OR earning **12 absolute premium points**.
@@ -262,7 +268,8 @@ The system liquidates the entire position if **ANY** of these parameters hit:
 
 ## 6. Operational Checklist
 - [ ] **Market Status:** Verified OPEN (9:15 - 15:10).
-- [ ] **Setup Detection:** 1H MACD Crossover confirmed within 10 hours.
+- [ ] **Data Integrity:** Scrip Master discovery (24h cache) verified.
+- [ ] **Setup Detection:** 1H MACD Crossover confirmed within 5 hours.
 - [ ] **Anchor Capture:** `CrossPrice` recorded for the target ITM contract.
 - [ ] **Tier 1 Validation:** Contract price dropped ₹10 from anchor.
 - [ ] **Tier 2 Validation:** Contract price dropped ₹22 from anchor.
@@ -274,7 +281,8 @@ The system liquidates the entire position if **ANY** of these parameters hit:
 graph TD
     A[Market State Verification] --> B{Time Check: >= 9:45 AM?}
     B -->|Yes| C{MACD 1H Crossover?}
-    C -->|Yes| D[Capture Option CrossPrice]
+    C -->|Yes| C1[Discover Options Chain via Scrip Master]
+    C1 --> D[Capture Option CrossPrice]
     D --> E{Wait for Pullback}
     E -->|₹10 Premium Drop| F[ENTRY TIER 1 - PARTIAL]
     F --> G{Monitor Position}
