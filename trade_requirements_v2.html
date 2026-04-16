@@ -224,16 +224,18 @@ The moment a valid MACD 1H crossover is verified, the system identifies the prim
 The system executes a "buy the dip" approach based on the Option Premium's distance from the `CrossPrice`.
 
 * **Tier 1 — Partial Entry (1 Lot):**
-    * Triggered when the contract premium drops **≥ ₹10** from the `CrossPrice`.
+    * Triggered when the contract premium drops between **₹10** and **₹22** from the `CrossPrice`.
 * **Tier 2 — Deep Entry (1 Lot):**
-    * Triggered when the contract premium drops **≥ ₹22** from the `CrossPrice`.
+    * Triggered when the contract premium drops between **₹22** and **₹50** from the `CrossPrice`.
+
+*(Note: If the premium drops more than ₹50 from the `CrossPrice`, the setup is considered failed/invalid for safety).*
 
 *(Note: Fibonacci zones and Trendlines are explicitly removed. Entry is strictly governed by the premium's absolute point reduction from the crossover moment).*
 
 > **Real-Life Example (Scaling Context):**
 > * AT 10:15 AM: MACD Cross occurs. 22200 CE is at ₹150 (`CrossPrice`).
-> * AT 10:45 AM: Market dips; CE hits ₹140 (10 pt drop). **Tier 1 Entry: 1 Lot.**
-> * AT 11:20 AM: Deeper volatility; CE hits ₹128 (22 pt drop). **Tier 2 Entry: 1 Lot.**
+> * AT 10:45 AM: Market dips; CE hits ₹140 (₹10 drop). **Tier 1 Entry: 1 Lot.**
+> * AT 11:20 AM: Deeper volatility; CE hits ₹128 (₹22 drop). **Tier 2 Entry: 1 Lot.**
 > * Result: Position averaged between two tiers of the pullback.
 
 ## 4. Contract Selection (ITM & Expiry)
@@ -262,8 +264,8 @@ The system liquidates the entire position if **ANY** of these parameters hit:
 - [ ] **Market Status:** Verified OPEN (9:15 - 15:10).
 - [ ] **Setup Detection:** 1H MACD Crossover confirmed within 10 hours.
 - [ ] **Anchor Capture:** `CrossPrice` recorded for the target ITM contract.
-- [ ] **Tier 1 Validation:** Contract price dropped 10 pts from anchor.
-- [ ] **Tier 2 Validation:** Contract price dropped 22 pts from anchor.
+- [ ] **Tier 1 Validation:** Contract price dropped ₹10 from anchor.
+- [ ] **Tier 2 Validation:** Contract price dropped ₹22 from anchor.
 - [ ] **Audit Trail:** Plain-text logs tracing capture → partial entry → deep entry → exit.
 
 ## 7. Master Architectural Flow
@@ -274,9 +276,9 @@ graph TD
     B -->|Yes| C{MACD 1H Crossover?}
     C -->|Yes| D[Capture Option CrossPrice]
     D --> E{Wait for Pullback}
-    E -->|10 Pt Premium Drop| F[ENTRY TIER 1 - PARTIAL]
+    E -->|₹10 Premium Drop| F[ENTRY TIER 1 - PARTIAL]
     F --> G{Monitor Position}
-    G -->|22 Pt Premium Drop| H[ENTRY TIER 2 - DEEP]
+    G -->|₹22 Premium Drop| H[ENTRY TIER 2 - DEEP]
     G --> I{Any Exit Trigger Hit?}
     H --> I
     I -->|Yes| J[FULL LIQUIDATION]
