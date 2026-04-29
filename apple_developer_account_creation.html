@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apple Developer Program Enrollment Guide</title>
+  <meta name="description"
+    content="A comprehensive step-by-step guide to enrolling in the Apple Developer Program — covering identity verification, organization details, D-U-N-S numbers, and finalizing your subscription." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --card: #1a1a26;
+      --card-hover: #20202f;
+      --border: rgba(255, 255, 255, 0.07);
+      --accent: #6366f1;
+      --accent2: #818cf8;
+      --accent3: #a5b4fc;
+      --apple: #2997ff;
+      --apple2: #63b3ed;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius: 16px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0a0a0f 0%, #0d0d1f 40%, #0f1628 100%);
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% -10%, rgba(99, 102, 241, 0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(41, 151, 255, 0.10) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #1d6fa8 0%, #2997ff 100%);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 0 40px rgba(41, 151, 255, 0.35);
+      font-size: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 30%, var(--apple2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      border: 1px solid;
+    }
+
+    .badge-blue {
+      background: rgba(41, 151, 255, 0.12);
+      border-color: rgba(41, 151, 255, 0.3);
+      color: var(--apple2);
+    }
+
+    .badge-green {
+      background: rgba(52, 211, 153, 0.10);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--success);
+    }
+
+    .badge-yellow {
+      background: rgba(251, 191, 36, 0.10);
+      border-color: rgba(251, 191, 36, 0.3);
+      color: var(--warning);
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .main-content {
+      padding: 60px 0 80px;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--apple);
+      box-shadow: 0 0 8px rgba(41, 151, 255, 0.6);
+    }
+
+    /* ── STEPS ── */
+    .steps-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step-card {
+      display: flex;
+      gap: 24px;
+      padding: 28px 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .step-card:first-child {
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .step-card:last-child {
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .step-card:not(:last-child) {
+      border-bottom: none;
+    }
+
+    .step-card:hover {
+      background: var(--card-hover);
+    }
+
+    .step-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+
+    .step-num {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #1d6fa8, #2997ff);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(41, 151, 255, 0.3);
+      flex-shrink: 0;
+    }
+
+    .step-line {
+      width: 2px;
+      flex: 1;
+      background: linear-gradient(to bottom, rgba(41, 151, 255, 0.4), transparent);
+      margin-top: 8px;
+      min-height: 20px;
+    }
+
+    .step-card:last-child .step-line {
+      display: none;
+    }
+
+    .step-body {
+      flex: 1;
+    }
+
+    .step-body h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .step-body p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+
+    .step-body strong {
+      color: var(--apple2);
+      font-weight: 600;
+    }
+
+    .step-note {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(251, 191, 36, 0.08);
+      border-left: 3px solid var(--warning);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--warning);
+    }
+
+    /* ── INSIGHTS GRID ── */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .insight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .insight-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      background: var(--card-hover);
+    }
+
+    .insight-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .insight-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .insight-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── TIMELINE TABLE ── */
+    .timeline-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .timeline-table th {
+      background: rgba(41, 151, 255, 0.12);
+      color: var(--apple2);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 14px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .timeline-table td {
+      padding: 14px 20px;
+      font-size: 14px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .timeline-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .timeline-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .timeline-table td:first-child {
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(41, 151, 255, 0.12);
+      color: var(--apple2);
+      border: 1px solid rgba(41, 151, 255, 0.25);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ── DEFINITIONS TABLE ── */
+    .defs-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .defs-table th {
+      background: rgba(99, 102, 241, 0.12);
+      color: var(--accent3);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 14px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .defs-table td {
+      padding: 14px 20px;
+      font-size: 14px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.65;
+    }
+
+    .defs-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .defs-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .defs-table td:first-child {
+      font-weight: 700;
+      color: var(--accent3);
+      white-space: nowrap;
+    }
+
+    /* ── IMPORTANT NOTES ── */
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .note-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      transition: background 0.2s;
+    }
+
+    .note-item:hover {
+      background: var(--card-hover);
+    }
+
+    .note-item .ni {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .note-item p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .note-item strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── FEE WAIVER SECTION ── */
+    .waiver-section {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(41, 151, 255, 0.07) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-top: 8px;
+    }
+
+    .waiver-section h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .waiver-section .waiver-intro {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    .waiver-section .waiver-intro strong {
+      color: var(--apple2);
+    }
+
+    .waiver-subsection {
+      margin-bottom: 24px;
+    }
+
+    .waiver-subsection h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent3);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    .waiver-eligibility {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .wcard {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .wcard.eligible {
+      background: rgba(52, 211, 153, 0.08);
+      border-color: rgba(52, 211, 153, 0.25);
+      color: var(--success);
+    }
+
+    .wcard.ineligible {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.25);
+      color: #f87171;
+    }
+
+    .waiver-conditions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .wcond {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .wcond strong {
+      color: var(--text);
+    }
+
+    .wcond .wc-icon {
+      flex-shrink: 0;
+      font-size: 15px;
+    }
+
+    .eu-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(41, 151, 255, 0.08);
+      border: 1px solid rgba(41, 151, 255, 0.2);
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+
+    .eu-banner .eu-flag {
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .eu-banner p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .eu-banner strong {
+      color: var(--apple2);
+    }
+
+    .apply-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .apply-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .apply-step strong {
+      color: var(--text);
+    }
+
+    .apply-step .as-num {
+      background: linear-gradient(135deg, #1d6fa8, #2997ff);
+      color: #fff;
+      font-weight: 700;
+      font-size: 11px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── OFFICIAL REFERENCE ── */
+    .ref-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 26px;
+      background: linear-gradient(135deg, rgba(41, 151, 255, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+      border: 1px solid rgba(41, 151, 255, 0.25);
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .ref-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(41, 151, 255, 0.15);
+      background: linear-gradient(135deg, rgba(41, 151, 255, 0.13) 0%, rgba(99, 102, 241, 0.13) 100%);
+    }
+
+    .ref-icon {
+      font-size: 30px;
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      background: rgba(41, 151, 255, 0.12);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(41, 151, 255, 0.2);
+    }
+
+    .ref-body h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .ref-body p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .ref-body .ref-url {
+      font-size: 12px;
+      color: var(--apple2);
+      font-weight: 500;
+    }
+
+    .ref-arrow {
+      margin-left: auto;
+      color: var(--apple2);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    footer span {
+      color: var(--apple2);
+      font-weight: 600;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .step-card {
+        flex-direction: column;
+        gap: 14px;
+        padding: 20px;
+      }
+
+      .step-left {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .step-line {
+        display: none;
+      }
+
+      .timeline-table,
+      .defs-table {
+        font-size: 13px;
+      }
+
+      .timeline-table th,
+      .timeline-table td,
+      .defs-table th,
+      .defs-table td {
+        padding: 10px 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-icon">🍎</div>
+    <h1>Apple Developer Program<br />Enrollment Guide</h1>
+    <p>A complete step-by-step walkthrough for enrolling in the Apple Developer Program — from sign-in to subscription.
+    </p>
+    <div class="hero-badges">
+      <span class="badge badge-blue">📱 Apple Developer App</span>
+      <span class="badge badge-green">✅ Identity Verified</span>
+      <span class="badge badge-yellow">🏢 Organizations Supported</span>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- ENROLLMENT STEPS -->
+      <p class="section-title"><span class="dot"></span>Enrollment Steps</p>
+
+      <div class="steps-grid">
+
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">1</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Navigate to developer.apple.com</h3>
+            <p>Open your preferred web browser and go to <strong>developer.apple.com</strong>. Click the
+              <strong>Account</strong> button to sign in with your Apple ID. If you don't have one, click <strong>Create
+                yours now</strong>, enter your details, and complete the Apple ID setup. Once signed in, click
+              <strong>Enroll Now</strong> to begin.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Download & Set Up the Apple Developer App</h3>
+            <p>The <strong>Enroll Now</strong> page links you to the <strong>Apple Developer App</strong> on the App
+              Store. Download, install, and open it. Sign in with your Apple ID via the <strong>Account</strong> tab,
+              then tap <strong>Enroll Now</strong>. Review the summary of <strong>benefits and requirements</strong>
+              carefully before tapping <strong>Continue</strong>.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">3</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Enter Personal & Identity Information</h3>
+            <p>Provide your <strong>legal first name, last name, and phone number</strong>. The name must match
+              <strong>exactly as it appears on official identification</strong> — no nicknames or company names allowed.
+              Complete <strong>identity verification</strong> using a government-issued photo ID such as a driver's
+              license. Capture a clear photo and tap <strong>Confirm</strong>.</p>
+            <div class="step-note">⚠️ Note for Mexico: Driver's licenses are <strong>not accepted</strong> for identity
+              verification. An alternate government-issued ID is required.</div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">4</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Provide Organization Details</h3>
+            <p>Select your <strong>entity type</strong> and enter the <strong>legal entity name</strong> (no CBAs or
+              trade names — this name appears as the seller in the App Store). Enter your <strong>D-U-N-S
+                number</strong> (a unique 9-digit identifier by <strong>Dun & Bradstreet</strong>); if you don't have
+              one, request it at no cost. Also provide the organization's <strong>headquarters address, phone
+                number</strong>, and an <strong>active public website domain</strong>.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">5</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Authority Confirmation & Verification Contact</h3>
+            <p>Confirm that you have <strong>legal authority to bind the organization</strong> to Apple's agreements.
+              Provide a <strong>contact person</strong> who can verify this authority. Submit all information and
+              monitor your <strong>email</strong> for Apple's review response and any follow-up requests.</p>
+            <div class="step-note">💡 Nonprofits, educational institutions, and government organizations <strong>may
+                qualify for a fee waiver</strong>. Request it via the provided link during enrollment.</div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">6</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Finalize Enrollment & Subscribe</h3>
+            <p>Once Apple approves your application, you'll receive an email. Reopen the <strong>Apple Developer
+                App</strong>, tap the <strong>Account</strong> tab, and sign in if needed. Tap <strong>Continue Your
+                Enrollment</strong>, then review the <strong>Apple Developer Program License Agreement</strong>
+              carefully. Tap <strong>Agree</strong>, review the annual membership details, then tap
+              <strong>Subscribe</strong> to complete enrollment.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <hr class="divider" />
+
+      <!-- KEY INSIGHTS -->
+      <p class="section-title"><span class="dot"></span>Key Insights & Takeaways</p>
+      <div class="insights-grid">
+        <div class="insight-card">
+          <div class="insight-icon">🌐</div>
+          <h4>Starting Point</h4>
+          <p>Enrollment begins on <strong>developer.apple.com</strong> or directly via the Apple Developer App.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🔑</div>
+          <h4>Apple ID Requirement</h4>
+          <p>An Apple ID is essential. New users can create one during the enrollment process.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🪪</div>
+          <h4>Identity Verification</h4>
+          <p>A government-issued photo ID is required. Driver's licenses are not accepted in Mexico.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🏢</div>
+          <h4>Organization Data</h4>
+          <p>Legal entity name, D-U-N-S number, valid headquarters info, and an active website domain are all mandatory.
+          </p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">⚖️</div>
+          <h4>Authority Confirmation</h4>
+          <p>Users must verify they hold the legal authority to bind their organization to Apple's agreements.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🎓</div>
+          <h4>Fee Waiver</h4>
+          <p>Nonprofits, accredited educational institutions, and government entities may qualify. All apps must remain
+            <strong>free</strong> to keep the waiver. EU orgs are also exempt from the Core Technology Fee.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">✅</div>
+          <h4>Final Steps</h4>
+          <p>Agreeing to the license terms and paying the annual subscription fee finalizes enrollment.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">📧</div>
+          <h4>Email Monitoring</h4>
+          <p>Approval and next-step notifications are sent via email. Check your inbox regularly after submission.</p>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- FEE WAIVER SECTION -->
+      <p class="section-title"><span class="dot"></span>Fee Waiver — Detailed Information</p>
+      <div class="waiver-section">
+        <h3>🎓 Annual Fee: $99 USD/year — Waived for Qualifying Organizations</h3>
+        <p class="waiver-intro">Apple offers a <strong>full fee waiver</strong> for the $99 annual Apple Developer
+          Program membership to eligible nonprofit, educational, and government organizations. The waiver is
+          <strong>confirmed active in 2026</strong>.</p>
+
+        <div class="waiver-subsection">
+          <h4>Who Qualifies?</h4>
+          <div class="waiver-eligibility">
+            <div class="wcard eligible">🤝 Registered Nonprofits</div>
+            <div class="wcard eligible">🎓 Accredited Educational Institutions</div>
+            <div class="wcard eligible">🏛️ Government Entities</div>
+            <div class="wcard ineligible">👤 Individuals / Sole Proprietors</div>
+          </div>
+        </div>
+
+        <div class="waiver-subsection">
+          <h4>Conditions to Maintain the Waiver</h4>
+          <div class="waiver-conditions">
+            <div class="wcond"><span class="wc-icon">🆓</span><span>All apps under the account <strong>must be
+                  free</strong> — no paid apps or in-app purchases allowed.</span></div>
+            <div class="wcond"><span class="wc-icon">📄</span><span>You must <strong>not have signed</strong> the Paid
+                Applications Agreement (Schedules 2 and 3).</span></div>
+            <div class="wcond"><span class="wc-icon">🚫</span><span>You must <strong>not sell any digital goods or
+                  services</strong> through your apps.</span></div>
+            <div class="wcond"><span class="wc-icon">⚠️</span><span>If you later release a paid app, the <strong>waiver
+                  is automatically revoked</strong>.</span></div>
+            <div class="wcond"><span class="wc-icon">🔄</span><span>Eligibility must be <strong>re-confirmed every
+                  year</strong> at renewal by the Account Holder.</span></div>
+          </div>
+        </div>
+
+        <div class="eu-banner">
+          <div class="eu-flag">🇪🇺</div>
+          <p><strong>EU Bonus (2026):</strong> If your organization operates an alternative app marketplace in the
+            <strong>European Union</strong>, the fee waiver also exempts you from the <strong>Core Technology Fee
+              (CTF)</strong> — a new Apple charge introduced for EU alternative markets.</p>
+        </div>
+
+        <div class="waiver-subsection" style="margin-bottom:0">
+          <h4>How to Apply</h4>
+          <div class="apply-steps">
+            <div class="apply-step"><span class="as-num">1</span><span><strong>New members:</strong> During enrollment,
+                select the option to <strong>request a fee waiver</strong> before completing payment.</span></div>
+            <div class="apply-step"><span class="as-num">2</span><span><strong>Existing members:</strong> The Account
+                Holder submits a fee waiver request via the Apple Developer website <strong>before membership
+                  expiration</strong>.</span></div>
+            <div class="apply-step"><span class="as-num">3</span><span>Apple reviews the request and may contact you for
+                <strong>additional supporting documentation</strong>.</span></div>
+            <div class="apply-step"><span class="as-num">4</span><span>Apple reserves the right to <strong>determine
+                  eligibility at its discretion</strong>.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- TIMELINE TABLE -->
+      <p class="section-title"><span class="dot"></span>Enrollment Timeline Summary</p>
+      <div style="overflow-x:auto; border-radius: var(--radius);">
+        <table class="timeline-table">
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Action</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="step-tag">Step 1</span></td>
+              <td>Navigate to developer.apple.com</td>
+              <td>Sign in or create an Apple ID, then click <strong>Enroll Now</strong>.</td>
+            </tr>
+            <tr>
+              <td><span class="step-tag">Step 2</span></td>
+              <td>Download Apple Developer App</td>
+              <td>Install and open the app, sign in, and tap <strong>Enroll Now</strong>.</td>
+            </tr>
+            <tr>
+              <td><span class="step-tag">Step 3</span></td>
+              <td>Enter personal information</td>
+              <td>Provide legal first and last names and phone number; verify identity with a government ID.</td>
+            </tr>
+            <tr>
+              <td><span class="step-tag">Step 4</span></td>
+              <td>Provide organization details</td>
+              <td>Enter legal entity name, D-U-N-S number, headquarters address, phone, and website domain.</td>
+            </tr>
+            <tr>
+              <td><span class="step-tag">Step 5</span></td>
+              <td>Confirm legal authority</td>
+              <td>Confirm authority to bind organization and provide a contact for verification.</td>
+            </tr>
+            <tr>
+              <td><span class="step-tag">Step 6</span></td>
+              <td>Finalize enrollment</td>
+              <td>Review the license agreement, agree to terms, and subscribe to annual membership.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- DEFINITIONS -->
+      <p class="section-title"><span class="dot"></span>Definitions & Key Terms</p>
+      <div style="overflow-x:auto; border-radius: var(--radius);">
+        <table class="defs-table">
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Definition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Apple ID</td>
+              <td>A personal account used to access Apple services, required for developer program enrollment.</td>
+            </tr>
+            <tr>
+              <td>D-U-N-S Number</td>
+              <td>A unique nine-digit identifier assigned by Dun & Bradstreet to business entities.</td>
+            </tr>
+            <tr>
+              <td>Legal Entity Name</td>
+              <td>The official registered name of an organization, used in legal agreements and app listings.</td>
+            </tr>
+            <tr>
+              <td>Fee Waiver</td>
+              <td>A waiver of the annual developer program fee, available to qualifying nonprofits and institutions.
+              </td>
+            </tr>
+            <tr>
+              <td>Apple Developer App</td>
+              <td>An application available on the App Store for managing developer program enrollment and resources.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- IMPORTANT NOTES -->
+      <p class="section-title"><span class="dot"></span>Important Notes</p>
+      <div class="notes-list">
+        <div class="note-item">
+          <span class="ni">📝</span>
+          <p>The <strong>name used during enrollment must exactly match official ID documentation</strong> — no aliases
+            or company names are allowed in the personal section.</p>
+        </div>
+        <div class="note-item">
+          <span class="ni">🚫</span>
+          <p><strong>Driver's licenses are not accepted for identity verification in Mexico</strong>. An alternate form
+            of government-issued photo ID is required.</p>
+        </div>
+        <div class="note-item">
+          <span class="ni">🏷️</span>
+          <p>Organizations without a D-U-N-S number can <strong>request one at no cost</strong> through Dun &
+            Bradstreet. This is a mandatory requirement for organization enrollment.</p>
+        </div>
+        <div class="note-item">
+          <span class="ni">📬</span>
+          <p>Enrollment approval is communicated <strong>via email</strong>. Applicants must monitor their inbox for
+            next steps after submitting their application.</p>
+        </div>
+        <div class="note-item">
+          <span class="ni">💳</span>
+          <p>The <strong>annual membership subscription</strong> is a paid requirement to complete enrollment and access
+            all Apple developer resources and distribution tools.</p>
+        </div>
+        <div class="note-item">
+          <span class="ni">🎓</span>
+          <p>The <strong>fee waiver does not apply to individuals or sole proprietors</strong> — only registered
+            nonprofits, accredited educational institutions, and government entities qualify.</p>
+        </div>
+        <div class="note-item">
+          <span class="ni">🔄</span>
+          <p>Once the fee waiver is granted, it must be <strong>renewed annually</strong> by the Account Holder
+            confirming the organization's continued eligibility.</p>
+        </div>
+        <div class="note-item">
+          <span class="ni">🚨</span>
+          <p>Publishing a <strong>paid app or enabling in-app purchases</strong> under a fee-waived account will cause
+            the waiver to be <strong>immediately revoked</strong>.</p>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- OFFICIAL REFERENCE -->
+      <p class="section-title"><span class="dot"></span>Official Reference</p>
+      <a href="https://developer.apple.com/help/account/membership/program-enrollment" target="_blank"
+        rel="noopener noreferrer" class="ref-card">
+        <div class="ref-icon">🍎</div>
+        <div class="ref-body">
+          <h4>Apple Developer Program Enrollment</h4>
+          <p>Official Apple documentation covering the complete enrollment process, membership requirements, and fee
+            waiver eligibility.</p>
+          <span class="ref-url">developer.apple.com/help/account/membership/program-enrollment</span>
+        </div>
+        <span class="ref-arrow">→</span>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>This guide covers the complete enrollment process for the <span>Apple Developer Program</span> — emphasizing
+      accuracy, required documentation, legal obligations, and finalization steps.</p>
+    <p style="margin-top:8px; font-size:12px;">Official Docs: <a
+        href="https://developer.apple.com/help/account/membership/program-enrollment" target="_blank"
+        rel="noopener noreferrer"
+        style="color:var(--apple2); text-decoration:none;">developer.apple.com/help/account/membership/program-enrollment</a>
+    </p>
+  </footer>
+
+</body>
+
+</html>
