@@ -1,359 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JAPOON V3 — Operational Master Blueprint</title>
-  <meta property="og:title" content="JAPOON V3 — Operational Master Blueprint">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-  <style>
-    :root {
-      --bg-color: #0f172a;
-      --surface-color: #1e293b;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --accent-color: #3b82f6;
-      --border-color: #334155;
-      --code-bg: #000000;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAPOON V3 — Operational Master Blueprint</title>
+    <meta property="og:title" content="JAPOON V3 — Operational Master Blueprint">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Marked.js for rendering markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Mermaid.js for flowcharts -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --border-color: #334155;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --code-bg: #000000;
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      line-height: 1.8;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
 
-    .container {
-      max-width: 1000px;
-      width: 100%;
-      margin: 40px 20px;
-      padding: 60px 80px;
-      background: var(--surface-color);
-      border-radius: 20px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
-    }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 40px 20px;
+            padding: 60px 80px;
+            background: var(--surface-color);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
+        }
 
-    h1, h2, h3, h4, h5 {
-      color: #ffffff;
-      margin-top: 2.5em;
-      margin-bottom: 1em;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-    }
+        h1, h2, h3, h4, h5 {
+            color: #ffffff;
+            margin-top: 2.5em;
+            margin-bottom: 1em;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
 
-    h1 {
-      font-size: 3rem;
-      text-align: center;
-      background: linear-gradient(to bottom right, #60a5fa, #2563eb);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.2em;
-      margin-top: 0.5em;
-    }
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            background: linear-gradient(to bottom right, #60a5fa, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.2em;
+            margin-top: 0.5em;
+        }
 
-    .subtitle {
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 1.2rem;
-      margin-bottom: 3em;
-      font-weight: 300;
-    }
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 3em;
+            font-weight: 300;
+        }
 
-    h2 {
-      font-size: 1.8rem;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 0.4em;
-      color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.4em;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    h2::before {
-      content: '';
-      width: 8px;
-      height: 24px;
-      background: var(--accent-color);
-      border-radius: 4px;
-      display: inline-block;
-    }
+        h2::before {
+            content: '';
+            width: 8px;
+            height: 24px;
+            background: var(--accent-color);
+            border-radius: 4px;
+            display: inline-block;
+        }
 
-    h3 {
-      font-size: 1.4rem;
-      color: #93c5fd;
-      border-left: 3px solid var(--accent-color);
-      padding-left: 15px;
-    }
+        h3 {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 15px;
+        }
 
-    p {
-      margin-bottom: 1.5rem;
-      color: #cbd5e1;
-      font-size: 1.1rem;
-    }
+        p {
+            margin-bottom: 1.5rem;
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
 
-    ul, ol {
-      margin-bottom: 2rem;
-      padding-left: 2rem;
-      color: #cbd5e1;
-    }
+        ul, ol {
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+            color: #cbd5e1;
+        }
 
-    li { margin-bottom: 0.8rem; }
-    strong { color: #fff; font-weight: 600; }
+        li {
+            margin-bottom: 0.8rem;
+        }
 
-    code {
-      font-family: 'Fira Code', monospace;
-      background: var(--code-bg);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.9em;
-      color: #f472b6;
-    }
+        strong {
+            color: #fff;
+            font-weight: 600;
+        }
 
-    pre {
-      background: var(--code-bg);
-      padding: 24px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      overflow-x: auto;
-      margin: 2rem 0;
-    }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #f472b6;
+        }
 
-    pre code {
-      color: #e2e8f0;
-      background: none;
-      padding: 0;
-    }
+        pre {
+            background: var(--code-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 2rem 0;
-      font-size: 0.95rem;
-    }
+        pre code {
+            color: #e2e8f0;
+            background: none;
+            padding: 0;
+        }
 
-    th {
-      background: rgba(59, 130, 246, 0.1);
-      color: #fff;
-      text-align: left;
-      padding: 12px;
-      border-bottom: 2px solid var(--border-color);
-    }
+        blockquote {
+            border-left: 5px solid var(--accent-color);
+            background: rgba(59, 130, 246, 0.05);
+            padding: 24px 32px;
+            margin: 30px 0;
+            border-radius: 4px 12px 12px 4px;
+        }
 
-    td {
-      padding: 12px;
-      border-bottom: 1px solid var(--border-color);
-      color: #cbd5e1;
-    }
+        blockquote p {
+            margin: 0;
+            color: #e2e8f0;
+            font-style: italic;
+        }
 
-    .mermaid {
-      background: #ffffff05;
-      padding: 30px;
-      border-radius: 16px;
-      border: 1px solid var(--border-color);
-      margin: 40px 0;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
 
-    @media (max-width: 768px) {
-      .container { padding: 30px 20px; }
-      h1 { font-size: 2rem; }
-    }
-  </style>
+        th {
+            background: rgba(59, 130, 246, 0.1);
+            color: #fff;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: #cbd5e1;
+        }
+
+        .mermaid {
+            background: #ffffff05;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin: 40px 0;
+        }
+
+        .doc-section {
+            margin-bottom: 100px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .alert-info { background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f644; }
+        .alert-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b44; }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            h1 { font-size: 2rem; }
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container" id="content">Initializing Technical Document...</div>
+    <div class="container" id="content">Initializing Technical Document...</div>
 
-  <script id="markdown-content" type="text/markdown">
-# JAPOON V3 — OPERATIONAL BLUEPRINT
+    <script id="markdown-content" type="text/markdown">
+# JAPOON V3 G�� OPERATIONAL BLUEPRINT
 <div class="subtitle">Autonomous NIFTY 50 Options Trading & Moment-of-Capture Logic</div>
-
 ---
-
 ## 1. STRATEGIC PHILOSOPHY
-JAPOON V3 is engineered to exploit the high-probability momentum shifts identified by **1-Hour MACD Crossovers** while simultaneously mitigating "price chasing" through a strictly enforced **Premium Pullback Entry Gate**.
-
-Unlike conventional trading bots that enter precisely at the signal tick, V3 recognizes that crossovers are often followed by a temporary exhaustion of momentum (a pullback). By waiting for a specific mathematical reduction in option premium from the crossover's anchor price, the system secures an improved cost basis, significantly enhancing the final Reward-to-Risk ratio.
-
+JAPOON V3 is engineered to exploit high-probability momentum shifts identified by **1-Hour MACD crossovers** and confirms direction using one lower timeframe MACD (**15M or 30M**) before allowing entries. 
+The execution model remains pullback-based to avoid chasing premium spikes and to improve entry quality.
 ---
-
 ## 2. MODULE A: SIGNAL INTELLIGENCE (THE MACD ENGINE)
-The system relies on the **Moving Average Convergence Divergence (MACD)** as its sole directional compass. This eliminates the "Analysis Paralysis" caused by conflicting indicators.
-
-### 2.1 The Directional Filter
-- **Bullish Bias (CALL)**: Initiated when the MACD Line (12,26) traverses above the Signal Line (9) on the 1-Hour timeframe.
-- **Bearish Bias (PUT)**: Initiated when the MACD Line traverses below the Signal Line on the 1-Hour timeframe.
-
-### 2.2 The Staleness Sentinel (5-Hour Rule)
-To prevent entering trades based on exhausted trends, the system implements a **5-Candle Staleness Filter**.
-- If the MACD crossover occurred more than 5 candles (5 hours) ago, the signal is discarded.
-- This ensures the system only engages with "fresh" momentum.
-
-### 2.3 The Single-Bias Protocol
-To maintain psychological and mathematical consistency, the system **locks the bias** for the remainder of the trading day once a signal is successfully verified. This prevents "whipsaw" losses during choppy, sideways markets.
-
+The system relies on the **Moving Average Convergence Divergence (MACD)** as the directional engine.
+### 2.1 The Two-Timeframe Alignment Filter (Primary Rule)
+- Entry is allowed only when **1-Hour MACD crossover direction** and **one lower timeframe MACD direction (15-Minute or 30-Minute)** are aligned.
+- **Bullish Entry (CALL)**: 1H MACD bullish crossover + (15M bullish OR 30M bullish).
+- **Bearish Entry (PUT)**: 1H MACD bearish crossover + (15M bearish OR 30M bearish).
+- Core rule for entry: **any 2 MACDs (1 higher timeframe + 1 lower timeframe) must agree in direction**.
+### 2.2 No Candle-Count Restriction
+- Previous candle-age/freshness filters are removed.
+- **No 5-candle, 10-candle, or any candle-window restriction** is applied for entry validation.
+### 2.3 Bias Handling
+- Bias remains valid only while required MACD alignment is present.
+- If alignment breaks, new entries are blocked until alignment returns.
 ---
-
-## 3. MODULE B: THE DYNAMIC ANCHOR CONTROL (CROSSPRICE)
-This is the most critical logic update in V3. It solves the problem of "Moving Goalposts" where traditional systems capture prices late, resulting in impossible entry targets.
-
-### 3.1 The "Moment-of-Capture" Synchronization
-The system does not just record the price when it "notices" the cross. It synchronizes the capture with the **Crossover Candle Index**.
-
+## 3. MODULE B: DYNAMIC ANCHOR CONTROL (CROSSPRICE)
+The system anchors pullback logic to a captured CrossPrice and uses that as the premium reference point.
+### 3.1 Moment-of-Capture Synchronization
 | Step | Action | Description |
 | :--- | :--- | :--- |
-| **01** | **Detect** | MACD Crossover identified on 1H chart. |
-| **02** | **Validate** | System checks if this is a *new* crossover by comparing the current Candle Index with the last stored Index in Redis. |
-| **03** | **Anchor** | If it's a new cross, the system captures the **live contract premium** at that exact second. This is the **CrossPrice**. |
-| **04** | **Check** | If the crossover index hasn't changed, the system continues using the *original* anchor, ensuring we don't "chase" the price up. |
-
-### 3.2 The Redis Reliability Layer
-The `CrossPrice` and its associated `CandleIndex` are persisted in a Redis cache with a 24-hour expiration. This ensures that even if the server restarts, the system remembers exactly where the original entry signal was anchored.
-
+| **01** | **Detect** | 1H MACD crossover identified. |
+| **02** | **Validate** | Confirms alignment with 15M or 30M MACD direction. |
+| **03** | **Anchor** | Captures live contract premium as CrossPrice. |
+| **04** | **Reuse** | Reuses anchor until new valid crossover/alignment cycle is formed. |
+### 3.2 Persistence Layer
+- CrossPrice metadata can be persisted in Redis for restart resilience.
 ---
-
-## 4. MODULE C: ENTRY GATE ARCHITECTURE (THE PULLBACK)
-V3 implements a **Buy-The-Dip** strategy for Option Premiums. Entry is strictly barred until the premium "pulls back" from the anchor.
-
+## 4. MODULE C: ENTRY GATE ARCHITECTURE (PULLBACK ENTRY)
+V3 uses **pullback entry** only. No direct chase entries.
 ### 4.1 Tier 1: Partial Entry (Scale-In)
-- **Condition**: Contract Premium drops between **₹10.00 and ₹22.00** from the `CrossPrice`.
-- **Action**: Execute Buy Order for **1 Lot (25 Qty)**.
-- **Purpose**: Establishes a baseline position at a discounted price while reserving capital for further volatility.
-
+- **Condition**: Contract premium drops between **G�10.00 and G�22.00** from CrossPrice.
+- **Action**: Buy **1 Lot (25 Qty)**.
 ### 4.2 Tier 2: Deep Entry (Final Load)
-- **Condition**: Contract Premium drops between **₹22.00 and ₹50.00** from the `CrossPrice`.
-- **Action**: Execute Buy Order for an additional **1 Lot**.
-- **Result**: The "Averaged Entry Price" is significantly lower than the price at the initial crossover moment.
-
-### 4.3 The "Dead-Zone" Safety logic
-- If the premium drops **more than ₹50.00** from the `CrossPrice`, the system flags the trade as "Invalidated."
-- **Logic**: A drop of this magnitude indicates the trend has likely failed, and "buying the dip" would turn into "catching a falling knife."
-
+- **Condition**: Contract premium drops between **G�22.00 and G�50.00** from CrossPrice.
+- **Action**: Buy additional **1 Lot**.
+### 4.3 Dead-Zone Invalidation
+- If premium drops **more than G�50.00** from CrossPrice, trade is invalidated.
+### 4.4 Entry Session Window (Mandatory Intraday Gate)
+- **No entries before 09:45 AM IST**.
+- **No new entries after 12:45 PM IST**.
+- Valid entry window: **09:45:00 to 12:45:00 IST**.
+- MACD alignment and pullback conditions must be satisfied within this window.
 ---
-
 ## 5. MODULE D: ASSET SELECTION & CONTRACT GOVERNANCE
-The system performs intelligent expiry and strike selection to maximize Delta while minimizing Theta decay.
-
-### 5.1 Deep-In-The-Money (ITM) Strike Selection
-V3 avoids "cheap" Out-of-the-Money options. It strictly selects strikes that are:
-- **CALLs**: At least 100 points below current Spot.
-- **PUTs**: At least 100 points above current Spot.
-- **Benefit**: This results in a higher Delta (~0.6 to 0.8), meaning the option moves almost in lockstep with the index.
-
-### 5.2 Expiry Roll Protocol (7-Day Rule)
-- The system automatically filters for weekly contracts.
-- **Safety Rule**: Minimum 7 days to expiration (DTE).
-- If the current weekly expiry has < 7 days remaining (usually on a Friday or Monday), the system **rolls to the next weekly series**. This prevents rapid time decay (Theta) from eating into profits.
-
+### 5.1 Deep ITM Strike Selection
+- **CALLs**: At least 100 points below spot.
+- **PUTs**: At least 100 points above spot.
+### 5.2 Expiry Roll Protocol
+- Prefer weekly options with safe DTE handling.
 ---
-
-## 6. MODULE E: THE EXIT MATRIX (TERMINATION LOGIC)
-V3 uses a multi-layered exit strategy to "lock in" gains while allowing for trend extensions.
-
+## 6. MODULE E: EXIT MATRIX (TERMINATION LOGIC)
 ### 6.1 Logical Exit Triggers
 | Trigger | Parameter | Action |
 | :--- | :--- | :--- |
-| **ROI Target** | Hits **+27%** absolute return. | Full Liquidation |
-| **Rapid Profit** | Hits **+8%** within < 60 minutes. | Full Liquidation (Protects against spikes) |
-| **Pivot Wall** | Price touches R1/R2/R3 or S1/S2/S3. | Full Liquidation (If profit > 12 points) |
-| **S&R Extension** | Index moves 50 points past a Pivot level. | Full Liquidation |
-| **Opposite Flip** | MACD Histogram crosses zero on **15M/30M**. | Immediate Termination |
-| **Temporal Cutoff** | Clock hits **15:10 IST**. | Mandatory System-wide exit |
-
+| **ROI Target** | Hits **+27%** absolute return | Full Exit |
+| **Rapid Profit** | Hits **+8%** within < 60 minutes | Full Exit |
+| **Pivot Wall** | Price touches R/S pivots | Full Exit (as configured) |
+| **Opposite Flip** | Lower timeframe momentum reversal | Immediate Exit |
 ### 6.2 Partial Profit Booking
-Once a position reaches **10% ROI** or **12 premium points** of profit, the system automatically sells **50% of the volume**. This ensures the trade is protected even if the market reverses.
-
+- **No change from earlier setup**.
+### 6.3 Stop Loss
+- **No change from earlier setup**.
+### 6.4 Mandatory Day-End Square-Off (No Overnight Holding)
+- All open positions must be closed **on or before 03:20 PM IST**.
+- **No overnight holding/carry-forward** is allowed.
 ---
-
-## 7. FLOW VIZUALIZATION
-
-```mermaid
+## 7. FLOW VISUALIZATION
+`mermaid
 graph TD
-    Start([System Start 09:45]) --> MCheck{Market Open?}
-    MCheck -->|Yes| DScan[Scan Angel Master JSON]
-    DScan --> Signal{MACD 1H Crossover?}
-
-    Signal -->|New Cross| Anchor[Capture CrossPrice & Store Index]
-    Signal -->|Stale Cross| Wait[Wait for next signal]
-
-    Anchor --> Pullback{Price Drops ₹10?}
-    Pullback -->|Yes| Tier1[Enter Tier 1: 1 Lot]
-    Pullback -->|No| Anchor
-
-    Tier1 --> Deep{Price Drops ₹22?}
-    Deep -->|Yes| Tier2[Enter Tier 2: 1 Lot]
-    Deep -->|No| Monitor[Monitor Exit Triggers]
-
-    Tier2 --> Monitor
-    Monitor --> Exit{Exit Trigger Hit?}
-    Exit -->|Yes| Liquidate[Full Liquidation]
-    Exit -->|No| Monitor
-
-    Liquidate --> End([Trade Completed])
-```
-
+    Start([System Start]) --> TimeGate{09:45 to 12:45?}
+    TimeGate -->|No| Wait[Wait]
+    TimeGate -->|Yes| Align{1H + (15M or 30M) MACD Align?}
+    Align -->|No| Wait
+    Align -->|Yes| Anchor[Capture/Use CrossPrice]
+    Anchor --> Pullback{Pullback Criteria Met?}
+    Pullback -->|No| Align
+    Pullback -->|Yes| Entry[Execute Entry]
+    Entry --> Monitor[Monitor exits + risk]
+    Monitor --> EOD{Time >= 15:20?}
+    EOD -->|Yes| SquareOff[Force Close All]
+    EOD -->|No| Monitor
+    SquareOff --> End([No Overnight Carry])
+`
 ---
-
 ## 8. RISK PARAMETERS & COMPLIANCE
-- **Stop Loss**: Implicitly managed via the MACD 15M/30M reversal and the ₹50 point max-drop invalidation.
-- **Gap Protection**: If the index GAPs more than 1.5% at open, the system enters a 30-minute stabilization hold.
-- **Capital Barrier**: Maximum utilization capped at 1.0 Lakh INR.
-- **Re-Entry Restriction**: No more than 2 entries permitted per day to prevent over-trading in volatile sideways ranges.
-
+- **Stop Loss**: No change from earlier setup.
+- **Profit Booking**: No change from earlier setup.
+- **Capital Barrier**: Maximum utilization as per current risk cap.
+- **Intraday Discipline**: Strictly no overnight positions.
 ---
-
 ## 9. OPERATIONAL AUDIT TRAIL
-The system generates high-fidelity plain-text audits for every decision.
-1. `PREFLIGHT_START`: Data integrity check.
-2. `CROSSOVER_PRICE_CAPTURED`: Documentation of the anchor moment.
-3. `ENTRY_SCALING_IN`: Tier-aware execution logs.
-4. `EXIT_EXECUTED`: Mathematical PnL breakdown.
-
+1. PREFLIGHT_START
+2. MACD_ALIGNMENT_VERIFIED
+3. CROSSPRICE_CAPTURED
+4. ENTRY_EXECUTED_PULLBACK
+5. EXIT_EXECUTED
+6. EOD_FORCE_SQUAREOFF
 ---
-
 ## 10. CONCLUSION
-JAPOON V3 is not just a bot; it is a **regimented execution framework**. By synchronizing the "Anchor" to the specific pulse of the crossover and demanding a "Pullback" before entry, it removes human emotional error and ensures every trade is executed with a mathematical edge.
-
+JAPOON V3 now follows a strict **2-timeframe MACD alignment + pullback entry** framework, with defined intraday entry windows and mandatory day-end square-off, while keeping existing stop-loss and profit-booking behavior unchanged.
 ---
-*Document Version: 3.1.2*  
-*Last Updated: 24-Apr-2026*  
+*Document Version: 3.2.0*  
+*Last Updated: 29-Apr-2026*  
 *Environment: Virtual Paper Trading (Mock Mode)*
-  </script>
+</script>
 
-  <script>
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: 'dark',
-      securityLevel: 'loose',
-      flowchart: {
-        useMaxWidth: true,
-        htmlLabels: true,
-        curve: 'basis'
-      }
-    });
+    <script>
+        // Configure Mermaid to support dark mode professionally
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
 
-    const markdownContent = document.getElementById('markdown-content').textContent;
-    const renderer = new marked.Renderer();
-    document.getElementById('content').innerHTML = marked.parse(markdownContent, { renderer });
+        // Fetch markdown text
+        const markdownContent = document.getElementById('markdown-content').textContent;
 
-    const renderMermaid = async () => {
-      const preTags = document.querySelectorAll('pre code.language-mermaid');
-      preTags.forEach((codeBlock) => {
-        const pre = codeBlock.parentElement;
-        const mermaidDiv = document.createElement('div');
-        mermaidDiv.className = 'mermaid';
-        mermaidDiv.textContent = codeBlock.textContent;
-        pre.replaceWith(mermaidDiv);
-      });
-      await mermaid.run();
-    };
+        // Custom rendering for marked
+        const renderer = new marked.Renderer();
+        
+        // Parse and Inject HTML
+        document.getElementById('content').innerHTML = marked.parse(markdownContent, { renderer: renderer });
 
-    renderMermaid();
-  </script>
+        // Extract <pre> blocks targeting mermaid
+        const renderMermaid = async () => {
+            const preTags = document.querySelectorAll('pre code.language-mermaid');
+            preTags.forEach((codeBlock) => {
+                const pre = codeBlock.parentElement;
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                mermaidDiv.textContent = codeBlock.textContent;
+                pre.replaceWith(mermaidDiv);
+            });
+            await mermaid.run();
+        };
+
+        renderMermaid();
+    </script>
 </body>
+
 </html>
