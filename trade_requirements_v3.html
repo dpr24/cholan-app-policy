@@ -2,16 +2,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JAPOON V3 — Operational Master Blueprint</title>
-    <meta property="og:title" content="JAPOON V3 — Operational Master Blueprint">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Marked.js for rendering markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Mermaid.js for flowcharts -->
+
+    <meta property="og:title" content="JAPOON V3 — Operational Master Blueprint" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Mermaid -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
     <style>
         :root {
             --bg-color: #0f172a;
@@ -19,12 +21,12 @@
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent-color: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.5);
             --border-color: #334155;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
             --code-bg: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
@@ -45,10 +47,16 @@
             padding: 60px 80px;
             background: var(--surface-color);
             border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 0 1px var(--border-color);
         }
 
-        h1, h2, h3, h4, h5 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
             color: #ffffff;
             margin-top: 2.5em;
             margin-bottom: 1em;
@@ -103,10 +111,11 @@
         p {
             margin-bottom: 1.5rem;
             color: #cbd5e1;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
         }
 
-        ul, ol {
+        ul,
+        ol {
             margin-bottom: 2rem;
             padding-left: 2rem;
             color: #cbd5e1;
@@ -117,7 +126,7 @@
         }
 
         strong {
-            color: #fff;
+            color: #ffffff;
             font-weight: 600;
         }
 
@@ -139,26 +148,6 @@
             margin: 2rem 0;
         }
 
-        pre code {
-            color: #e2e8f0;
-            background: none;
-            padding: 0;
-        }
-
-        blockquote {
-            border-left: 5px solid var(--accent-color);
-            background: rgba(59, 130, 246, 0.05);
-            padding: 24px 32px;
-            margin: 30px 0;
-            border-radius: 4px 12px 12px 4px;
-        }
-
-        blockquote p {
-            margin: 0;
-            color: #e2e8f0;
-            font-style: italic;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -168,7 +157,7 @@
 
         th {
             background: rgba(59, 130, 246, 0.1);
-            color: #fff;
+            color: #ffffff;
             text-align: left;
             padding: 12px;
             border-bottom: 2px solid var(--border-color);
@@ -181,116 +170,299 @@
         }
 
         .mermaid {
-            background: #ffffff05;
+            background: rgba(255, 255, 255, 0.03);
             padding: 30px;
             border-radius: 16px;
             border: 1px solid var(--border-color);
             margin: 40px 0;
+            overflow-x: auto;
         }
 
-        .doc-section {
-            margin-bottom: 100px;
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 3rem 0;
         }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
+        .footer {
+            margin-top: 80px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
-
-        .alert-info { background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f644; }
-        .alert-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b44; }
 
         @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
             }
-            h1 { font-size: 2rem; }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container" id="content">Initializing Technical Document...</div>
 
-    <script id="markdown-content" type="text/markdown">
-# JAPOON V3 G�� OPERATIONAL BLUEPRINT
-<div class="subtitle">Autonomous NIFTY 50 Options Trading & Moment-of-Capture Logic</div>
----
-## 1. STRATEGIC PHILOSOPHY
-JAPOON V3 is engineered to exploit high-probability momentum shifts identified by **1-Hour MACD crossovers** and confirms direction using one lower timeframe MACD (**15M or 30M**) before allowing entries. 
-The execution model remains pullback-based to avoid chasing premium spikes and to improve entry quality.
----
-## 2. MODULE A: SIGNAL INTELLIGENCE (THE MACD ENGINE)
-The system relies on the **Moving Average Convergence Divergence (MACD)** as the directional engine.
-### 2.1 The Two-Timeframe Alignment Filter (Primary Rule)
-- Entry is allowed only when **1-Hour MACD crossover direction** and **one lower timeframe MACD direction (15-Minute or 30-Minute)** are aligned.
-- **Bullish Entry (CALL)**: 1H MACD bullish crossover + (15M bullish OR 30M bullish).
-- **Bearish Entry (PUT)**: 1H MACD bearish crossover + (15M bearish OR 30M bearish).
-- Core rule for entry: **any 2 MACDs (1 higher timeframe + 1 lower timeframe) must agree in direction**.
-### 2.2 No Candle-Count Restriction
-- Previous candle-age/freshness filters are removed.
-- **No 5-candle, 10-candle, or any candle-window restriction** is applied for entry validation.
-### 2.3 Bias Handling
-- Bias remains valid only while required MACD alignment is present.
-- If alignment breaks, new entries are blocked until alignment returns.
----
-## 3. MODULE B: DYNAMIC ANCHOR CONTROL (CROSSPRICE)
-The system anchors pullback logic to a captured CrossPrice and uses that as the premium reference point.
-### 3.1 Moment-of-Capture Synchronization
-| Step | Action | Description |
-| :--- | :--- | :--- |
-| **01** | **Detect** | 1H MACD crossover identified. |
-| **02** | **Validate** | Confirms alignment with 15M or 30M MACD direction. |
-| **03** | **Anchor** | Captures live contract premium as CrossPrice. |
-| **04** | **Reuse** | Reuses anchor until new valid crossover/alignment cycle is formed. |
-### 3.2 Persistence Layer
-- CrossPrice metadata can be persisted in Redis for restart resilience.
----
-## 4. MODULE C: ENTRY GATE ARCHITECTURE (PULLBACK ENTRY)
-V3 uses **pullback entry** only. No direct chase entries.
-### 4.1 Tier 1: Partial Entry (Scale-In)
-- **Condition**: Contract premium drops between **G�10.00 and G�22.00** from CrossPrice.
-- **Action**: Buy **1 Lot (25 Qty)**.
-### 4.2 Tier 2: Deep Entry (Final Load)
-- **Condition**: Contract premium drops between **G�22.00 and G�50.00** from CrossPrice.
-- **Action**: Buy additional **1 Lot**.
-### 4.3 Dead-Zone Invalidation
-- If premium drops **more than G�50.00** from CrossPrice, trade is invalidated.
-### 4.4 Entry Session Window (Mandatory Intraday Gate)
-- **No entries before 09:45 AM IST**.
-- **No new entries after 12:45 PM IST**.
-- Valid entry window: **09:45:00 to 12:45:00 IST**.
-- MACD alignment and pullback conditions must be satisfied within this window.
----
-## 5. MODULE D: ASSET SELECTION & CONTRACT GOVERNANCE
-### 5.1 Deep ITM Strike Selection
-- **CALLs**: At least 100 points below spot.
-- **PUTs**: At least 100 points above spot.
-### 5.2 Expiry Roll Protocol
-- Prefer weekly options with safe DTE handling.
----
-## 6. MODULE E: EXIT MATRIX (TERMINATION LOGIC)
-### 6.1 Logical Exit Triggers
-| Trigger | Parameter | Action |
-| :--- | :--- | :--- |
-| **ROI Target** | Hits **+27%** absolute return | Full Exit |
-| **Rapid Profit** | Hits **+8%** within < 60 minutes | Full Exit |
-| **Pivot Wall** | Price touches R/S pivots | Full Exit (as configured) |
-| **Opposite Flip** | Lower timeframe momentum reversal | Immediate Exit |
-### 6.2 Partial Profit Booking
-- **No change from earlier setup**.
-### 6.3 Stop Loss
-- **No change from earlier setup**.
-### 6.4 Mandatory Day-End Square-Off (No Overnight Holding)
-- All open positions must be closed **on or before 03:20 PM IST**.
-- **No overnight holding/carry-forward** is allowed.
----
-## 7. FLOW VISUALIZATION
-`mermaid
+    <div class="container">
+
+        <h1>JAPOON V3 — OPERATIONAL BLUEPRINT</h1>
+
+        <div class="subtitle">
+            Autonomous NIFTY 50 Options Trading & Moment-of-Capture Logic
+        </div>
+
+        <hr />
+
+        <h2>1. STRATEGIC PHILOSOPHY</h2>
+
+        <p>
+            JAPOON V3 is engineered to exploit high-probability momentum shifts identified by
+            <strong>1-Hour MACD crossovers</strong> and confirms direction using one lower timeframe
+            MACD (<strong>15M or 30M</strong>) before allowing entries.
+        </p>
+
+        <p>
+            The execution model remains pullback-based to avoid chasing premium spikes and to improve
+            entry quality.
+        </p>
+
+        <h2>2. MODULE A: SIGNAL INTELLIGENCE (THE MACD ENGINE)</h2>
+
+        <p>
+            The system relies on the <strong>Moving Average Convergence Divergence (MACD)</strong>
+            as the directional engine.
+        </p>
+
+        <h3>2.1 The Two-Timeframe Alignment Filter (Primary Rule)</h3>
+
+        <ul>
+            <li>
+                Entry is allowed only when <strong>1-Hour MACD crossover direction</strong> and one
+                lower timeframe MACD direction (<strong>15-Minute or 30-Minute</strong>) are aligned.
+            </li>
+
+            <li>
+                <strong>Bullish Entry (CALL):</strong>
+                1H MACD bullish crossover + (15M bullish OR 30M bullish).
+            </li>
+
+            <li>
+                <strong>Bearish Entry (PUT):</strong>
+                1H MACD bearish crossover + (15M bearish OR 30M bearish).
+            </li>
+
+            <li>
+                Core rule for entry:
+                <strong>Any 2 MACDs (1 higher timeframe + 1 lower timeframe) must agree in direction.</strong>
+            </li>
+        </ul>
+
+        <h3>2.2 No Candle-Count Restriction</h3>
+
+        <ul>
+            <li>Previous candle-age/freshness filters are removed.</li>
+            <li>
+                <strong>No 5-candle, 10-candle, or any candle-window restriction</strong>
+                is applied for entry validation.
+            </li>
+        </ul>
+
+        <h3>2.3 Bias Handling</h3>
+
+        <ul>
+            <li>Bias remains valid only while required MACD alignment is present.</li>
+            <li>If alignment breaks, new entries are blocked until alignment returns.</li>
+        </ul>
+
+        <h2>3. MODULE B: DYNAMIC ANCHOR CONTROL (CROSSPRICE)</h2>
+
+        <p>
+            The system anchors pullback logic to a captured CrossPrice and uses that as the premium reference point.
+        </p>
+
+        <h3>3.1 Moment-of-Capture Synchronization</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Action</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>01</td>
+                    <td>Detect</td>
+                    <td>1H MACD crossover identified.</td>
+                </tr>
+
+                <tr>
+                    <td>02</td>
+                    <td>Validate</td>
+                    <td>Confirms alignment with 15M or 30M MACD direction.</td>
+                </tr>
+
+                <tr>
+                    <td>03</td>
+                    <td>Anchor</td>
+                    <td>Captures live contract premium as CrossPrice.</td>
+                </tr>
+
+                <tr>
+                    <td>04</td>
+                    <td>Reuse</td>
+                    <td>Reuses anchor until new valid crossover/alignment cycle is formed.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.2 Persistence Layer</h3>
+
+        <ul>
+            <li>CrossPrice metadata can be persisted in Redis for restart resilience.</li>
+        </ul>
+
+        <h2>4. MODULE C: ENTRY GATE ARCHITECTURE (PULLBACK ENTRY)</h2>
+
+        <p>
+            V3 uses <strong>pullback entry only</strong>. No direct chase entries.
+        </p>
+
+        <h3>4.1 Tier 1: Partial Entry (Scale-In)</h3>
+
+        <ul>
+            <li>
+                <strong>Condition:</strong>
+                Contract premium drops between ₹10.00 and ₹22.00 from CrossPrice.
+            </li>
+
+            <li>
+                <strong>Action:</strong>
+                Buy 1 Lot (25 Qty).
+            </li>
+        </ul>
+
+        <h3>4.2 Tier 2: Deep Entry (Final Load)</h3>
+
+        <ul>
+            <li>
+                <strong>Condition:</strong>
+                Contract premium drops between ₹22.00 and ₹50.00 from CrossPrice.
+            </li>
+
+            <li>
+                <strong>Action:</strong>
+                Buy additional 1 Lot.
+            </li>
+        </ul>
+
+        <h3>4.3 Dead-Zone Invalidation</h3>
+
+        <ul>
+            <li>
+                If premium drops more than <strong>₹50.00</strong> from CrossPrice,
+                trade is invalidated.
+            </li>
+        </ul>
+
+        <h3>4.4 Entry Session Window (Mandatory Intraday Gate)</h3>
+
+        <ul>
+            <li><strong>No entries before 09:45 AM IST.</strong></li>
+            <li><strong>No new entries after 12:45 PM IST.</strong></li>
+            <li>Valid entry window: <strong>09:45:00 to 12:45:00 IST</strong>.</li>
+            <li>
+                MACD alignment and pullback conditions must be satisfied within this window.
+            </li>
+        </ul>
+
+        <h2>5. MODULE D: ASSET SELECTION & CONTRACT GOVERNANCE</h2>
+
+        <h3>5.1 Deep ITM Strike Selection</h3>
+
+        <ul>
+            <li><strong>CALLs:</strong> At least 100 points below spot.</li>
+            <li><strong>PUTs:</strong> At least 100 points above spot.</li>
+        </ul>
+
+        <h3>5.2 Expiry Roll Protocol</h3>
+
+        <ul>
+            <li>Prefer weekly options with safe DTE handling.</li>
+        </ul>
+
+        <h2>6. MODULE E: EXIT MATRIX (TERMINATION LOGIC)</h2>
+
+        <h3>6.1 Logical Exit Triggers</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Trigger</th>
+                    <th>Parameter</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>ROI Target</td>
+                    <td>Hits +27% absolute return</td>
+                    <td>Full Exit</td>
+                </tr>
+
+                <tr>
+                    <td>Rapid Profit</td>
+                    <td>Hits +8% within &lt; 60 minutes</td>
+                    <td>Full Exit</td>
+                </tr>
+
+                <tr>
+                    <td>Pivot Wall</td>
+                    <td>Price touches R/S pivots</td>
+                    <td>Full Exit (as configured)</td>
+                </tr>
+
+                <tr>
+                    <td>Opposite Flip</td>
+                    <td>Lower timeframe momentum reversal</td>
+                    <td>Immediate Exit</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>6.2 Partial Profit Booking</h3>
+
+        <ul>
+            <li>No change from earlier setup.</li>
+        </ul>
+
+        <h3>6.3 Stop Loss</h3>
+
+        <ul>
+            <li>No change from earlier setup.</li>
+        </ul>
+
+        <h3>6.4 Mandatory Day-End Square-Off (No Overnight Holding)</h3>
+
+        <ul>
+            <li>All open positions must be closed on or before <strong>03:20 PM IST</strong>.</li>
+            <li><strong>No overnight holding/carry-forward</strong> is allowed.</li>
+        </ul>
+
+        <h2>7. FLOW VISUALIZATION</h2>
+
+        <div class="mermaid">
 graph TD
     Start([System Start]) --> TimeGate{09:45 to 12:45?}
     TimeGate -->|No| Wait[Wait]
@@ -305,34 +477,48 @@ graph TD
     EOD -->|Yes| SquareOff[Force Close All]
     EOD -->|No| Monitor
     SquareOff --> End([No Overnight Carry])
-`
----
-## 8. RISK PARAMETERS & COMPLIANCE
-- **Stop Loss**: No change from earlier setup.
-- **Profit Booking**: No change from earlier setup.
-- **Capital Barrier**: Maximum utilization as per current risk cap.
-- **Intraday Discipline**: Strictly no overnight positions.
----
-## 9. OPERATIONAL AUDIT TRAIL
-1. PREFLIGHT_START
-2. MACD_ALIGNMENT_VERIFIED
-3. CROSSPRICE_CAPTURED
-4. ENTRY_EXECUTED_PULLBACK
-5. EXIT_EXECUTED
-6. EOD_FORCE_SQUAREOFF
----
-## 10. CONCLUSION
-JAPOON V3 now follows a strict **2-timeframe MACD alignment + pullback entry** framework, with defined intraday entry windows and mandatory day-end square-off, while keeping existing stop-loss and profit-booking behavior unchanged.
----
-*Document Version: 3.2.0*  
-*Last Updated: 29-Apr-2026*  
-*Environment: Virtual Paper Trading (Mock Mode)*
-</script>
+        </div>
+
+        <h2>8. RISK PARAMETERS & COMPLIANCE</h2>
+
+        <ul>
+            <li><strong>Stop Loss:</strong> No change from earlier setup.</li>
+            <li><strong>Profit Booking:</strong> No change from earlier setup.</li>
+            <li><strong>Capital Barrier:</strong> Maximum utilization as per current risk cap.</li>
+            <li><strong>Intraday Discipline:</strong> Strictly no overnight positions.</li>
+        </ul>
+
+        <h2>9. OPERATIONAL AUDIT TRAIL</h2>
+
+        <ol>
+            <li>PREFLIGHT_START</li>
+            <li>MACD_ALIGNMENT_VERIFIED</li>
+            <li>CROSSPRICE_CAPTURED</li>
+            <li>ENTRY_EXECUTED_PULLBACK</li>
+            <li>EXIT_EXECUTED</li>
+            <li>EOD_FORCE_SQUAREOFF</li>
+        </ol>
+
+        <h2>10. CONCLUSION</h2>
+
+        <p>
+            JAPOON V3 now follows a strict
+            <strong>2-timeframe MACD alignment + pullback entry</strong>
+            framework, with defined intraday entry windows and mandatory day-end square-off,
+            while keeping existing stop-loss and profit-booking behavior unchanged.
+        </p>
+
+        <div class="footer">
+            <p><strong>Document Version:</strong> 3.2.0</p>
+            <p><strong>Last Updated:</strong> 29-Apr-2026</p>
+            <p><strong>Environment:</strong> Virtual Paper Trading (Mock Mode)</p>
+        </div>
+
+    </div>
 
     <script>
-        // Configure Mermaid to support dark mode professionally
         mermaid.initialize({
-            startOnLoad: false,
+            startOnLoad: true,
             theme: 'dark',
             securityLevel: 'loose',
             flowchart: {
@@ -341,31 +527,8 @@ JAPOON V3 now follows a strict **2-timeframe MACD alignment + pullback entry** f
                 curve: 'basis'
             }
         });
-
-        // Fetch markdown text
-        const markdownContent = document.getElementById('markdown-content').textContent;
-
-        // Custom rendering for marked
-        const renderer = new marked.Renderer();
-        
-        // Parse and Inject HTML
-        document.getElementById('content').innerHTML = marked.parse(markdownContent, { renderer: renderer });
-
-        // Extract <pre> blocks targeting mermaid
-        const renderMermaid = async () => {
-            const preTags = document.querySelectorAll('pre code.language-mermaid');
-            preTags.forEach((codeBlock) => {
-                const pre = codeBlock.parentElement;
-                const mermaidDiv = document.createElement('div');
-                mermaidDiv.className = 'mermaid';
-                mermaidDiv.textContent = codeBlock.textContent;
-                pre.replaceWith(mermaidDiv);
-            });
-            await mermaid.run();
-        };
-
-        renderMermaid();
     </script>
+
 </body>
 
 </html>
