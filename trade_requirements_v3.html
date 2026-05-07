@@ -4,12 +4,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>JAPOON V3 — Operational Master Blueprint</title>
 
     <meta property="og:title" content="JAPOON V3 — Operational Master Blueprint" />
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet" />
 
     <!-- Mermaid -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
@@ -35,7 +38,7 @@
             font-family: 'Inter', sans-serif;
             line-height: 1.8;
             margin: 0;
-            padding: 0;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
         }
@@ -43,10 +46,9 @@
         .container {
             max-width: 1000px;
             width: 100%;
-            margin: 40px 20px;
-            padding: 60px 80px;
             background: var(--surface-color);
             border-radius: 20px;
+            padding: 60px 80px;
             box-shadow:
                 0 25px 50px -12px rgba(0, 0, 0, 0.5),
                 0 0 0 1px var(--border-color);
@@ -54,11 +56,9 @@
 
         h1,
         h2,
-        h3,
-        h4,
-        h5 {
+        h3 {
             color: #ffffff;
-            margin-top: 2.5em;
+            margin-top: 2.2em;
             margin-bottom: 1em;
             font-weight: 700;
             letter-spacing: -0.025em;
@@ -67,18 +67,18 @@
         h1 {
             font-size: 3rem;
             text-align: center;
+            margin-top: 0;
+            margin-bottom: 0.3em;
             background: linear-gradient(to bottom right, #60a5fa, #2563eb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.2em;
-            margin-top: 0.5em;
         }
 
         .subtitle {
             text-align: center;
             color: var(--text-secondary);
-            font-size: 1.2rem;
-            margin-bottom: 3em;
+            font-size: 1.15rem;
+            margin-bottom: 3rem;
             font-weight: 300;
         }
 
@@ -102,86 +102,67 @@
         }
 
         h3 {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             color: #93c5fd;
             border-left: 3px solid var(--accent-color);
             padding-left: 15px;
         }
 
-        p {
-            margin-bottom: 1.5rem;
+        p,
+        li {
             color: #cbd5e1;
             font-size: 1.05rem;
         }
 
         ul,
         ol {
-            margin-bottom: 2rem;
             padding-left: 2rem;
-            color: #cbd5e1;
+            margin-bottom: 2rem;
         }
 
         li {
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.7rem;
         }
 
         strong {
             color: #ffffff;
-            font-weight: 600;
-        }
-
-        code {
-            font-family: 'Fira Code', monospace;
-            background: var(--code-bg);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            color: #f472b6;
-        }
-
-        pre {
-            background: var(--code-bg);
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-            margin: 2rem 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 2rem 0;
-            font-size: 0.95rem;
+            overflow: hidden;
+            border-radius: 10px;
         }
 
         th {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(59, 130, 246, 0.12);
             color: #ffffff;
             text-align: left;
-            padding: 12px;
+            padding: 14px;
             border-bottom: 2px solid var(--border-color);
         }
 
         td {
-            padding: 12px;
+            padding: 14px;
             border-bottom: 1px solid var(--border-color);
             color: #cbd5e1;
-        }
-
-        .mermaid {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 30px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            margin: 40px 0;
-            overflow-x: auto;
         }
 
         hr {
             border: none;
             border-top: 1px solid var(--border-color);
             margin: 3rem 0;
+        }
+
+        .mermaid {
+            margin: 40px 0;
+            padding: 30px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
         }
 
         .footer {
@@ -194,7 +175,7 @@
 
         @media (max-width: 768px) {
             .container {
-                padding: 30px 20px;
+                padding: 30px 22px;
             }
 
             h1 {
@@ -230,14 +211,14 @@
         </p>
 
         <p>
-            The execution model remains pullback-based to avoid chasing premium spikes and to improve
-            entry quality.
+            The execution model remains pullback-based to avoid chasing premium spikes and improve entry quality.
         </p>
 
         <h2>2. MODULE A: SIGNAL INTELLIGENCE (THE MACD ENGINE)</h2>
 
         <p>
-            The system relies on the <strong>Moving Average Convergence Divergence (MACD)</strong>
+            The system relies on the
+            <strong>Moving Average Convergence Divergence (MACD)</strong>
             as the directional engine.
         </p>
 
@@ -245,23 +226,27 @@
 
         <ul>
             <li>
-                Entry is allowed only when <strong>1-Hour MACD crossover direction</strong> and one
-                lower timeframe MACD direction (<strong>15-Minute or 30-Minute</strong>) are aligned.
+                Entry is allowed only when <strong>1-Hour MACD crossover direction</strong>
+                and one lower timeframe MACD direction
+                (<strong>15-Minute or 30-Minute</strong>) are aligned.
             </li>
 
             <li>
                 <strong>Bullish Entry (CALL):</strong>
-                1H MACD bullish crossover + (15M bullish OR 30M bullish).
+                1H MACD bullish crossover + (15M bullish OR 30M bullish)
             </li>
 
             <li>
                 <strong>Bearish Entry (PUT):</strong>
-                1H MACD bearish crossover + (15M bearish OR 30M bearish).
+                1H MACD bearish crossover + (15M bearish OR 30M bearish)
             </li>
 
             <li>
-                Core rule for entry:
-                <strong>Any 2 MACDs (1 higher timeframe + 1 lower timeframe) must agree in direction.</strong>
+                Core rule:
+                <strong>
+                    Any 2 MACDs (1 higher timeframe + 1 lower timeframe)
+                    must agree in direction.
+                </strong>
             </li>
         </ul>
 
@@ -269,8 +254,11 @@
 
         <ul>
             <li>Previous candle-age/freshness filters are removed.</li>
+
             <li>
-                <strong>No 5-candle, 10-candle, or any candle-window restriction</strong>
+                <strong>
+                    No 5-candle, 10-candle, or any candle-window restriction
+                </strong>
                 is applied for entry validation.
             </li>
         </ul>
@@ -381,9 +369,7 @@
             <li><strong>No entries before 09:45 AM IST.</strong></li>
             <li><strong>No new entries after 12:45 PM IST.</strong></li>
             <li>Valid entry window: <strong>09:45:00 to 12:45:00 IST</strong>.</li>
-            <li>
-                MACD alignment and pullback conditions must be satisfied within this window.
-            </li>
+            <li>MACD alignment and pullback conditions must be satisfied within this window.</li>
         </ul>
 
         <h2>5. MODULE D: ASSET SELECTION & CONTRACT GOVERNANCE</h2>
@@ -423,7 +409,7 @@
 
                 <tr>
                     <td>Rapid Profit</td>
-                    <td>Hits +8% within &lt; 60 minutes</td>
+                    <td>Hits +8% within less than 60 minutes</td>
                     <td>Full Exit</td>
                 </tr>
 
@@ -457,25 +443,33 @@
 
         <ul>
             <li>All open positions must be closed on or before <strong>03:20 PM IST</strong>.</li>
-            <li><strong>No overnight holding/carry-forward</strong> is allowed.</li>
+            <li><strong>No overnight holding or carry-forward</strong> is allowed.</li>
         </ul>
 
         <h2>7. FLOW VISUALIZATION</h2>
 
         <div class="mermaid">
 graph TD
-    Start([System Start]) --> TimeGate{09:45 to 12:45?}
+    Start([System Start]) --> TimeGate{09:45 to 12:45 IST?}
+
     TimeGate -->|No| Wait[Wait]
-    TimeGate -->|Yes| Align{1H + (15M or 30M) MACD Align?}
+    TimeGate -->|Yes| Align{1H + 15M or 30M MACD Align?}
+
     Align -->|No| Wait
-    Align -->|Yes| Anchor[Capture/Use CrossPrice]
+    Align -->|Yes| Anchor[Capture or Reuse CrossPrice]
+
     Anchor --> Pullback{Pullback Criteria Met?}
+
     Pullback -->|No| Align
     Pullback -->|Yes| Entry[Execute Entry]
-    Entry --> Monitor[Monitor exits + risk]
-    Monitor --> EOD{Time >= 15:20?}
-    EOD -->|Yes| SquareOff[Force Close All]
+
+    Entry --> Monitor[Monitor Exits and Risk]
+
+    Monitor --> EOD{Time >= 15:20 IST?}
+
+    EOD -->|Yes| SquareOff[Force Close All Positions]
     EOD -->|No| Monitor
+
     SquareOff --> End([No Overnight Carry])
         </div>
 
@@ -502,7 +496,7 @@ graph TD
         <h2>10. CONCLUSION</h2>
 
         <p>
-            JAPOON V3 now follows a strict
+            JAPOON V3 follows a strict
             <strong>2-timeframe MACD alignment + pullback entry</strong>
             framework, with defined intraday entry windows and mandatory day-end square-off,
             while keeping existing stop-loss and profit-booking behavior unchanged.
@@ -519,12 +513,12 @@ graph TD
     <script>
         mermaid.initialize({
             startOnLoad: true,
-            theme: 'dark',
-            securityLevel: 'loose',
+            theme: "dark",
+            securityLevel: "loose",
             flowchart: {
                 useMaxWidth: true,
                 htmlLabels: true,
-                curve: 'basis'
+                curve: "basis"
             }
         });
     </script>
