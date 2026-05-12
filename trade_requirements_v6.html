@@ -531,6 +531,18 @@
         <hr>
 
         <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  SECTION 11 — RECENT REFINEMENTS (MAY 2026)                -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <h2>11. RECENT REFINEMENTS (MAY 2026)</h2>
+        <ul>
+            <li><strong>Synthetic Premium Fallback</strong>: In Paper Mode, if the options chain is unavailable, the system utilizes a default synthetic premium of <strong>150</strong>. This prevents the risk-engine from falling back to the NIFTY spot price (23,000+), which would lead to incorrect zero-lot calculations.</li>
+            <li><strong>Model Integrity</strong>: All trades now explicitly store <code>stopLoss</code> and <code>target</code> values at the moment of entry. Default stops are set at 25 points and targets at 40 points from the entry premium.</li>
+            <li><strong>Redis v4+ Compatibility</strong>: Redis operations for exposure tracking and daily limits use modern <code>set</code> command options (e.g., <code>{ EX: 86400 }</code>) to ensure compatibility with high-performance Redis clients.</li>
+            <li><strong>Enhanced Observability</strong>: The audit trail includes <code>DEBUG</code> level tracing for real-time visibility into the execution gates (Cooldown, Exposure, Bias, and Risk Sizing).</li>
+        </ul>
+        <hr>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
         <!--  SECTION 10 — CONCLUSION                                   -->
         <!-- ══════════════════════════════════════════════════════════ -->
         <h2>10. CONCLUSION</h2>
