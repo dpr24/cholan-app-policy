@@ -1,578 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JAPOON V6 — Operational Master Blueprint</title>
-    <meta name="description"
-        content="JAPOON V6 Operational Master Blueprint — Autonomous NIFTY 50 Options Trading & Moment-of-Capture Logic">
-    <meta property="og:title" content="JAPOON V6 — Operational Master Blueprint">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-        rel="stylesheet">
-    <!-- Mermaid.js for flowcharts -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --surface-color: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-color: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.5);
-            --border-color: #334155;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --code-bg: #000000;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.8;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            margin: 40px 20px;
-            padding: 60px 80px;
-            background: var(--surface-color);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
-        }
-
-        /* ── HEADINGS ── */
-        h1,
-        h2,
-        h3,
-        h4,
-        h5 {
-            color: #ffffff;
-            margin-top: 2.5em;
-            margin-bottom: 1em;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-
-        h1 {
-            font-size: 3rem;
-            text-align: center;
-            background: linear-gradient(to bottom right, #60a5fa, #2563eb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.2em;
-            margin-top: 0.5em;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            margin-bottom: 3em;
-            font-weight: 300;
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 0.4em;
-            color: #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        h2::before {
-            content: '';
-            width: 8px;
-            height: 24px;
-            background: var(--accent-color);
-            border-radius: 4px;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-
-        h3 {
-            font-size: 1.4rem;
-            color: #93c5fd;
-            border-left: 3px solid var(--accent-color);
-            padding-left: 15px;
-        }
-
-        /* ── TEXT ── */
-        p {
-            margin-bottom: 1.5rem;
-            color: #cbd5e1;
-            font-size: 1.1rem;
-        }
-
-        ul,
-        ol {
-            margin-bottom: 2rem;
-            padding-left: 2rem;
-            color: #cbd5e1;
-        }
-
-        li {
-            margin-bottom: 0.8rem;
-            font-size: 1.05rem;
-        }
-
-        strong {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        em {
-            color: #94a3b8;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 50px 0;
-        }
-
-        /* ── CODE ── */
-        code {
-            font-family: 'Fira Code', monospace;
-            background: var(--code-bg);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            color: #f472b6;
-        }
-
-        pre {
-            background: var(--code-bg);
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-            margin: 2rem 0;
-        }
-
-        pre code {
-            color: #e2e8f0;
-            background: none;
-            padding: 0;
-        }
-
-        /* ── BLOCKQUOTE ── */
-        blockquote {
-            border-left: 5px solid var(--accent-color);
-            background: rgba(59, 130, 246, 0.05);
-            padding: 24px 32px;
-            margin: 30px 0;
-            border-radius: 4px 12px 12px 4px;
-        }
-
-        blockquote p {
-            margin: 0;
-            color: #e2e8f0;
-            font-style: italic;
-        }
-
-        /* ── TABLES ── */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            font-size: 0.95rem;
-        }
-
-        th {
-            background: rgba(59, 130, 246, 0.1);
-            color: #fff;
-            text-align: left;
-            padding: 12px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-            color: #cbd5e1;
-        }
-
-        /* ── MERMAID ── */
-        .mermaid {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 30px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            margin: 40px 0;
-        }
-
-        /* ── SECTION SPACING ── */
-        .doc-section {
-            margin-bottom: 100px;
-        }
-
-        /* ── ALERTS ── */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .alert-info {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.27);
-        }
-
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.27);
-        }
-
-        /* ── FOOTER META ── */
-        .doc-meta {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* ── RESPONSIVE ── */
-        @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            h2 {
-                font-size: 1.4rem;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nifty Trading App — Design, Logic & Calculations</title>
+  <style>
+    body{font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif;line-height:1.5;color:#111;background:#fff;padding:20px}
+    h1,h2,h3{color:#1b2330}
+    code{background:#f6f8fa;padding:2px 6px;border-radius:4px}
+    pre{background:#0b1220;color:#e6eef8;padding:12px;border-radius:6px;overflow:auto}
+    table{border-collapse:collapse;width:100%;margin:8px 0}
+    th,td{border:1px solid #ddd;padding:8px;text-align:left}
+    .small{font-size:0.9rem;color:#555}
+  </style>
 </head>
-
 <body>
-    <div class="container">
+  <h1>Nifty Trading App — Design, Logic & Calculations</h1>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  HEADER                                                    -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h1>JAPOON V6 — OPERATIONAL BLUEPRINT</h1>
-        <p class="subtitle">Autonomous NIFTY 50 Options Trading &amp; Moment-of-Capture Logic</p>
-        <hr>
+  <p class="small">Generated from project source under <strong>src/</strong>. This document explains architecture, core modules, formulas, rules and data flows used by the system. Each section references the primary implementation in the codebase.</p>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 1 — STRATEGIC PHILOSOPHY                          -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>1. STRATEGIC PHILOSOPHY</h2>
-        <p>
-            JAPOON V6 is engineered to exploit high-probability momentum shifts identified by
-            <strong>1-Hour MACD crossovers</strong> and confirms direction using one lower timeframe MACD
-            (<strong>15M or 30M</strong>) before allowing entries.
-        </p>
-        <p>
-            The execution model remains pullback-based to avoid chasing premium spikes and to improve entry quality.
-        </p>
-        <hr>
+  <h2>Contents</h2>
+  <ol>
+    <li>Project Overview</li>
+    <li>Architecture & Key Components</li>
+    <li>Broker Integration & Order Payloads</li>
+    <li>Execution Flow (Order lifecycle)</li>
+    <li>Position & Exposure Calculations</li>
+    <li>Risk Management</li>
+    <li>Strategy V2: Entry/Exit Orchestration</li>
+    <li>Indicators and Calculations</li>
+    <li>Utilities and Helper Functions</li>
+    <li>Redis Keys & Side Effects</li>
+  </ol>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 2 — MODULE A: SIGNAL INTELLIGENCE                 -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>2. MODULE A: SIGNAL INTELLIGENCE (THE MACD ENGINE)</h2>
-        <p>
-            The system relies on the <strong>Moving Average Convergence Divergence (MACD)</strong> as the directional
-            engine.
-        </p>
+  <h2>1. Project Overview</h2>
+  <p>The app is an automated trading engine focused on NIFTY options trading. Main responsibilities:
+    - ingest market/candle data, evaluate multi-timeframe signals,
+    - select contracts, size positions based on risk profile,
+    - place/modify/cancel orders via Angel broker API,
+    - persist trades and events in DB for audit.
+  </p>
 
-        <h3>2.1 The Two-Timeframe Alignment Filter (Primary Rule)</h3>
-        <ul>
-            <li>Entry is allowed only when <strong>1-Hour MACD crossover direction</strong> and
-                <strong>one lower timeframe MACD direction (15-Minute or 30-Minute)</strong> are aligned.
-            </li>
-            <li><strong>Bullish Entry (CALL)</strong>: 1H MACD bullish crossover + (15M bullish OR 30M bullish).</li>
-            <li><strong>Bearish Entry (PUT)</strong>: 1H MACD bearish crossover + (15M bearish OR 30M bearish).</li>
-            <li>Core rule for entry: <strong>any 2 MACDs (1 higher timeframe + 1 lower timeframe) must agree in
-                    direction</strong>.</li>
-        </ul>
+  <h2>2. Architecture & Key Components</h2>
+  <ul>
+    <li><strong>Entry point:</strong> <code>src/app.js</code>, <code>src/server.js</code> (HTTP + websocket endpoints).</li>
+    <li><strong>Execution:</strong> <code>src/execution/order.manager.js</code>, <code>src/execution/order.service.js</code>, <code>src/execution/position.manager.js</code>.</li>
+    <li><strong>Risk:</strong> <code>src/risk/capital.manager.js</code>, <code>src/risk/trade.limits.js</code>, <code>src/risk/cooldown.manager.js</code>, <code>src/risk/gap.guard.js</code>.</li>
+    <li><strong>Strategy</strong> V2 orchestrator and rules under <code>src/strategy/v2/</code> (orchestrator, timeRules, pullbackRules, entryChecklist, exitRules).</li>
+    <li><strong>Indicators:</strong> <code>src/indicators/</code> — MACD, Pullback, CandleFilter, Volume.</li>
+    <li><strong>Data persistence:</strong> Sequelize models in <code>src/models/</code> (orders, trades, events).</li>
+  </ul>
 
-        <h3>2.2 No Candle-Count Restriction</h3>
-        <ul>
-            <li>Previous candle-age/freshness filters are removed.</li>
-            <li><strong>No 5-candle, 10-candle, or any candle-window restriction</strong> is applied for entry
-                validation.</li>
-        </ul>
+  <h2>3. Broker Integration & Order Payloads</h2>
+  <p>Broker glue lives in <code>src/broker/angelClient.js</code> and <code>src/execution/order.service.js</code>. The OrderService resolves instruments and builds place/modify payloads expected by Angel APIs. Important fields:</p>
+  <ul>
+    <li><strong>tradingsymbol</strong> — instrument mnemonic</li>
+    <li><strong>symboltoken</strong> — numeric token optionally used for resolution</li>
+    <li><strong>quantity</strong> — integer shares/lot units</li>
+    <li><strong>ordertype</strong> — "LIMIT" or "MARKET" (mapped via <code>toOrderType</code>)</li>
+    <li><strong>producttype</strong> — e.g. "MIS" mapped via <code>toProductType</code></li>
+    <li><strong>price</strong>, <strong>triggerprice</strong>, <strong>stoploss</strong>, <strong>squareoff</strong></li>
+  </ul>
 
-        <h3>2.3 Bias Handling</h3>
-        <ul>
-            <li>Bias remains valid only while required MACD alignment is present.</li>
-            <li>If alignment breaks, new entries are blocked until alignment returns.</li>
-        </ul>
-        <hr>
+  <h3>Order placement logic (high-level)</h3>
+  <ol>
+    <li>Resolve instrument (exchange/tradingsymbol/symboltoken) — <code>resolveInstrument()</code>.</li>
+    <li>Build payload via <code>buildPlaceOrderPayload()</code> and call <code>angelClient.placeOrder()</code>.</li>
+    <li>On errors, OrderManager retries up to <code>config.MAX_ORDER_RETRY</code> with delay <code>ORDER_TIMEOUT/2</code>.</li>
+  </ol>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 3 — MODULE B: DYNAMIC ANCHOR CONTROL              -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>3. MODULE B: DYNAMIC ANCHOR CONTROL (CROSSPRICE)</h2>
-        <p>
-            The system anchors pullback logic to a captured CrossPrice and uses that as the premium reference point.
-        </p>
+  <h2>4. Execution Flow (Order lifecycle)</h2>
+  <p>Primary flow is implemented in <code>src/execution/order.manager.js</code>:</p>
+  <ul>
+    <li><strong>validateOrder(config)</strong> — validates trading symbol, quantity bounds, price > 0. Checks risk-reward when stopLoss/target both provided:
+      reward/risk = |target - price| / |price - stopLoss| must be &ge; STRATEGY_MIN_PROFIT_RATIO.
+    </li>
+    <li>Compares configured price against market LTP and enforces <code>PRICE_SLIPPAGE_PERCENT</code>.
+    </li>
+    <li><strong>placeEntryOrder(config)</strong> — validates, attempts to place LIMIT entry as BUY with configured quantity and entryPrice. Stores metadata in <code>activeOrders</code> map and maintains <code>orderEvents</code> for audit trail.</li>
+    <li><strong>placeMarketOrder(config)</strong> — used for exits; places MARKET order payload (price: 0).</li>
+    <li><strong>modifyStopLoss/modifyTarget(cancel)</strong> — wrapper that calls OrderService.modifyOrder/cancelOrder and updates in-memory order meta and logs events.</li>
+  </ul>
 
-        <h3>3.1 Moment-of-Capture Synchronization</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Step</th>
-                    <th>Action</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>01</strong></td>
-                    <td><strong>Detect</strong></td>
-                    <td>1H MACD crossover identified.</td>
-                </tr>
-                <tr>
-                    <td><strong>02</strong></td>
-                    <td><strong>Validate</strong></td>
-                    <td>Confirms alignment with 15M or 30M MACD direction.</td>
-                </tr>
-                <tr>
-                    <td><strong>03</strong></td>
-                    <td><strong>Anchor</strong></td>
-                    <td>Captures live contract premium as CrossPrice.</td>
-                </tr>
-                <tr>
-                    <td><strong>04</strong></td>
-                    <td><strong>Reuse</strong></td>
-                    <td>Reuses anchor until new valid crossover/alignment cycle is formed.</td>
-                </tr>
-            </tbody>
-        </table>
+  <h2>5. Position & Exposure Calculations</h2>
+  <h3>Position processing</h3>
+  <p><code>PositionManager.processPositions()</code> normalizes broker position payloads to: <code>{ symbol, quantity, averagePrice, currentPrice, pnl, pnlPercent }</code>. PnL percent computed as:</p>
+  <pre>pnlPercent = avg > 0 ? (pnl / (|quantity| * avg)) * 100 : 0</pre>
 
-        <h3>3.2 Persistence Layer</h3>
-        <ul>
-            <li>CrossPrice metadata can be persisted in Redis for restart resilience.</li>
-        </ul>
-        <hr>
+  <h3>Exposure</h3>
+  <p>Total exposure computed as:</p>
+  <pre>totalExposure = Σ(position.quantity * position.averagePrice)</pre>
+  <p>CapitalManager stores exposure per day in Redis at key <code>exposure:YYYY-MM-DD</code>.</p>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 4 — MODULE C: ENTRY GATE ARCHITECTURE             -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>4. MODULE C: ENTRY GATE ARCHITECTURE (PULLBACK ENTRY)</h2>
-        <p>v6 uses <strong>pullback entry</strong> only. No direct chase entries.</p>
+  <h2>6. Risk Management</h2>
+  <p>Main logic is in <code>src/risk/capital.manager.js</code>. Key concepts:</p>
+  <ul>
+    <li><strong>Risk profile</strong> built from Redis key <code>ACTIVE_RISK_PROFILE</code> or defaults from <code>src/config/risk.profiles.js</code>. Profile fields include <code>capitalSize</code>, <code>perTradeRiskPercent</code>, <code>perTradeRiskValue</code>, <code>maxCapitalUtilizationPercent</code>, <code>lotSize</code>, etc.</li>
+    <li><strong>Max capital</strong>: maxCapital = capitalSize * maxCapitalUtilizationPercent / 100</li>
+    <li><strong>Sizing percent</strong>: sizingPercent = dashboard per-trade percent if present else profile percent</li>
+    <li><strong>Percent risk capital</strong>: percentRiskCapital = capitalSize * sizingPercent / 100</li>
+    <li><strong>tradeCapital</strong>: capped to min(maxCapital, perTradeRiskValue || percentRiskCapital)</li>
+  </ul>
 
-        <h3>4.1 Tier 1: Partial Entry (Scale-In)</h3>
-        <ul>
-            <li><strong>Condition</strong>: Contract premium drops between <strong>₹10.00 and ₹22.00</strong> from
-                CrossPrice.</li>
-            <li><strong>Action</strong>: Buy <strong>1 Lot (25 Qty)</strong>.</li>
-        </ul>
+  <h3>Position sizing formulas</h3>
+  <p>Two sizing methods are used across code:</p>
+  <ol>
+    <li><strong>Simplified per-share size</strong> (from utils.calculatePositionSize):
+      <pre>riskAmount = (capital * riskPercent) / 100
+pricePerShare = |entryPrice - stopLoss|
+qty = floor(riskAmount / pricePerShare)</pre>
+    </li>
+    <li><strong>Lot-based sizing</strong> (CapitalManager):
+      <pre>minCapitalFor1Lot = entryPrice * lotSize
+rawLots = tradeCapital / minCapitalFor1Lot
+lots = floor(rawLots) (ensure at least 1 if tradeCapital >= minCapitalFor1Lot)
+qty = lots * lotSize
+totalCost = qty * entryPrice</pre>
+    </li>
+  </ol>
 
-        <h3>4.2 Tier 2: Deep Entry (Final Load)</h3>
-        <ul>
-            <li><strong>Condition</strong>: Contract premium drops between <strong>₹22.00 and ₹50.00</strong> from
-                CrossPrice.</li>
-            <li><strong>Action</strong>: Buy additional <strong>1 Lot</strong>.</li>
-        </ul>
+  <h3>Trade eligibility checks</h3>
+  <p><code>CapitalManager.canTrade()</code> checks Redis counters and limits:
+    - open_positions_count &lt;= profile.maxPositions
+    - daily trade count &lt; MAX_TRADES_PER_DAY
+    - trend trade count &lt; MAX_TRADES_PER_TREND
+  </p>
 
-        <h3>4.3 Dead-Zone Invalidation</h3>
-        <ul>
-            <li>If premium drops <strong>more than ₹50.00</strong> from CrossPrice, trade is invalidated.</li>
-        </ul>
+  <h3>Cooldowns & consecutive losses</h3>
+  <p><code>CooldownManager</code> tracks consecutive losses per day (Redis key <code>losses:YYYY-MM-DD</code>), and when limit reached, activates <code>cooldown:active</code> for 5 trading days. Cooldown end computed by skipping weekends and setting end timestamp to 15:30 of final trading day.</p>
 
-        <h3>4.4 Entry Session Window (Mandatory Intraday Gate)</h3>
-        <ul>
-            <li><strong>No entries before 09:45 AM IST</strong>.</li>
-            <li><strong>No new entries after 12:45 PM IST</strong>.</li>
-            <li>Valid entry window: <strong>09:45:00 to 12:45:00 IST</strong>.</li>
-            <li>MACD alignment and pullback conditions must be satisfied within this window.</li>
-        </ul>
-        <hr>
+  <h2>7. Strategy V2 — Orchestration & Decision Flow</h2>
+  <p>Files in <code>src/strategy/v2/</code> form the entry decision pipeline. Key steps:</p>
+  <ol>
+    <li><strong>Market & time gates</strong> — market open and EntryTimeGate boundaries (default 09:45–14:45 IST).</li>
+    <li><strong>MACD 1H crossover</strong> detection (<code>pullbackRules</code>) — uses standard MACD (12,26,9) via <code>technicalindicators</code>. A bullish crossover is histogram negative→positive with MACD line crossing above signal line.</li>
+    <li><strong>Multi-timeframe alignment</strong> — validate lower TF (15m/30m) alignment with the 1h bias.</li>
+    <li><strong>Contract selection</strong> — <code>selectContract()</code> chooses option leg(s) from options chain with constraints such as minimum premium, ITM points, days-to-expiry, strike window, last 3-days premium checks, and greeks snapshot when available.</li>
+    <li><strong>CrossPrice anchor + tolerance</strong> — on initial crossover the system stores a crossPrice (index snapshot). Entry only allowed while live index remains within CrossPrice ± tolerance (config CROSSPRICE_INDEX_TOLERANCE_POINTS).</li>
+    <li><strong>Entry checklist</strong> — all gates combined via <code>evaluateEntryChecklist()</code>. Any failed gate blocks entry and returns human-readable reason(s).</li>
+  </ol>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 5 — MODULE D: ASSET SELECTION                     -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>5. MODULE D: ASSET SELECTION &amp; CONTRACT GOVERNANCE</h2>
+  <h3>After entry</h3>
+  <p>After an entry is confirmed, <code>afterEntryConfirmed</code> locks bias, increments trade counts, and updates state via <code>src/strategy/v2/tradeState.js</code>. Exit evaluation uses <code>exitRules</code> including partial book profit rules and full exit conditions.</p>
 
-        <h3>5.1 Deep ITM Strike Selection</h3>
-        <ul>
-            <li><strong>CALLs</strong>: At least 100 points below spot.</li>
-            <li><strong>PUTs</strong>: At least 100 points above spot.</li>
-        </ul>
+  <h2>8. Indicators & Exact Calculations</h2>
+  <h3>MACD</h3>
+  <p>Implemented in <code>src/indicators/macd.indicator.js</code> with params: fast=12, slow=26, signal=9. The library returns arrays of {MACD, signal, histogram}.
+    A crossover detection checks histogram sign changes and MACD vs signal relationships. <code>findLastCrossover</code> maps result index back to candle index (accounting for result length shorter than candles).</p>
 
-        <h3>5.2 Expiry Roll Protocol</h3>
-        <ul>
-            <li>Prefer weekly options with safe DTE handling.</li>
-        </ul>
-        <hr>
+  <h3>Pullback calculation</h3>
+  <p>Utility <code>calculatePullback(high, low, close)</code> returns:
+    <pre>pullbackPercent = ((close - low) / (high - low)) * 100</pre>
+    Zig-zag levels (config ZIGZAG_LEVELS) used: 1st ≥70%, 2nd ≥60%, 3rd ≥55%.
+  </p>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 6 — MODULE E: EXIT MATRIX                         -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>6. MODULE E: EXIT MATRIX (TERMINATION LOGIC)</h2>
+  <h3>Candle filters & pattern checks</h3>
+  <ul>
+    <li><strong>Consecutive candles:</strong> need strict consecutive bullish/bearish counts as configured (e.g., 3).</li>
+    <li><strong>Mixed candle rule (lower TF):</strong> last 6 candles cannot be all same color; need at least one opposite to confirm pullback.</li>
+    <li><strong>Doji/Hammer</strong> detection thresholds used in <code>CandleFilterIndicator</code> (body/range ratios).</li>
+    <li><strong>Gradual vs gap pullback:</strong> reject entries where openPullback &gt; 80% (gap entry) — prefer gradual retracements.</li>
+  </ul>
 
-        <h3>6.1 Logical Exit Triggers</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Trigger</th>
-                    <th>Parameter</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>ROI Target</strong></td>
-                    <td>Hits <strong>+27%</strong> absolute return</td>
-                    <td>Full Exit</td>
-                </tr>
-                <tr>
-                    <td><strong>Rapid Profit</strong></td>
-                    <td>Hits <strong>+8%</strong> within &lt; 60 minutes</td>
-                    <td>Full Exit</td>
-                </tr>
-                <tr>
-                    <td><strong>Pivot Wall</strong></td>
-                    <td>Price touches R/S pivots</td>
-                    <td>Full Exit (as configured)</td>
-                </tr>
-                <tr>
-                    <td><strong>Opposite Flip</strong></td>
-                    <td>Lower timeframe momentum reversal</td>
-                    <td>Immediate Exit</td>
-                </tr>
-            </tbody>
-        </table>
+  <h3>Volume strength</h3>
+  <p>Computed in <code>VolumeIndicator.analyzeVolume()</code>:
+    - avgVolume = average of previous 20 candles
+    - multiplier = currentVolume / avgVolume
+    - strength: &lt;1.5 = WEAK, 1.5–2.0 = GOOD, &ge;2.0 = STRONG
+  </p>
 
-        <h3>6.2 Partial Profit Booking</h3>
-        <ul>
-            <li><strong>No change from earlier setup</strong>.</li>
-        </ul>
+  <h2>9. Utilities & Helper Functions</h2>
+  <p>Located in <code>src/utils/</code>. Notable functions (formulas):</p>
+  <ul>
+    <li><code>calculatePercentage(current, previous)</code> = ((current - previous) / previous) * 100</li>
+    <li><code>calculateTrailingStop(entryPrice, currentPrice, trailingPercent)</code> returns max(entryPrice,currentPrice) * (1 - trailingPercent/100)</li>
+    <li><code>calculateRisk(entryPrice, stopLoss, quantity)</code> = |entryPrice - stopLoss| * quantity</li>
+    <li><code>calculateReward(exitPrice, entryPrice, quantity)</code> = |exitPrice - entryPrice| * quantity</li>
+    <li><code>linearRegression(points)</code> returns slope, intercept, rSquared (least-squares)</li>
+  </ul>
 
-        <h3>6.3 Stop Loss</h3>
-        <ul>
-            <li><strong>No change from earlier setup</strong>.</li>
-        </ul>
+  <h2>10. Redis Keys, Counters & Side Effects</h2>
+  <ul>
+    <li><code>exposure:YYYY-MM-DD</code> — daily exposure amount (CapitalManager).</li>
+    <li><code>trades:daily:YYYY-MM-DD</code>, <code>trades:weekly:YYYY-MM-DD</code>, <code>trades:monthly:YYYY-MM</code> — counters for TradeLimits.</li>
+    <li><code>open_positions_count</code> — number of currently open positions (used by CapitalManager.canTrade()).</li>
+    <li><code>losses:YYYY-MM-DD</code> and <code>cooldown:active</code> — tracked by CooldownManager.</li>
+    <li><code>ACTIVE_RISK_PROFILE</code> — JSON risk profile override used by CapitalManager.</li>
+    <li><code>crossPrice:{CALL|PUT}</code> — stored cross-price anchor and metadata (strategy state).</li>
+  </ul>
 
-        <h3>6.4 Mandatory Day-End Square-Off (No Overnight Holding)</h3>
-        <ul>
-            <li>All open positions must be closed <strong>on or before 03:20 PM IST</strong>.</li>
-            <li><strong>No overnight holding/carry-forward</strong> is allowed.</li>
-        </ul>
-        <hr>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 7 — FLOW VISUALIZATION                            -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>7. FLOW VISUALIZATION</h2>
 
-        <div class="mermaid">
-            graph TD
-            Start([System Start]) --> TimeGate{09:45 to 12:45?}
-            TimeGate -->|No| Wait[Wait]
-            TimeGate -->|Yes| Align{"1H + (15M or 30M) MACD Align?"}
-            Align -->|No| Wait
-            Align -->|Yes| Anchor[Capture/Use CrossPrice]
-            Anchor --> Pullback{Pullback Criteria Met?}
-            Pullback -->|No| Align
-            Pullback -->|Yes| Entry[Execute Entry]
-            Entry --> Monitor[Monitor exits + risk]
-            Monitor --> EOD{Time >= 15:20?}
-            EOD -->|Yes| SquareOff[Force Close All]
-            EOD -->|No| Monitor
-            SquareOff --> End([No Overnight Carry])
-        </div>
-        <hr>
-
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 8 — RISK PARAMETERS                               -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>8. RISK PARAMETERS &amp; COMPLIANCE</h2>
-        <ul>
-            <li><strong>Stop Loss</strong>: No change from earlier setup.</li>
-            <li><strong>Profit Booking</strong>: No change from earlier setup.</li>
-            <li><strong>Capital Barrier</strong>: Maximum utilization as per current risk cap.</li>
-            <li><strong>Intraday Discipline</strong>: Strictly no overnight positions.</li>
-        </ul>
-        <hr>
-
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 9 — OPERATIONAL AUDIT TRAIL                       -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>9. OPERATIONAL AUDIT TRAIL</h2>
-        <ol>
-            <li>PREFLIGHT_START</li>
-            <li>MACD_ALIGNMENT_VERIFIED</li>
-            <li>CROSSPRICE_CAPTURED</li>
-            <li>ENTRY_EXECUTED_PULLBACK</li>
-            <li>EXIT_EXECUTED</li>
-            <li>EOD_FORCE_SQUAREOFF</li>
-        </ol>
-        <hr>
-
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 11 — RECENT REFINEMENTS (MAY 2026)                -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>11. RECENT REFINEMENTS (MAY 2026)</h2>
-        <ul>
-            <li><strong>Synthetic Premium Fallback</strong>: In Paper Mode, if the options chain is unavailable, the system utilizes a default synthetic premium of <strong>150</strong>. This prevents the risk-engine from falling back to the NIFTY spot price (23,000+), which would lead to incorrect zero-lot calculations.</li>
-            <li><strong>Model Integrity</strong>: All trades now explicitly store <code>stopLoss</code> and <code>target</code> values at the moment of entry. Default stops are set at 25 points and targets at 40 points from the entry premium.</li>
-            <li><strong>Redis v4+ Compatibility</strong>: Redis operations for exposure tracking and daily limits use modern <code>set</code> command options (e.g., <code>{ EX: 86400 }</code>) to ensure compatibility with high-performance Redis clients.</li>
-            <li><strong>Enhanced Observability</strong>: The audit trail includes <code>DEBUG</code> level tracing for real-time visibility into the execution gates (Cooldown, Exposure, Bias, and Risk Sizing).</li>
-        </ul>
-        <hr>
-
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  SECTION 10 — CONCLUSION                                   -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <h2>10. CONCLUSION</h2>
-        <p>
-            JAPOON v6 now follows a strict <strong>2-timeframe MACD alignment + pullback entry</strong> framework,
-            with defined intraday entry windows and mandatory day-end square-off, while keeping existing
-            stop-loss and profit-booking behavior unchanged.
-        </p>
-
-        <!-- ── Document Metadata ── -->
-        <div class="doc-meta">
-
-            <em>Last Updated: 7-May-2026</em><br>
-            <em>Environment: Virtual Paper Trading (Mock Mode)</em></p>
-        </div>
-
-    </div><!-- /.container -->
-
-    <script>
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'dark',
-            securityLevel: 'loose',
-            flowchart: {
-                useMaxWidth: true,
-                htmlLabels: true,
-                curve: 'basis'
-            }
-        });
-    </script>
+  <p class="small">If you want, I can (1) expand the contract selection logic line-by-line, (2) include full mappings of Angel API payloads, or (3) run a static grep to list every file referencing sensitive config keys.</p>
 </body>
-
 </html>
