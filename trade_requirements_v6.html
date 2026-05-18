@@ -3,194 +3,217 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nifty Trading App — Design, Logic & Calculations</title>
+  <title>Trading Engine — Operational Master Document</title>
   <style>
-    body{font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif;line-height:1.5;color:#111;background:#fff;padding:20px}
-    h1,h2,h3{color:#1b2330}
-    code{background:#f6f8fa;padding:2px 6px;border-radius:4px}
-    pre{background:#0b1220;color:#e6eef8;padding:12px;border-radius:6px;overflow:auto}
-    table{border-collapse:collapse;width:100%;margin:8px 0}
+    body{font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#111;background:#fff;padding:28px}
+    h1,h2,h3{color:#0b2545}
+    p{margin:0 0 12px}
+    ul,ol{margin:0 0 12px 20px}
+    pre{background:#f6f8fa;padding:12px;border-radius:6px}
+    .small{font-size:0.95rem;color:#444}
+    .section{margin-bottom:26px}
+    table{border-collapse:collapse;width:100%;margin:12px 0}
     th,td{border:1px solid #ddd;padding:8px;text-align:left}
-    .small{font-size:0.9rem;color:#555}
   </style>
 </head>
 <body>
-  <h1>Nifty Trading App — Design, Logic & Calculations</h1>
+  <h1>Trading Engine — Operational Master Document</h1>
+  <p class="small">Client-facing, consolidated description of system architecture, decision logic, calculations, and operational controls. Internal file paths and code snippets have been removed for readability.</p>
 
-  <p class="small">Generated from project source under <strong>src/</strong>. This document explains architecture, core modules, formulas, rules and data flows used by the system. Each section references the primary implementation in the codebase.</p>
+  <div class="section">
+    <h2>Contents</h2>
+    <ol>
+      <li>Introduction & Goals</li>
+      <li>Configuration & Defaults</li>
+      <li>Data Models & Persistence</li>
+      <li>Broker Integration and Order Payloads</li>
+      <li>Order Lifecycle and State Management</li>
+      <li>Position Management and PnL</li>
+      <li>Risk Sizing and Capital Management</li>
+      <li>Trade Limits, Cooldowns & Safety Gates</li>
+      <li>Entry Session & Gap Controls</li>
+      <li>Strategy Orchestration (Entry/Exit)</li>
+      <li>Indicator Calculations & Thresholds</li>
+      <li>Utility Formulas</li>
+      <li>Operational Keys & Side Effects</li>
+      <li>Numeric Examples and Walkthroughs</li>
+      <li>Errors, Retries and Observability</li>
+      <li>Appendix: Edge Cases & Tests</li>
+    </ol>
+  </div>
 
-  <h2>Contents</h2>
-  <ol>
-    <li>Project Overview</li>
-    <li>Architecture & Key Components</li>
-    <li>Broker Integration & Order Payloads</li>
-    <li>Execution Flow (Order lifecycle)</li>
-    <li>Position & Exposure Calculations</li>
-    <li>Risk Management</li>
-    <li>Strategy V2: Entry/Exit Orchestration</li>
-    <li>Indicators and Calculations</li>
-    <li>Utilities and Helper Functions</li>
-    <li>Redis Keys & Side Effects</li>
-  </ol>
+  <div class="section">
+    <h2>Introduction & Goals</h2>
+    <p>The system automates options trading decisions for an index using a pullback-entry strategy anchored to momentum crossovers. Its goals are to produce deterministic entry/exit signals, size positions per configurable risk profiles, enforce operational safeguards (time windows, exposure limits, cooldowns), and maintain an auditable trade lifecycle.</p>
+  </div>
 
-  <h2>1. Project Overview</h2>
-  <p>The app is an automated trading engine focused on NIFTY options trading. Main responsibilities:
-    - ingest market/candle data, evaluate multi-timeframe signals,
-    - select contracts, size positions based on risk profile,
-    - place/modify/cancel orders via Angel broker API,
-    - persist trades and events in DB for audit.
-  </p>
+  <div class="section">
+    <h2>Configuration & Defaults</h2>
+    <p>Key numeric defaults used across the engine (examples):</p>
+    <ul>
+      <li>Capital fallback: 1,000,000</li>
+      <li>Max trades per day: 2</li>
+      <li>Max trades per trend: 5</li>
+      <li>Consecutive loss limit: 3</li>
+      <li>Standard lot size for index options: 65</li>
+      <li>Zig-zag retracement levels: 70%, 60%, 55%</li>
+    </ul>
+    <p>Environment-driven parameters (risk percentages, slippage limits, retry counts, time windows) are read at startup and provide runtime behavior controls.</p>
+  </div>
 
-  <h2>2. Architecture & Key Components</h2>
-  <ul>
-    <li><strong>Entry point:</strong> <code>src/app.js</code>, <code>src/server.js</code> (HTTP + websocket endpoints).</li>
-    <li><strong>Execution:</strong> <code>src/execution/order.manager.js</code>, <code>src/execution/order.service.js</code>, <code>src/execution/position.manager.js</code>.</li>
-    <li><strong>Risk:</strong> <code>src/risk/capital.manager.js</code>, <code>src/risk/trade.limits.js</code>, <code>src/risk/cooldown.manager.js</code>, <code>src/risk/gap.guard.js</code>.</li>
-    <li><strong>Strategy</strong> V2 orchestrator and rules under <code>src/strategy/v2/</code> (orchestrator, timeRules, pullbackRules, entryChecklist, exitRules).</li>
-    <li><strong>Indicators:</strong> <code>src/indicators/</code> — MACD, Pullback, CandleFilter, Volume.</li>
-    <li><strong>Data persistence:</strong> Sequelize models in <code>src/models/</code> (orders, trades, events).</li>
-  </ul>
+  <div class="section">
+    <h2>Data Models & Persistence</h2>
+    <p>Trades, trade-events, orders and order-events are persisted in a relational database. For each trade the system records entire entry parameters (entry price, stop loss, target) at the moment of entry to avoid ambiguity when auditing later.</p>
+    <p>Migrations must be applied before running the service; ensure database connectivity settings are correct when a migration fails.</p>
+  </div>
 
-  <h2>3. Broker Integration & Order Payloads</h2>
-  <p>Broker glue lives in <code>src/broker/angelClient.js</code> and <code>src/execution/order.service.js</code>. The OrderService resolves instruments and builds place/modify payloads expected by Angel APIs. Important fields:</p>
-  <ul>
-    <li><strong>tradingsymbol</strong> — instrument mnemonic</li>
-    <li><strong>symboltoken</strong> — numeric token optionally used for resolution</li>
-    <li><strong>quantity</strong> — integer shares/lot units</li>
-    <li><strong>ordertype</strong> — "LIMIT" or "MARKET" (mapped via <code>toOrderType</code>)</li>
-    <li><strong>producttype</strong> — e.g. "MIS" mapped via <code>toProductType</code></li>
-    <li><strong>price</strong>, <strong>triggerprice</strong>, <strong>stoploss</strong>, <strong>squareoff</strong></li>
-  </ul>
+  <div class="section">
+    <h2>Broker Integration and Order Payloads</h2>
+    <p>The engine resolves the chosen instrument, builds the broker payload, and places or modifies orders through the broker's API. Important payload attributes include:</p>
+    <ul>
+      <li>tradingsymbol (instrument label)</li>
+      <li>symbol token (numeric identifier when available)</li>
+      <li>quantity, order type (limit/market), product type</li>
+      <li>price, trigger price, stop loss, square-off and validity</li>
+    </ul>
+    <p>Numbers are typically stringified to match broker API expectations. Prices should be rounded to the allowed tick size before submission to avoid rejections.</p>
+  </div>
 
-  <h3>Order placement logic (high-level)</h3>
-  <ol>
-    <li>Resolve instrument (exchange/tradingsymbol/symboltoken) — <code>resolveInstrument()</code>.</li>
-    <li>Build payload via <code>buildPlaceOrderPayload()</code> and call <code>angelClient.placeOrder()</code>.</li>
-    <li>On errors, OrderManager retries up to <code>config.MAX_ORDER_RETRY</code> with delay <code>ORDER_TIMEOUT/2</code>.</li>
-  </ol>
+  <div class="section">
+    <h2>Order Lifecycle and State Management</h2>
+    <p>The order lifecycle has preflight validation, placement (possibly retried), in-memory tracking, and event logging for audit. Key validation steps include:</p>
+    <ul>
+      <li>symbol and quantity bounds</li>
+      <li>price &gt; 0</li>
+      <li>risk-reward check when stop loss and target are provided: reward/risk must meet a minimum ratio</li>
+      <li>market slippage check against live last traded price</li>
+    </ul>
+    <p>On placement success the engine records the order metadata in runtime state and emits an order-placed event. Market orders are used for fast exits; limit orders for controlled entries.</p>
+  </div>
 
-  <h2>4. Execution Flow (Order lifecycle)</h2>
-  <p>Primary flow is implemented in <code>src/execution/order.manager.js</code>:</p>
-  <ul>
-    <li><strong>validateOrder(config)</strong> — validates trading symbol, quantity bounds, price > 0. Checks risk-reward when stopLoss/target both provided:
-      reward/risk = |target - price| / |price - stopLoss| must be &ge; STRATEGY_MIN_PROFIT_RATIO.
-    </li>
-    <li>Compares configured price against market LTP and enforces <code>PRICE_SLIPPAGE_PERCENT</code>.
-    </li>
-    <li><strong>placeEntryOrder(config)</strong> — validates, attempts to place LIMIT entry as BUY with configured quantity and entryPrice. Stores metadata in <code>activeOrders</code> map and maintains <code>orderEvents</code> for audit trail.</li>
-    <li><strong>placeMarketOrder(config)</strong> — used for exits; places MARKET order payload (price: 0).</li>
-    <li><strong>modifyStopLoss/modifyTarget(cancel)</strong> — wrapper that calls OrderService.modifyOrder/cancelOrder and updates in-memory order meta and logs events.</li>
-  </ul>
+  <div class="section">
+    <h2>Position Management and PnL</h2>
+    <p>Positions are normalized from broker data into a consistent shape that includes quantity, average price, current price and unrealized PnL. The percentage PnL is computed relative to the position notional:</p>
+    <p style="margin-left:10px"><em>PnL% = (unrealized PnL) / (|quantity| × average price) × 100</em></p>
+    <p>Total exposure is the sum across open positions of (quantity × average price). Exposure and positions are used by risk routines to decide whether an additional position may be opened.</p>
+  </div>
 
-  <h2>5. Position & Exposure Calculations</h2>
-  <h3>Position processing</h3>
-  <p><code>PositionManager.processPositions()</code> normalizes broker position payloads to: <code>{ symbol, quantity, averagePrice, currentPrice, pnl, pnlPercent }</code>. PnL percent computed as:</p>
-  <pre>pnlPercent = avg > 0 ? (pnl / (|quantity| * avg)) * 100 : 0</pre>
+  <div class="section">
+    <h2>Risk Sizing and Capital Management</h2>
+    <p>Risk profiles combine a customer's selected capital, a per-trade percentage or explicit per-trade value, and a maximum capital utilization limit. Two common sizing methods appear in the engine (choose one canonical approach for production):</p>
+    <h3>Per-share risk-based sizing</h3>
+    <p>Interpretation: the per-trade risk percentage defines the maximum acceptable monetary loss.</p>
+    <p style="margin-left:10px">riskAmount = capital × riskPercent / 100</p>
+    <p style="margin-left:10px">pricePerShare = |entryPrice − stopLoss|</p>
+    <p style="margin-left:10px">quantity = floor(riskAmount / pricePerShare)</p>
+    <h3>Lot-based allocation sizing</h3>
+    <p>Interpretation: per-trade risk translates to a purchasing budget; compute how many lots that budget can buy:</p>
+    <p style="margin-left:10px">tradeCapital = min(maxCapital, perTradeAbsoluteValue or percentRiskCapital)</p>
+    <p style="margin-left:10px">minCapitalFor1Lot = entryPrice × lotSize</p>
+    <p style="margin-left:10px">rawLots = tradeCapital / minCapitalFor1Lot ; lots = floor(rawLots) ; quantity = lots × lotSize</p>
+    <p class="small">Note: the first method sizes based on maximum acceptable loss, the second sizes based on capital allocation. They are not equivalent; choose one and document it clearly in the client UI.</p>
+  </div>
 
-  <h3>Exposure</h3>
-  <p>Total exposure computed as:</p>
-  <pre>totalExposure = Σ(position.quantity * position.averagePrice)</pre>
-  <p>CapitalManager stores exposure per day in Redis at key <code>exposure:YYYY-MM-DD</code>.</p>
+  <div class="section">
+    <h2>Trade Limits, Cooldowns & Safety Gates</h2>
+    <p>The engine enforces operational safeguards:</p>
+    <ul>
+      <li>daily/weekly/monthly trade counters with enforced maximums</li>
+      <li>limits per trend to avoid overtrading in a single directional move</li>
+      <li>consecutive-loss tracking: after a configured number of consecutive losses, the engine activates a cooldown period measured in trading days</li>
+    </ul>
+    <p>Cooldown duration is calculated by skipping weekend days and ending on market close time of the final trading day.</p>
+  </div>
 
-  <h2>6. Risk Management</h2>
-  <p>Main logic is in <code>src/risk/capital.manager.js</code>. Key concepts:</p>
-  <ul>
-    <li><strong>Risk profile</strong> built from Redis key <code>ACTIVE_RISK_PROFILE</code> or defaults from <code>src/config/risk.profiles.js</code>. Profile fields include <code>capitalSize</code>, <code>perTradeRiskPercent</code>, <code>perTradeRiskValue</code>, <code>maxCapitalUtilizationPercent</code>, <code>lotSize</code>, etc.</li>
-    <li><strong>Max capital</strong>: maxCapital = capitalSize * maxCapitalUtilizationPercent / 100</li>
-    <li><strong>Sizing percent</strong>: sizingPercent = dashboard per-trade percent if present else profile percent</li>
-    <li><strong>Percent risk capital</strong>: percentRiskCapital = capitalSize * sizingPercent / 100</li>
-    <li><strong>tradeCapital</strong>: capped to min(maxCapital, perTradeRiskValue || percentRiskCapital)</li>
-  </ul>
+  <div class="section">
+    <h2>Entry Session & Gap Controls</h2>
+    <p>Entries are allowed only during a configured intraday window (for example 09:45–14:45 IST). Additional controls include:</p>
+    <ul>
+      <li>opening gap detection: if the opening price gap (percent) exceeds a threshold and market is within a stabilization window, new entries are blocked</li>
+      <li>news-driven risk multiplier: high-impact news can reduce position sizing (for example, a 50% reduction)</li>
+    </ul>
+  </div>
 
-  <h3>Position sizing formulas</h3>
-  <p>Two sizing methods are used across code:</p>
-  <ol>
-    <li><strong>Simplified per-share size</strong> (from utils.calculatePositionSize):
-      <pre>riskAmount = (capital * riskPercent) / 100
-pricePerShare = |entryPrice - stopLoss|
-qty = floor(riskAmount / pricePerShare)</pre>
-    </li>
-    <li><strong>Lot-based sizing</strong> (CapitalManager):
-      <pre>minCapitalFor1Lot = entryPrice * lotSize
-rawLots = tradeCapital / minCapitalFor1Lot
-lots = floor(rawLots) (ensure at least 1 if tradeCapital >= minCapitalFor1Lot)
-qty = lots * lotSize
-totalCost = qty * entryPrice</pre>
-    </li>
-  </ol>
+  <div class="section">
+    <h2>Strategy Orchestration (Entry/Exit)</h2>
+    <p>The decision pipeline follows a sequential gate model. Typical gates:</p>
+    <ol>
+      <li>Market open and session time gate</li>
+      <li>Trade limits and exposure gate</li>
+      <li>Momentum crossover detection on a primary timeframe</li>
+      <li>Multi-timeframe alignment confirmation on lower timeframes</li>
+      <li>Contract selection and liquidity checks</li>
+      <li>Cross-price anchoring and tolerance band check</li>
+      <li>Final checklist aggregation — entry permitted only if all gates pass</li>
+    </ol>
+    <p>After entry the system locks bias to prevent duplicate entries and increments counters; exit evaluation runs periodically to check partial/full-booking conditions and time-based force exits.</p>
+  </div>
 
-  <h3>Trade eligibility checks</h3>
-  <p><code>CapitalManager.canTrade()</code> checks Redis counters and limits:
-    - open_positions_count &lt;= profile.maxPositions
-    - daily trade count &lt; MAX_TRADES_PER_DAY
-    - trend trade count &lt; MAX_TRADES_PER_TREND
-  </p>
+  <div class="section">
+    <h2>Indicator Calculations & Thresholds</h2>
+    <h3>MACD</h3>
+    <p>Uses standard MACD with typical parameterization: fast period 12, slow period 26, signal period 9. A bullish crossover is identified when the histogram moves from negative to positive and the MACD line crosses above its signal line.</p>
+    <h3>Pullback</h3>
+    <p>Pullback percent is calculated as the retracement from recent swing low:</p>
+    <p style="margin-left:10px">pullback% = ((close − low) / (high − low)) × 100</p>
+    <p>Zig-zag retracement thresholds typically used: first pullback ≥70%, second ≥60%, third ≥55%.</p>
+    <h3>Candle Filters</h3>
+    <p>Lower timeframe candle filters enforce patterns such as mixed-color presence across the last 6 candles (reject if all same color), doji/hammer heuristics, and rejection of gap entries where the candle opens directly deep inside the pullback zone.</p>
+    <h3>Volume Strength</h3>
+    <p>Volume strength compares current candle volume to an average of previous N candles (commonly 20): multiplier = currentVolume / averageVolume. Thresholds: &ge;2.0 strong, &ge;1.5 good, else weak.</p>
+  </div>
 
-  <h3>Cooldowns & consecutive losses</h3>
-  <p><code>CooldownManager</code> tracks consecutive losses per day (Redis key <code>losses:YYYY-MM-DD</code>), and when limit reached, activates <code>cooldown:active</code> for 5 trading days. Cooldown end computed by skipping weekends and setting end timestamp to 15:30 of final trading day.</p>
+  <div class="section">
+    <h2>Utility Formulas</h2>
+    <ul>
+      <li>Percentage change: ((current − previous) / previous) × 100 (returns 0 if previous is 0)</li>
+      <li>Trailing stop: max(entryPrice, currentPrice) × (1 − trailingPercent/100)</li>
+      <li>Monetary risk: |entryPrice − stopLoss| × quantity</li>
+      <li>Monetary reward: |exitPrice − entryPrice| × quantity</li>
+      <li>Risk/reward ratio: reward / risk (guard against division-by-zero)</li>
+      <li>Position sizing (risk-based): floor((capital × riskPercent / 100) / |entryPrice − stopLoss|)</li>
+    </ul>
+  </div>
 
-  <h2>7. Strategy V2 — Orchestration & Decision Flow</h2>
-  <p>Files in <code>src/strategy/v2/</code> form the entry decision pipeline. Key steps:</p>
-  <ol>
-    <li><strong>Market & time gates</strong> — market open and EntryTimeGate boundaries (default 09:45–14:45 IST).</li>
-    <li><strong>MACD 1H crossover</strong> detection (<code>pullbackRules</code>) — uses standard MACD (12,26,9) via <code>technicalindicators</code>. A bullish crossover is histogram negative→positive with MACD line crossing above signal line.</li>
-    <li><strong>Multi-timeframe alignment</strong> — validate lower TF (15m/30m) alignment with the 1h bias.</li>
-    <li><strong>Contract selection</strong> — <code>selectContract()</code> chooses option leg(s) from options chain with constraints such as minimum premium, ITM points, days-to-expiry, strike window, last 3-days premium checks, and greeks snapshot when available.</li>
-    <li><strong>CrossPrice anchor + tolerance</strong> — on initial crossover the system stores a crossPrice (index snapshot). Entry only allowed while live index remains within CrossPrice ± tolerance (config CROSSPRICE_INDEX_TOLERANCE_POINTS).</li>
-    <li><strong>Entry checklist</strong> — all gates combined via <code>evaluateEntryChecklist()</code>. Any failed gate blocks entry and returns human-readable reason(s).</li>
-  </ol>
+  <div class="section">
+    <h2>Operational Keys & Side Effects</h2>
+    <p>Runtime state and counters are stored in a fast key-value store. Typical keys and meanings (human-friendly):</p>
+    <ul>
+      <li>Daily exposure amount</li>
+      <li>Daily/weekly/monthly trade counters</li>
+      <li>Open positions count</li>
+      <li>Consecutive loss counters and active cooldown record</li>
+      <li>Active risk profile override stored by the UI</li>
+      <li>Cross-price anchor entries for each bias</li>
+    </ul>
+    <p>Daily counters typically expire after 24 hours. Cooldown records persist until their calculated end time.</p>
+  </div>
 
-  <h3>After entry</h3>
-  <p>After an entry is confirmed, <code>afterEntryConfirmed</code> locks bias, increments trade counts, and updates state via <code>src/strategy/v2/tradeState.js</code>. Exit evaluation uses <code>exitRules</code> including partial book profit rules and full exit conditions.</p>
+  <div class="section">
+    <h2>Numeric Examples and Walkthroughs</h2>
+    <h3>Risk-based sizing example</h3>
+    <p>Given capital 500,000 and per-trade risk 1.5%, riskAmount = 7,500. If entry is 180 and stop loss 150, per-share risk = 30. Quantity = floor(7,500 / 30) = 250 shares.</p>
+    <h3>Lot-based allocation example</h3>
+    <p>Given capitalSize 1,000,000 and per-trade percent 1.5% → tradeCapital 15,000. If entryPrice 150 and lotSize 65, min capital for 1 lot = 9,750. rawLots = 15,000 / 9,750 = 1.538 → buy 1 lot (65 qty).</p>
+    <p>Note: the monetary risk for that lot may be much lower than the tradeCapital; clarify whether tradeCapital is an allocation budget or maximum loss.</p>
+  </div>
 
-  <h2>8. Indicators & Exact Calculations</h2>
-  <h3>MACD</h3>
-  <p>Implemented in <code>src/indicators/macd.indicator.js</code> with params: fast=12, slow=26, signal=9. The library returns arrays of {MACD, signal, histogram}.
-    A crossover detection checks histogram sign changes and MACD vs signal relationships. <code>findLastCrossover</code> maps result index back to candle index (accounting for result length shorter than candles).</p>
+  <div class="section">
+    <h2>Errors, Retries and Observability</h2>
+    <p>Order placement uses a limited retry policy with sleeps between attempts. All significant lifecycle events are logged in a structured log stream for audit. It is recommended to persist the event audit trail to durable storage to survive restarts.</p>
+  </div>
 
-  <h3>Pullback calculation</h3>
-  <p>Utility <code>calculatePullback(high, low, close)</code> returns:
-    <pre>pullbackPercent = ((close - low) / (high - low)) * 100</pre>
-    Zig-zag levels (config ZIGZAG_LEVELS) used: 1st ≥70%, 2nd ≥60%, 3rd ≥55%.
-  </p>
-
-  <h3>Candle filters & pattern checks</h3>
-  <ul>
-    <li><strong>Consecutive candles:</strong> need strict consecutive bullish/bearish counts as configured (e.g., 3).</li>
-    <li><strong>Mixed candle rule (lower TF):</strong> last 6 candles cannot be all same color; need at least one opposite to confirm pullback.</li>
-    <li><strong>Doji/Hammer</strong> detection thresholds used in <code>CandleFilterIndicator</code> (body/range ratios).</li>
-    <li><strong>Gradual vs gap pullback:</strong> reject entries where openPullback &gt; 80% (gap entry) — prefer gradual retracements.</li>
-  </ul>
-
-  <h3>Volume strength</h3>
-  <p>Computed in <code>VolumeIndicator.analyzeVolume()</code>:
-    - avgVolume = average of previous 20 candles
-    - multiplier = currentVolume / avgVolume
-    - strength: &lt;1.5 = WEAK, 1.5–2.0 = GOOD, &ge;2.0 = STRONG
-  </p>
-
-  <h2>9. Utilities & Helper Functions</h2>
-  <p>Located in <code>src/utils/</code>. Notable functions (formulas):</p>
-  <ul>
-    <li><code>calculatePercentage(current, previous)</code> = ((current - previous) / previous) * 100</li>
-    <li><code>calculateTrailingStop(entryPrice, currentPrice, trailingPercent)</code> returns max(entryPrice,currentPrice) * (1 - trailingPercent/100)</li>
-    <li><code>calculateRisk(entryPrice, stopLoss, quantity)</code> = |entryPrice - stopLoss| * quantity</li>
-    <li><code>calculateReward(exitPrice, entryPrice, quantity)</code> = |exitPrice - entryPrice| * quantity</li>
-    <li><code>linearRegression(points)</code> returns slope, intercept, rSquared (least-squares)</li>
-  </ul>
-
-  <h2>10. Redis Keys, Counters & Side Effects</h2>
-  <ul>
-    <li><code>exposure:YYYY-MM-DD</code> — daily exposure amount (CapitalManager).</li>
-    <li><code>trades:daily:YYYY-MM-DD</code>, <code>trades:weekly:YYYY-MM-DD</code>, <code>trades:monthly:YYYY-MM</code> — counters for TradeLimits.</li>
-    <li><code>open_positions_count</code> — number of currently open positions (used by CapitalManager.canTrade()).</li>
-    <li><code>losses:YYYY-MM-DD</code> and <code>cooldown:active</code> — tracked by CooldownManager.</li>
-    <li><code>ACTIVE_RISK_PROFILE</code> — JSON risk profile override used by CapitalManager.</li>
-    <li><code>crossPrice:{CALL|PUT}</code> — stored cross-price anchor and metadata (strategy state).</li>
-  </ul>
-
-
-
-  <p class="small">If you want, I can (1) expand the contract selection logic line-by-line, (2) include full mappings of Angel API payloads, or (3) run a static grep to list every file referencing sensitive config keys.</p>
+  <div class="section">
+    <h2>Appendix: Edge Cases & Recommended Tests</h2>
+    <ol>
+      <li>Verify database connectivity and run migrations with verbose mode when migrations fail.</li>
+      <li>Add tick-size rounding helpers to guarantee broker-friendly price submission.</li>
+      <li>Standardize on one position-sizing method and reflect its meaning in the UI.</li>
+      <li>Persist runtime order state in a central store for multi-process deployments.</li>
+      <li>Add startup-time validations for required environment keys to fail fast if broker credentials are missing.</li>
+      <li>Create timezone unit tests for intraday gates to ensure correct behavior across deployments.</li>
+    </ol>
+    <p class="small">If you want, I can now expand each major section into a fully annotated, line-by-line narrative that maps the client's business logic to source code behaviors (omitting file names), or I can provide a machine-readable manifest of all parameters and formulas for dashboard ingestion. Pick one and I will continue.</p>
+  </div>
 </body>
 </html>
