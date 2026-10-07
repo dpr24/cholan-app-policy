@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,7 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 50%, rgba(108, 99, 255, 0.08), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(0, 212, 255, 0.08), transparent 25%);
             background-attachment: fixed;
@@ -254,34 +255,96 @@
             letter-spacing: 1px;
         }
 
+        .how-it-works {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .how-it-works h3 {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .how-it-works p {
+            font-size: 0.95rem !important;
+            margin-bottom: 12px !important;
+        }
+
+        .real-life {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--primary);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 16px;
+        }
+
+        .card.recommended .real-life {
+            border-left-color: #00E676;
+        }
+
+        .real-life strong {
+            color: #fff;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
         /* Animations */
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
         <header>
             <div class="badge">Architecture Guide</div>
             <h1>Desktop Presence Strategy</h1>
-            <p class="lead">How to reliably and future-proof the detection of active Desktop App instances for online class authorization.</p>
+            <p class="lead">How to reliably and future-proof the detection of active Desktop App instances for online
+                class authorization.</p>
         </header>
 
         <div class="problem-statement">
-            <strong>Why "App Close" Events Fail:</strong> Relying on the app to send a message when it closes is flawed. If a user force-kills the app via Task Manager/Activity Monitor, or if the OS crashes, or the computer loses power, the app never gets a chance to send the "I am closing" message. The server must actively verify the connection.
+            <strong>Why "App Close" Events Fail:</strong> Relying on the app to send a message when it closes is flawed.
+            If a user force-kills the app via Task Manager/Activity Monitor, or if the OS crashes, or the computer loses
+            power, the app never gets a chance to send the "I am closing" message. The server must actively verify the
+            connection.
         </div>
 
         <div class="grid">
@@ -289,38 +352,96 @@
             <div class="card recommended">
                 <div class="rec-badge">Recommended</div>
                 <div class="icon-wrapper">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
                     </svg>
                 </div>
                 <h2>WebSockets (Real-Time)</h2>
-                <p>The industry standard for real-time presence. The app and server maintain an active, constant TCP connection.</p>
+                <p>The industry standard for real-time presence. The app and server maintain an active, constant TCP
+                    connection.</p>
                 <ul class="feature-list">
-                    <li><strong>Instant Kick-out:</strong> If the app is force-killed, the OS immediately severs the socket. The server knows instantly.</li>
-                    <li><strong>Low Overhead:</strong> Ping-pong packets are extremely lightweight compared to HTTP requests.</li>
-                    <li><strong>Ready to go:</strong> Your codebase already contains a <code>WebSocketService</code> reserved for future use.</li>
+                    <li><strong>Instant Kick-out:</strong> If the app is force-killed, the OS immediately severs the
+                        socket. The server knows instantly.</li>
+                    <li><strong>Low Overhead:</strong> Ping-pong packets are extremely lightweight compared to HTTP
+                        requests.</li>
+                    <li><strong>Ready to go:</strong> Your codebase already contains a <code>WebSocketService</code>
+                        reserved for future use.</li>
                 </ul>
+
+                <div class="how-it-works">
+                    <h3>How it Works</h3>
+                    <ul class="feature-list" style="margin-bottom: 16px;">
+                        <li><strong>Connection:</strong> When the desktop app opens, it connects to your server via a
+                            WebSocket.</li>
+                        <li><strong>Ping-Pong:</strong> The server and the app constantly play ping-pong in the
+                            background (which is built into the WebSocket protocol).</li>
+                        <li><strong>Force Kill:</strong> If the app is force-killed: The Operating System instantly
+                            severs the TCP connection. Your server receives a disconnect event immediately and knows the
+                            app is gone.</li>
+                        <li><strong>Network Drop:</strong> If the internet drops: The server's ping times out, and it
+                            assumes the app is gone.</li>
+                        <li><strong>Future-proof:</strong> Your class web portal can instantly listen to the server. If
+                            the WebSocket disconnects, the web portal can instantly kick the student out of the video
+                            player.</li>
+                    </ul>
+                    <div class="real-life">
+                        <strong>📖 Real Life Example: A Phone Call</strong>
+                        <span style="font-size: 0.9rem; color: #D1D5DB;">You are on a phone call with the server. As
+                            long as the line is open, the server knows you are there. If your phone battery dies
+                            suddenly, the call drops instantly. The server immediately hears the "beep beep beep" and
+                            knows you are gone.</span>
+                    </div>
+                </div>
             </div>
 
             <!-- HTTP Polling -->
             <div class="card">
                 <div class="icon-wrapper">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
                 </div>
                 <h2>HTTP Polling (Heartbeat)</h2>
-                <p>A simpler fallback method using standard REST APIs. The app periodically shouts "I am still here!" to the server.</p>
+                <p>A simpler fallback method using standard REST APIs. The app periodically shouts "I am still here!" to
+                    the server.</p>
                 <ul class="feature-list">
-                    <li><strong>Easy Implementation:</strong> Can be built using your existing <code>ApiService</code> in minutes.</li>
-                    <li><strong>Database Driven:</strong> Server updates a <code>last_seen</code> timestamp in the database on every pulse.</li>
-                    <li><strong>Slight Delay:</strong> Detection of an app crash is delayed by the interval time (e.g., up to 30 seconds).</li>
+                    <li><strong>Easy Implementation:</strong> Can be built using your existing <code>ApiService</code>
+                        in minutes.</li>
+                    <li><strong>Database Driven:</strong> Server updates a <code>last_seen</code> timestamp in the
+                        database on every pulse.</li>
+                    <li><strong>Slight Delay:</strong> Detection of an app crash is delayed by the interval time (e.g.,
+                        up to 30 seconds).</li>
                 </ul>
                 <div class="code-block">
-Timer.periodic(Duration(seconds: 30), (timer) {<br>
-&nbsp;&nbsp;_apiService.sendHeartbeat();<br>
-});
+                    Timer.periodic(Duration(seconds: 30), (timer) {<br>
+                    &nbsp;&nbsp;_apiService.sendHeartbeat();<br>
+                    });
+                </div>
+
+                <div class="how-it-works">
+                    <h3>How it Works</h3>
+                    <ul class="feature-list" style="margin-bottom: 16px;">
+                        <li><strong>New Endpoint:</strong> You create a new API endpoint on your server:
+                            <code>POST /api/heartbeat</code></li>
+                        <li><strong>Timer:</strong> In your Flutter app, you set up a Timer that fires every 30 seconds
+                            to tell the server "I am still here".</li>
+                        <li><strong>Server Tracking:</strong> On the Server: You have a database table (e.g.,
+                            <code>active_sessions</code>) with a <code>last_seen</code> timestamp. Every time the
+                            heartbeat hits, update <code>last_seen = NOW()</code>.</li>
+                        <li><strong>Authorization:</strong> When the student tries to watch the class, the server
+                            checks: "Is this user's last_seen within the last 45 seconds?" If not, it means the app was
+                            closed or disconnected, and access is denied.</li>
+                    </ul>
+                    <div class="real-life">
+                        <strong>📖 Real Life Example: Security Guard Check-in</strong>
+                        <span style="font-size: 0.9rem; color: #D1D5DB;">You are a security guard who has to radio the
+                            base every 30 minutes to say "All good". If the base doesn't hear from you after 45 minutes,
+                            they assume you have left the building (or something happened) and lock down the
+                            area.</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -330,11 +451,15 @@ Timer.periodic(Duration(seconds: 30), (timer) {<br>
             <div class="comparison-inner">
                 <div class="comp-item">
                     <h4>Choose WebSockets if</h4>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">You need <strong>instantaneous</strong> detection when a student closes the app, so the web portal can instantly lock the video player. Best for strict security.</p>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">You need <strong>instantaneous</strong>
+                        detection when a student closes the app, so the web portal can instantly lock the video player.
+                        Best for strict security.</p>
                 </div>
                 <div class="comp-item">
                     <h4>Choose HTTP Polling if</h4>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">You want the fastest development time and are okay with a <strong>30 to 60-second grace period</strong> before the system realizes the student closed the app.</p>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">You want the fastest development time and
+                        are okay with a <strong>30 to 60-second grace period</strong> before the system realizes the
+                        student closed the app.</p>
                 </div>
             </div>
         </div>
@@ -342,4 +467,5 @@ Timer.periodic(Duration(seconds: 30), (timer) {<br>
     </div>
 
 </body>
+
 </html>
