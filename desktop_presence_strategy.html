@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop Presence Strategy | TYK Bavan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0D0F1A;
+            --bg-surface: #161929;
+            --primary: #6C63FF;
+            --secondary: #00D4FF;
+            --error: #xFFFF4D6D;
+            --text-main: #FFFFFF;
+            --text-muted: #8A8FAD;
+            --card-border: rgba(108, 99, 255, 0.2);
+            --card-bg: rgba(22, 25, 41, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(108, 99, 255, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 212, 255, 0.08), transparent 25%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(108, 99, 255, 0.15);
+            color: var(--primary);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            background: linear-gradient(135deg, #FFFFFF 0%, #B0AAFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.lead {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .problem-statement {
+            background: rgba(255, 77, 109, 0.05);
+            border-left: 4px solid var(--error);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 50px;
+            animation: fadeIn 1s ease-out 0.3s backwards;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(108, 99, 255, 0.4);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card.recommended {
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .card.recommended::before {
+            opacity: 1;
+            background: linear-gradient(90deg, #00E676, var(--secondary));
+        }
+
+        .rec-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 230, 118, 0.15);
+            color: #00E676;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: rgba(108, 99, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .card.recommended .icon-wrapper {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.2);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin: 0 0 16px 0;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+            font-size: 0.95rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-list li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #D1D5DB;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .card.recommended .feature-list li::before {
+            color: var(--secondary);
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #A3BE8C;
+            margin-top: 20px;
+        }
+
+        .comparison {
+            background: var(--bg-surface);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid var(--card-border);
+            text-align: center;
+            animation: fadeIn 1s ease-out 0.8s backwards;
+        }
+
+        .comparison h3 {
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        .comparison-inner {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .comp-item {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .comp-item h4 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="badge">Architecture Guide</div>
+            <h1>Desktop Presence Strategy</h1>
+            <p class="lead">How to reliably and future-proof the detection of active Desktop App instances for online class authorization.</p>
+        </header>
+
+        <div class="problem-statement">
+            <strong>Why "App Close" Events Fail:</strong> Relying on the app to send a message when it closes is flawed. If a user force-kills the app via Task Manager/Activity Monitor, or if the OS crashes, or the computer loses power, the app never gets a chance to send the "I am closing" message. The server must actively verify the connection.
+        </div>
+
+        <div class="grid">
+            <!-- WebSockets (Recommended) -->
+            <div class="card recommended">
+                <div class="rec-badge">Recommended</div>
+                <div class="icon-wrapper">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                    </svg>
+                </div>
+                <h2>WebSockets (Real-Time)</h2>
+                <p>The industry standard for real-time presence. The app and server maintain an active, constant TCP connection.</p>
+                <ul class="feature-list">
+                    <li><strong>Instant Kick-out:</strong> If the app is force-killed, the OS immediately severs the socket. The server knows instantly.</li>
+                    <li><strong>Low Overhead:</strong> Ping-pong packets are extremely lightweight compared to HTTP requests.</li>
+                    <li><strong>Ready to go:</strong> Your codebase already contains a <code>WebSocketService</code> reserved for future use.</li>
+                </ul>
+            </div>
+
+            <!-- HTTP Polling -->
+            <div class="card">
+                <div class="icon-wrapper">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <h2>HTTP Polling (Heartbeat)</h2>
+                <p>A simpler fallback method using standard REST APIs. The app periodically shouts "I am still here!" to the server.</p>
+                <ul class="feature-list">
+                    <li><strong>Easy Implementation:</strong> Can be built using your existing <code>ApiService</code> in minutes.</li>
+                    <li><strong>Database Driven:</strong> Server updates a <code>last_seen</code> timestamp in the database on every pulse.</li>
+                    <li><strong>Slight Delay:</strong> Detection of an app crash is delayed by the interval time (e.g., up to 30 seconds).</li>
+                </ul>
+                <div class="code-block">
+Timer.periodic(Duration(seconds: 30), (timer) {<br>
+&nbsp;&nbsp;_apiService.sendHeartbeat();<br>
+});
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison">
+            <h3>Decision Matrix</h3>
+            <div class="comparison-inner">
+                <div class="comp-item">
+                    <h4>Choose WebSockets if</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">You need <strong>instantaneous</strong> detection when a student closes the app, so the web portal can instantly lock the video player. Best for strict security.</p>
+                </div>
+                <div class="comp-item">
+                    <h4>Choose HTTP Polling if</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">You want the fastest development time and are okay with a <strong>30 to 60-second grace period</strong> before the system realizes the student closed the app.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
